@@ -85,54 +85,80 @@
   gap: var(--space-2);
 }
 
+/* ===== Skeuomorphic book trigger (线装书) ===== */
+
 .templateTrigger {
   display: flex;
-  align-items: center;
-  gap: var(--space-2);
+  align-items: stretch;
   height: 30px;
-  padding: 0 var(--space-3);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--sem-text-disabled);
-  background: transparent;
-  color: var(--sem-text-secondary);
-  font-family: var(--font-family-body);
-  font-size: var(--font-caption);
+  border: none;
+  padding: 0;
   cursor: pointer;
-  transition: background-color var(--duration-fast) var(--ease-brush-touch);
+  background: transparent;
+  position: relative;
+  transition: transform var(--duration-fast) var(--ease-brush-touch),
+              filter var(--duration-fast) var(--ease-brush-touch);
 }
 
 .templateTrigger:hover {
-  background-color: var(--sem-bg-secondary);
+  transform: translateY(-1px) rotate(-0.5deg);
 }
 
-.templateThumb {
-  display: block;
-  width: var(--space-4);
-  height: 22px;
-  border: 1px solid var(--sem-text-disabled);
-  border-radius: 1px;
-  background: var(--color-paper-base);
+.templateTrigger:active {
+  transform: translateY(0) rotate(0deg);
+}
+
+/* Book spine — dark binding strip with thread holes */
+.triggerSpine {
+  width: 7px;
+  background: var(--sem-text-secondary);
+  border-radius: 1px 0 0 1px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
   position: relative;
-  overflow: hidden;
+  flex-shrink: 0;
 }
 
-.templateThumb::after {
+/* Thread binding dots — three holes along the spine */
+.triggerSpine::before {
   content: '';
-  position: absolute;
-  top: var(--space-1);
-  left: 2px;
-  right: 2px;
+  width: 2px;
   height: 2px;
-  background: var(--sem-text-primary);
-  border-radius: 1px;
+  border-radius: var(--radius-full);
+  background: var(--color-paper-aged);
   box-shadow:
-    0 var(--space-1) 0 var(--sem-border-default),
-    0 var(--space-2) 0 var(--sem-border-default);
+    0 -5px 0 var(--color-paper-aged),
+    0 5px 0 var(--color-paper-aged);
 }
 
-.templateArrow {
+/* Book cover — paper-textured surface */
+.triggerCover {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0 var(--space-3);
+  background: var(--sem-bg-secondary);
+  border: 1px solid var(--color-paper-aged);
+  border-left: none;
+  border-radius: 0 1px 1px 0;
+  box-shadow: var(--shadow-subtle);
+}
+
+.templateTrigger:hover .triggerCover {
+  box-shadow: var(--shadow-medium);
+  background: var(--color-paper-base);
+}
+
+.triggerName {
+  font-family: var(--font-family-display);
   font-size: var(--font-caption);
-  opacity: 0.5;
+  font-weight: var(--weight-bold);
+  color: var(--sem-text-primary);
+  white-space: nowrap;
+  letter-spacing: var(--tracking-wide);
 }
 
 /* 导出按钮使用 SealButton 组件，无需自定义样式 */

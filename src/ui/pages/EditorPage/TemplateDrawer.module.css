@@ -1,0 +1,401 @@
+/* src/ui/pages/EditorPage/TemplateDrawer.module.css */
+/* Template drawer — 书案抽屉，iOS 6 风拟物化 */
+/* 设计意图：厚实的木框 + 内凹纸面 + 顶部翻边 = 真实抽屉感 */
+
+/* ===== Backdrop ===== */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(28, 18, 8, 0.15);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-normal) var(--ease-brush-touch);
+}
+
+.backdropOpen {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ===== 抽屉整体定位 ===== */
+
+/* L3 组件令牌 */
+.drawer {
+  --drawer-frame: var(--color-paper-aged);
+  --drawer-frame-dark: var(--color-ink-faint);
+  --drawer-inner: var(--color-paper-warm);
+  --drawer-wall: 5px;
+  --drawer-rim-height: 4px;
+  --drawer-seal-size: 16px;
+
+  position: fixed;
+  top: var(--editor-toolbar-height);
+  left: 50%;
+  transform: translateX(-50%) translateY(-110%);
+  width: min(760px, 92vw);
+  z-index: 201;
+  opacity: 0;
+  transition:
+    transform var(--duration-normal) var(--ease-ink-spread),
+    opacity var(--duration-fast) var(--ease-brush-touch);
+}
+
+.drawerOpen {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+/* ===== 抽屉外壳 — 木质框架 ===== */
+/* 三面厚壁（左、右、底），顶部开口衔接工具栏 */
+
+.frame {
+  background: var(--drawer-frame);
+  padding: 0 var(--drawer-wall) var(--drawer-wall);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  position: relative;
+
+  /* 木框外侧投影 — 抽屉悬浮于页面之上 */
+  box-shadow:
+    0 8px 28px rgba(28, 18, 8, 0.16),
+    0 2px 6px rgba(28, 18, 8, 0.06);
+}
+
+/* 顶部翻边 — 抽屉拉出时露出的前挡板 */
+/* 比框体宽一点点，有高光和阴影模拟厚度 */
+.frame::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -1px;
+  right: -1px;
+  height: var(--drawer-rim-height);
+  background: linear-gradient(
+    180deg,
+    var(--drawer-frame-dark) 0%,
+    var(--drawer-frame) 60%,
+    color-mix(in srgb, var(--drawer-frame) 80%, white) 100%
+  );
+  border-radius: 1px 1px 0 0;
+  box-shadow: 0 1px 2px rgba(28, 18, 8, 0.1);
+}
+
+/* ===== 内部纸面 — 抽屉内壁 ===== */
+
+.inner {
+  background: var(--drawer-inner);
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  padding: var(--space-4) var(--space-6);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+
+  /* 内凹阴影 — 往抽屉里看的深度 */
+  box-shadow:
+    inset 0 4px 12px rgba(28, 18, 8, 0.07),
+    inset 2px 0 6px rgba(28, 18, 8, 0.03),
+    inset -2px 0 6px rgba(28, 18, 8, 0.03);
+}
+
+/* ===== Header ===== */
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title {
+  font-family: var(--font-family-display);
+  font-size: var(--font-small);
+  font-weight: var(--weight-bold);
+  color: var(--sem-text-secondary);
+  margin: 0;
+  letter-spacing: var(--tracking-wide);
+}
+
+.closeBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--sem-text-tertiary);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-brush-touch),
+              color var(--duration-fast) var(--ease-brush-touch);
+}
+
+.closeBtn:hover {
+  background: var(--sem-bg-tertiary);
+  color: var(--sem-text-secondary);
+}
+
+/* ===== 模板列表 — 横排册页 ===== */
+
+.list {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-4);
+  padding: var(--space-2) 0;
+}
+
+/* ===== 模板卡片 ===== */
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  cursor: pointer;
+  text-align: center;
+  font-family: var(--font-family-body);
+  position: relative;
+  flex-shrink: 0;
+  transition: background-color var(--duration-fast) var(--ease-brush-touch),
+              transform var(--duration-fast) var(--ease-brush-touch);
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+/* 选中卡片不需要 hover 反馈 — 避免产生"蒙版"视觉 */
+.cardActive,
+.cardActive:hover {
+  background: transparent;
+  transform: none;
+}
+
+/* ===== 缩略图 ===== */
+
+.thumb {
+  width: 56px;
+  height: 76px;
+  flex-shrink: 0;
+  background: var(--sem-bg-primary);
+  border: 1px solid var(--color-paper-aged);
+  border-radius: 1px;
+  box-shadow: var(--shadow-subtle);
+  padding: 6px 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  position: relative;
+}
+
+.cardActive .thumb {
+  border-color: var(--sem-action-primary);
+}
+
+.cardName {
+  font-family: var(--font-family-display);
+  font-size: var(--font-caption);
+  font-weight: var(--weight-bold);
+  color: var(--sem-text-primary);
+  line-height: var(--leading-tight);
+  white-space: nowrap;
+}
+
+.cardDesc {
+  font-size: 10px;
+  color: var(--sem-text-tertiary);
+  line-height: var(--leading-tight);
+  white-space: nowrap;
+}
+
+/* 朱砂印章 — 选中标记 */
+.activeSeal {
+  position: absolute;
+  bottom: -3px;
+  right: -3px;
+  width: var(--drawer-seal-size);
+  height: var(--drawer-seal-size);
+  background: var(--sem-action-primary);
+  border-radius: var(--radius-none);
+  transform: rotate(-3deg);
+  z-index: 1;
+}
+
+.activeSeal::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 7px;
+  height: 4px;
+  border-left: 1.5px solid var(--sem-text-inverse);
+  border-bottom: 1.5px solid var(--sem-text-inverse);
+  transform: translate(-50%, -60%) rotate(-45deg);
+}
+
+/* ===== 拉手 ===== */
+
+.handle {
+  display: flex;
+  justify-content: center;
+  padding-top: var(--space-2);
+}
+
+.handleBar {
+  width: 40px;
+  height: 3px;
+  background: var(--color-paper-aged);
+  border-radius: var(--radius-full);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* ===== Thumbnail wireframe elements ===== */
+
+.thLine {
+  height: 2px;
+  background: var(--color-paper-aged);
+  border-radius: 1px;
+}
+
+.thLine60 { width: 60%; }
+.thLine80 { width: 80%; }
+
+.thTitle {
+  width: 45%;
+  height: 3px;
+  background: var(--sem-text-primary);
+  border-radius: 1px;
+  margin-bottom: 2px;
+}
+
+.thSub {
+  width: 55%;
+  height: 2px;
+  background: var(--sem-text-disabled);
+  border-radius: 1px;
+  margin-bottom: 3px;
+}
+
+.thHead {
+  width: 35%;
+  height: 2px;
+  background: var(--sem-text-secondary);
+  border-radius: 1px;
+  margin-top: 2px;
+}
+
+.thGap { height: 3px; }
+
+.thSep {
+  width: 100%;
+  height: 1px;
+  background: var(--sem-text-primary);
+  margin: 2px 0;
+  opacity: 0.3;
+}
+
+/* Two-column */
+.thTwocol {
+  display: flex;
+  gap: 3px;
+  height: 100%;
+}
+
+.thTcLeft {
+  width: 35%;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-right: 1px solid var(--color-paper-aged);
+  padding-right: 2px;
+}
+
+.thTcRight {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.thTcBold {
+  height: 2px;
+  background: var(--sem-text-tertiary);
+  border-radius: 1px;
+  width: 70%;
+}
+
+.thTcLight {
+  height: 1.5px;
+  background: var(--color-paper-aged);
+  border-radius: 1px;
+}
+
+/* Modern */
+.thModern {
+  display: flex;
+  height: 100%;
+  gap: 0;
+}
+
+.thModSide {
+  width: 30%;
+  background: var(--sem-text-primary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 2px;
+  gap: 2px;
+}
+
+.thModDot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: rgba(245, 237, 214, 0.3);
+  margin-bottom: 3px;
+}
+
+.thModSideLine {
+  height: 1.5px;
+  width: 80%;
+  background: rgba(245, 237, 214, 0.2);
+  border-radius: 1px;
+}
+
+.thModBody {
+  flex: 1;
+  padding: 6px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Minimal */
+.thMinimal {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 6px;
+  gap: 4px;
+  height: 100%;
+}
+
+/* Academic */
+.thAcademic {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  height: 100%;
+}
+
+.thAcademic .thTitle {
+  align-self: center;
+}
+
+.thAcademic .thSub {
+  align-self: center;
+}

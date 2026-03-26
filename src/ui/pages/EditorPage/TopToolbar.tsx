@@ -9,11 +9,10 @@ import styles from './TopToolbar.module.css'
 
 interface TopToolbarProps {
   title: string
-  templateId: string
   templateName: string
   resume: Resume
   onTitleChange: (title: string) => void
-  onOpenTemplatePopover: () => void
+  onOpenTemplateDrawer: () => void
 }
 
 export function TopToolbar({
@@ -21,7 +20,7 @@ export function TopToolbar({
   templateName,
   resume,
   onTitleChange,
-  onOpenTemplatePopover,
+  onOpenTemplateDrawer,
 }: TopToolbarProps) {
   const navigate = useNavigate()
   const { exporting, compiling, exportPdf } = usePreviewStore()
@@ -79,12 +78,13 @@ export function TopToolbar({
         <button
           type="button"
           className={styles.templateTrigger}
-          onClick={onOpenTemplatePopover}
+          onClick={onOpenTemplateDrawer}
           aria-label={`当前模板：${templateName}，点击切换`}
         >
-          <span className={styles.templateThumb} />
-          <span>{templateName}</span>
-          <span className={styles.templateArrow}>&#9662;</span>
+          <span className={styles.triggerSpine} aria-hidden="true" />
+          <span className={styles.triggerCover}>
+            <span className={styles.triggerName}>{templateName}</span>
+          </span>
         </button>
         <SealButton
           size="sm"

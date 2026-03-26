@@ -1,5 +1,5 @@
 // src/ui/pages/EditorPage/EditorPage.tsx
-// Resume editor page — 42/58 split, AI drawer, template popover
+// Resume editor page — 42/58 split, AI drawer, template drawer
 import { useEffect, useCallback, useMemo, useState } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router'
 import { Reorder, useDragControls } from 'motion/react'
@@ -7,7 +7,7 @@ import { useResumeStore, useAiStore } from '@/runtime/store'
 import { TEMPLATES } from '@/config'
 import { CloudEmpty, PaperToast } from '@/ui/components'
 import { TopToolbar } from './TopToolbar'
-import { TemplatePopover } from './TemplatePopover'
+import { TemplateDrawer } from './TemplateDrawer'
 import { SectionEditor } from './SectionEditor'
 import { ResumePreview } from './ResumePreview'
 import { AiDrawer } from './AiDrawer'
@@ -241,14 +241,13 @@ export function EditorPage() {
     <div className={styles.root}>
       <TopToolbar
         title={currentResume.title}
-        templateId={currentResume.templateId}
         templateName={currentTemplateName}
         resume={currentResume}
         onTitleChange={handleTitleChange}
-        onOpenTemplatePopover={() => setTplOpen(true)}
+        onOpenTemplateDrawer={() => setTplOpen(true)}
       />
 
-      <TemplatePopover
+      <TemplateDrawer
         open={tplOpen}
         currentTemplateId={currentResume.templateId}
         onSelect={handleTemplateChange}
