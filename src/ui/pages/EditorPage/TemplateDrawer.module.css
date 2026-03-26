@@ -1,6 +1,6 @@
 /* src/ui/pages/EditorPage/TemplateDrawer.module.css */
-/* Template drawer — 书案抽屉，iOS 6 风拟物化 */
-/* 设计意图：厚实的木框 + 内凹纸面 + 顶部翻边 = 真实抽屉感 */
+/* Template drawer — 卷轴从房檐下垂落 */
+/* 设计意图：房檐(深色檐口) + 卷轴(纸面) + 拉手 = 中式建筑悬挂感 */
 
 /* ===== Backdrop ===== */
 
@@ -19,66 +19,86 @@
   pointer-events: all;
 }
 
-/* ===== 抽屉整体定位 ===== */
+/* ===== 卷轴整体定位 ===== */
 
 /* L3 组件令牌 */
 .drawer {
-  --drawer-frame: var(--color-paper-aged);
-  --drawer-frame-dark: var(--color-ink-faint);
   --drawer-inner: var(--color-paper-warm);
-  --drawer-wall: 5px;
-  --drawer-rim-height: 4px;
+  --drawer-wall: 4px;
   --drawer-seal-size: 16px;
+  --eave-height: 10px;
+  --eave-color: var(--color-ink-medium);
+  --eave-light: var(--color-ink-light);
 
   position: fixed;
   top: var(--editor-toolbar-height);
   left: 50%;
-  transform: translateX(-50%) translateY(-110%);
-  width: min(760px, 92vw);
+  translate: -50% 0;
+  width: min(620px, 80vw);
   z-index: 201;
+
+  /* 卷轴从檐口展开 — clip-path 从上向下揭开，无内容变形 */
+  clip-path: inset(0 0 100% 0);
   opacity: 0;
   transition:
-    transform var(--duration-normal) var(--ease-ink-spread),
+    clip-path var(--duration-normal) var(--ease-ink-spread),
     opacity var(--duration-fast) var(--ease-brush-touch);
 }
 
 .drawerOpen {
-  transform: translateX(-50%) translateY(0);
+  clip-path: inset(0 0 0 0);
   opacity: 1;
 }
 
-/* ===== 抽屉外壳 — 木质框架 ===== */
-/* 三面厚壁（左、右、底），顶部开口衔接工具栏 */
+/* ===== 房檐 — 深色檐口，出檐，飞檐意象 ===== */
+/* 比卷轴本体略宽，模拟屋檐向外延伸 */
+
+.eave {
+  position: relative;
+  height: var(--eave-height);
+  margin: 0 -6px; /* 出檐 — 比下方卷轴宽 */
+  background: linear-gradient(
+    180deg,
+    var(--eave-color) 0%,
+    var(--eave-light) 70%,
+    var(--color-paper-aged) 100%
+  );
+  border-radius: 0 0 2px 2px;
+
+  /* 檐下投影 — 房檐遮蔽产生的阴影 */
+  box-shadow: 0 4px 12px rgba(28, 18, 8, 0.18);
+}
+
+/* 瓦当滴水线 — 檐口底部的装饰齿纹 */
+.eave::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 10px;
+  right: 10px;
+  height: 1px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--color-ink-faint) 0px,
+    var(--color-ink-faint) 4px,
+    transparent 4px,
+    transparent 8px
+  );
+  opacity: 0.5;
+}
+
+/* ===== 卷轴本体 ===== */
 
 .frame {
-  background: var(--drawer-frame);
+  background: var(--color-paper-aged);
   padding: 0 var(--drawer-wall) var(--drawer-wall);
   border-radius: 0 0 var(--radius-md) var(--radius-md);
   position: relative;
 
-  /* 木框外侧投影 — 抽屉悬浮于页面之上 */
+  /* 卷轴悬浮投影 */
   box-shadow:
-    0 8px 28px rgba(28, 18, 8, 0.16),
-    0 2px 6px rgba(28, 18, 8, 0.06);
-}
-
-/* 顶部翻边 — 抽屉拉出时露出的前挡板 */
-/* 比框体宽一点点，有高光和阴影模拟厚度 */
-.frame::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -1px;
-  right: -1px;
-  height: var(--drawer-rim-height);
-  background: linear-gradient(
-    180deg,
-    var(--drawer-frame-dark) 0%,
-    var(--drawer-frame) 60%,
-    color-mix(in srgb, var(--drawer-frame) 80%, white) 100%
-  );
-  border-radius: 1px 1px 0 0;
-  box-shadow: 0 1px 2px rgba(28, 18, 8, 0.1);
+    0 8px 28px rgba(28, 18, 8, 0.14),
+    0 2px 6px rgba(28, 18, 8, 0.05);
 }
 
 /* ===== 内部纸面 — 抽屉内壁 ===== */
@@ -145,6 +165,41 @@
   padding: var(--space-2) 0;
 }
 
+/* ===== 卡片入场 — 展开后依次浮现 ===== */
+
+.drawerOpen .card {
+  animation: card-enter var(--duration-normal) var(--ease-ink-spread) both;
+}
+
+.drawerOpen .card:nth-child(1) { animation-delay: 80ms; }
+.drawerOpen .card:nth-child(2) { animation-delay: 130ms; }
+.drawerOpen .card:nth-child(3) { animation-delay: 180ms; }
+.drawerOpen .card:nth-child(4) { animation-delay: 230ms; }
+.drawerOpen .card:nth-child(5) { animation-delay: 280ms; }
+
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== Reduced motion ===== */
+
+@media (prefers-reduced-motion: reduce) {
+  .drawer {
+    transition-duration: 0.01ms;
+  }
+
+  .drawerOpen .card {
+    animation: none;
+  }
+}
+
 /* ===== 模板卡片 ===== */
 
 .card {
@@ -207,7 +262,7 @@
 }
 
 .cardDesc {
-  font-size: 10px;
+  font-size: var(--font-caption);
   color: var(--sem-text-tertiary);
   line-height: var(--leading-tight);
   white-space: nowrap;

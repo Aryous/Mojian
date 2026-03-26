@@ -41,9 +41,10 @@ export function TemplateDrawer({ open, currentTemplateId, onSelect, onClose }: T
         role="dialog"
         aria-label="选择模板"
       >
-        {/* 木框 — 三面厚壁 + 顶部翻边 */}
+        {/* 房檐 — 檐口出檐，卷轴悬挂点 */}
+        <div className={styles.eave} aria-hidden="true" />
+        {/* 卷轴本体 */}
         <div className={styles.frame}>
-          {/* 内凹纸面 */}
           <div className={styles.inner}>
             <div className={styles.header}>
               <h3 className={styles.title}>选帖</h3>

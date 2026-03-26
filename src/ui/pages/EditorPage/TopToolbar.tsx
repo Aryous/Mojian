@@ -74,7 +74,7 @@ export function TopToolbar({
           aria-label="简历标题"
         />
       </div>
-      <div className={styles.right}>
+      <div className={styles.center}>
         <button
           type="button"
           className={styles.templateTrigger}
@@ -86,6 +86,8 @@ export function TopToolbar({
             <span className={styles.triggerName}>{templateName}</span>
           </span>
         </button>
+      </div>
+      <div className={styles.right}>
         <SealButton
           size="sm"
           onClick={handleExport}

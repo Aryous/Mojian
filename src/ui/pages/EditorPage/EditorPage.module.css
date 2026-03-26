@@ -28,11 +28,11 @@
   overflow: hidden;
 }
 
-/* Editor panel ~42% */
+/* Editor panel — narrower to balance with AI drawer (340px) */
 .editor {
   flex: 42;
-  min-width: 380px;
-  max-width: 520px;
+  min-width: 360px;
+  max-width: 420px;
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
@@ -117,7 +117,7 @@
 .sectionTitle {
   flex: 1;
   font-family: var(--font-family-display);
-  font-size: var(--font-h3);
+  font-size: var(--font-body);
   font-weight: var(--weight-bold);
   line-height: var(--leading-tight);
   color: var(--sem-text-primary);

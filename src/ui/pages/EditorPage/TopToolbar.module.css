@@ -2,9 +2,9 @@
 /* Slim toolbar */
 
 .root {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
   height: var(--editor-toolbar-height);
   padding: 0 var(--space-4);
   background-color: var(--sem-bg-primary);
@@ -19,6 +19,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
+  justify-self: start;
 }
 
 .backBtn {
@@ -77,12 +78,19 @@
   border-bottom-style: solid;
 }
 
-/* ===== Right: template trigger + export ===== */
+/* ===== Center: template trigger ===== */
+
+.center {
+  justify-self: center;
+}
+
+/* ===== Right: export ===== */
 
 .right {
   display: flex;
   align-items: center;
   gap: var(--space-2);
+  justify-self: end;
 }
 
 /* ===== Skeuomorphic book trigger (线装书) ===== */

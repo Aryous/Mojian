@@ -14,7 +14,7 @@
   border-radius: 0;
   background: transparent;
   font-family: var(--font-family-body);
-  font-size: var(--font-body);
+  font-size: var(--font-small);
   font-weight: var(--weight-regular);
   line-height: var(--leading-normal);
   color: var(--sem-text-primary);
@@ -68,7 +68,7 @@
   top: calc(var(--space-4) + var(--space-2));
   left: var(--space-1);
   font-family: var(--font-family-body);
-  font-size: var(--font-body);
+  font-size: var(--font-small);
   color: var(--sem-text-tertiary);
   pointer-events: none;
   transition:
@@ -81,7 +81,7 @@
 .input:focus + .label,
 .input:not(:placeholder-shown) + .label {
   transform: translateY(calc(-1 * var(--space-4) - var(--space-1)));
-  font-size: var(--font-small);
+  font-size: var(--font-caption);
   color: var(--sem-text-secondary);
 }
 
@@ -100,7 +100,7 @@
 /* 多行模式标签始终上浮 */
 .multiline .label {
   transform: translateY(calc(-1 * var(--space-4) - var(--space-1)));
-  font-size: var(--font-small);
+  font-size: var(--font-caption);
   color: var(--sem-text-secondary);
 }
 
