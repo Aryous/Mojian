@@ -32,9 +32,23 @@ UI          可引用 Types, Config, Runtime
 
 1. 读取 `docs/exec-plans/active/<plan>.md`
 2. 读取 `ARCHITECTURE.md`
-3. 读取相关 `docs/product-specs/`（验收标准）
-4. 实现代码，确保遵守分层规则，新增代码有测试
-5. 完成后将执行计划移动到 `docs/exec-plans/completed/`
+3. 读取 `.claude/rules/` 下所有规则文件（包括 `ui/react.md`、`ui/design-tokens.md`）
+4. 读取相关 `docs/product-specs/`（验收标准）
+5. 实现代码，确保遵守分层规则和 React 规则
+6. **为新增代码编写测试**（至少覆盖核心逻辑的 happy path）
+7. 运行完整验证：`npx tsc -b --noEmit && npx eslint src/ && npx vitest run`
+8. 完成后将执行计划移动到 `docs/exec-plans/completed/`
+
+## 完成前检查清单
+
+代码提交前必须逐项确认：
+
+- [ ] 所有 React hooks 在 early return 之前调用（读取 `.claude/rules/ui/react.md`）
+- [ ] 无跨层引用（eslint `mojian/layer-dependency` 通过）
+- [ ] 新增功能有对应测试文件
+- [ ] `npx tsc -b --noEmit` 通过
+- [ ] `npx eslint src/` 通过
+- [ ] `npx vitest run` 全部通过
 
 ## 上报协议
 
@@ -51,3 +65,5 @@ UI          可引用 Types, Config, Runtime
 - 不得修改 `docs/product-specs/intent.md`
 - 不得跨层引用
 - 不得自行引入 tech-decisions.md 中未记录的依赖
+- 不得在 early return 之后放置 React hooks（参见 `.claude/rules/ui/react.md`）
+- 不得跳过测试编写——没有测试的代码视为未完成
