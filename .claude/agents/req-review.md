@@ -10,7 +10,7 @@ model: opus
 ## 启动前检查
 
 读取 `docs/product-specs/intent.md` 的 frontmatter。
-若 status 不存在或为 approved，可以开始工作（intent.md 是人类编写的起点文档）。
+确认 `status` 为 `approved`，否则拒绝工作。
 
 ## 工作流程
 
