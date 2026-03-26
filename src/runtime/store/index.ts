@@ -2,3 +2,4 @@
 // 依赖：Service, Config, Types
 
 export { useResumeStore } from './resumeStore'
+export { usePreviewStore } from './previewStore'

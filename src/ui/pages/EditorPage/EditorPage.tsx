@@ -1,10 +1,11 @@
-// 简历编辑器页面
+// 简历编辑器页面（双栏：左编辑 + 右预览）
 import { useEffect, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router'
 import { motion, AnimatePresence } from 'motion/react'
 import { useResumeStore } from '@/runtime/store'
 import { PaperCard, SealButton, InkDivider, CloudEmpty } from '@/ui/components'
 import { SectionEditor } from './SectionEditor'
+import { ResumePreview } from './ResumePreview'
 import type { Resume } from '@/types'
 import styles from './EditorPage.module.css'
 
@@ -63,27 +64,35 @@ export function EditorPage() {
 
       <InkDivider />
 
-      <div className={styles.content}>
-        <AnimatePresence mode="popLayout">
-          {visibleSections.map((section) => (
-            <motion.div
-              key={section.id}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.35, ease: [0.22, 0.61, 0.36, 1] }}
-            >
-              <PaperCard>
-                <h2 className={styles.sectionTitle}>{section.title}</h2>
-                <SectionEditor
-                  type={section.type}
-                  resume={currentResume}
-                  onUpdate={handleUpdate}
-                />
-              </PaperCard>
-            </motion.div>
-          ))}
-        </AnimatePresence>
+      <div className={styles.columns}>
+        {/* 左栏：编辑器 */}
+        <div className={styles.editor}>
+          <AnimatePresence mode="popLayout">
+            {visibleSections.map((section) => (
+              <motion.div
+                key={section.id}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.35, ease: [0.22, 0.61, 0.36, 1] }}
+              >
+                <PaperCard>
+                  <h2 className={styles.sectionTitle}>{section.title}</h2>
+                  <SectionEditor
+                    type={section.type}
+                    resume={currentResume}
+                    onUpdate={handleUpdate}
+                  />
+                </PaperCard>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
+
+        {/* 右栏：预览 */}
+        <div className={styles.preview}>
+          <ResumePreview resume={currentResume} />
+        </div>
       </div>
     </div>
   )
