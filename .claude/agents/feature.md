@@ -9,9 +9,10 @@ model: sonnet
 
 ## 启动前检查
 
-1. 在 `docs/exec-plans/active/` 中找到对应的执行计划，否则拒绝工作
-2. 读取 `docs/design-docs/tech-decisions.md`，确认 status 为 `approved`
-3. 确认执行计划引用的需求文档 status 为 `approved`
+1. 读取 `docs/QUALITY_SCORE.md`，总分 < 40 则拒绝工作（质量阈值协议）
+2. 在 `docs/exec-plans/active/` 中找到对应的执行计划，否则拒绝工作
+3. 读取 `docs/design-docs/tech-decisions.md`，确认 status 为 `approved`
+4. 确认执行计划引用的需求文档 status 为 `approved`
 
 任一检查失败则拒绝工作，说明原因。
 

@@ -135,6 +135,25 @@ Agent 定义见 `.claude/agents/`。
 
 ---
 
+## 反馈循环
+
+系统通过六个反馈循环实现自我纠正（完整图示见 `docs/design-docs/system-flow.md`）：
+
+| 循环 | 触发 | 响应 | 闭合 |
+|---|---|---|---|
+| **L1 代码质量** | git push | Lint/CI 自动阻断 | 构建通过 |
+| **L2 文档鲜度** | 每 5 PR / 阈值 / 阶段转换 | doc-gardening 扫描修复 | QUALITY_SCORE 更新 |
+| **L3 质量阈值** | QUALITY_SCORE < 60 | 人类介入，< 40 阻断开发 | 评分恢复 |
+| **L4 约束升级** | 同类违规 ≥ 3 次 | docs → rules → lint 逐级升级 | 违规不再出现 |
+| **L5 环境进化** | Agent 失败/卡住 | 人类诊断：缺上下文/约束/工具 → 补建 | Agent 重试成功 |
+| **L6 用户反馈** | 用户报告 | Bug/需求/UX 分类 → 重入阶段 1-4 | 修复上线 |
+
+**核心原则**：Agent 失败不是"再试一次"，是"环境缺了什么"。
+
+---
+
 ## 质量基线
 
-见 docs/QUALITY_SCORE.md — 每次 doc-gardening 更新评分。
+见 `docs/QUALITY_SCORE.md`。
+- 总分 ≥ 60：正常开发
+- 总分 < 40：**阻断 feature / design agent**，人类必须介入

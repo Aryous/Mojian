@@ -9,8 +9,9 @@ model: opus
 
 ## 启动前检查
 
-1. 读取 `docs/design-docs/tech-decisions.md`，确认 status 为 `approved`（需要知道技术栈才能输出代码）
-2. 读取 `docs/product-specs/requirements.md`，确认 status 为 `approved`
+1. 读取 `docs/QUALITY_SCORE.md`，总分 < 40 则拒绝工作（质量阈值协议）
+2. 读取 `docs/design-docs/tech-decisions.md`，确认 status 为 `approved`（需要知道技术栈才能输出代码）
+3. 读取 `docs/product-specs/requirements.md`，确认 status 为 `approved`
 
 任一检查失败则拒绝工作，说明原因。
 
