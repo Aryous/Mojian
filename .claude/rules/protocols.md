@@ -143,3 +143,36 @@ Agent 启动前应读取 QUALITY_SCORE.md 检查总分。
 环境修复后，Agent 重试原任务。若再次失败，回到第 1 步。
 
 **核心原则**：Agent 失败是环境的信号，不是 Agent 的问题。
+
+---
+
+## 协议七：提交协议（工作完成 → git commit）
+
+每个阶段性工作完成后，**必须立即 commit**，不得积攒多个阶段的变更。
+
+**触发条件**（满足任一即 commit）：
+- Agent 完成输出文档（requirements.md、tech-decisions.md、design-spec.md 等）
+- 人类完成裁决回注
+- 环境搭建完成（lint/CI/测试全部通过）
+- 功能实现通过测试
+- 文档修复完成
+
+**commit 前检查**：
+1. 相关测试通过（`npm test` 或 `npm run test:structure`）
+2. Lint 通过（`npm run lint`）
+3. 类型检查通过（`tsc -b --noEmit`）
+4. 需要人类确认才能 commit
+
+**commit 消息格式**：
+```
+Phase N: 简短描述
+
+- 变更要点 1
+- 变更要点 2
+- 文档状态变更（如 status: review → approved）
+```
+
+**原则**：
+- 一个阶段一个 commit，不混合多个阶段的变更
+- commit 是系统的检查点——回滚时能精确定位到每个阶段
+- 积压变更是技术债——越晚 commit，合并冲突和回滚成本越高
