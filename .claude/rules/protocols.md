@@ -31,7 +31,8 @@ open_questions: 0
 intent.md (approved) → req-review → requirements.md
 requirements.md (approved) → tech-selection → tech-decisions.md
 tech-decisions.md (approved) → 环境搭建（基础设施）
-环境就绪 → design / feature → src/
+环境就绪 → design agent 阶段A → design-spec.md
+design-spec.md (approved) → design agent 阶段B + feature agent → src/
 ```
 
 ---

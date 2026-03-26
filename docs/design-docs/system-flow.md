@@ -48,11 +48,23 @@
            │ │    │  · 结构测试      │
            │ │    └────────┬────────┘
            │ │             │
+           │ │             │
+           │ │             ↓
+           │ │    ┌─────────────────┐
+           │ │    │  design agent   │  阶段 A：设计规范
+           │ │    │  (阶段 A)       │──→ ④ 上报（审美决策）
+           │ │    └────────┬────────┘
+           │ │        ③ 产出│status: review
+           │ │             ↓
+           │ │    ┌─────────────────┐
+           │ │    │design-spec.md  │←── 人类审批 → status: approved
+           │ │    └────────┬────────┘
+           │ │             │
            │ │    ┌────────┴────────┐
            │ │    ↓                 ↓
            │ │  ┌──────┐      ┌─────────┐
            │ │  │design│      │ feature │
-           │ │  │agent │      │  agent  │
+           │ │  │(阶段B)│      │  agent  │
            │ │  └──┬───┘      └────┬────┘
            │ │     │               │
            │ │     ↓               ↓
@@ -95,7 +107,8 @@
 | 1 需求 | intent.md (approved) | req-review agent | requirements.md (review) | 人类审批 → tech-selection |
 | 2 选型 | requirements.md (approved) | tech-selection agent | tech-decisions.md (review) | 人类审批 → 阶段 3 |
 | 3 环境 | tech-decisions.md (approved) | 基础设施搭建 | eslint.config.js, CI, tests | 所有后续 Agent |
-| 4 开发 | exec-plan + 约束环境 | design / feature agent | src/ + 文档 | Lint/CI → 用户 |
+| 4a 设计规范 | requirements.md + tech-decisions.md + 网络调研 | design agent 阶段A | design-spec.md (review) | 人类审批 → 阶段 4b |
+| 4b 开发 | design-spec.md (approved) + exec-plan + 约束环境 | design(B) / feature agent | src/ + 文档 | Lint/CI → 用户 |
 | 持续 | 全库 | doc-gardening agent | 文档修复 + 质量评分 | 所有 Agent + 人类 |
 
 ---

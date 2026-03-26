@@ -33,7 +33,8 @@ AI 驱动的中古风简历编辑器。核心三件套：
          ↑ 阶段 3 不是 Agent 角色，是基础设施。
          ↑ 它的产出是 eslint.config.js、.github/workflows/、tests/structure/
          ↑ 这些代码在每次提交时自动运行，约束所有后续 Agent 的行为。
-阶段 4  业务开发           design / feature agent 在约束环境中工作
+阶段 4a 设计规范           design agent 阶段A → design-spec.md
+阶段 4b 业务开发           design agent 阶段B + feature agent 在约束环境中工作
 持续    垃圾收集           doc-gardening agent 扫描漂移
 ```
 
@@ -95,7 +96,8 @@ docs/references/design-inspiration.md ← 古风设计参考资料
 |---|---|---|---|
 | **req-review** | 新功能意向、需求变更 | intent.md + 对话 | docs/product-specs/ |
 | **tech-selection** | 引入新依赖、架构决策 | requirements.md + 候选方案 | docs/design-docs/tech-decisions.md |
-| **design** | UI 组件、动画、古风元素 | DESIGN.md + 需求 | src/ui/, docs/design-docs/ |
+| **design(A)** | 设计规范制定 | requirements.md + tech-decisions.md + 网络调研 | docs/design-docs/design-spec.md |
+| **design(B)** | UI 组件实现 | design-spec.md (approved) | src/ui/, docs/design-docs/ |
 | **feature** | 功能实现 | exec-plan + 架构文档 | src/ |
 | **doc-gardening** | 定期运行（扫描漂移） | 全库 docs/ | 修复 PR |
 
