@@ -1,7 +1,7 @@
 // Service 层：Typst WASM 编译器封装
 // 依赖：Types, @myriaddreamin/typst.ts
 
-import { createTypstCompiler, type TypstCompiler } from '@myriaddreamin/typst.ts'
+import { createTypstCompiler, type TypstCompiler, preloadRemoteFonts } from '@myriaddreamin/typst.ts'
 import type { Resume } from '@/types'
 
 let compiler: TypstCompiler | null = null
@@ -24,8 +24,16 @@ async function ensureCompiler(): Promise<TypstCompiler> {
 
   if (!initPromise) {
     initPromise = (async () => {
-      compiler = createTypstCompiler()
-      await compiler.init()
+      const c = createTypstCompiler()
+      await c.init({
+        getModule: () =>
+          '/node_modules/@myriaddreamin/typst-ts-web-compiler/pkg/typst_ts_web_compiler_bg.wasm',
+        beforeBuild: [
+          preloadRemoteFonts([], { assets: ['text', 'cjk'] }),
+        ],
+      })
+      // 仅在 init 成功后赋值，避免未初始化实例被复用
+      compiler = c
     })()
   }
 

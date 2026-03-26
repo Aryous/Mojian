@@ -1,7 +1,7 @@
 // 经典单栏简历模板
 // 数据通过 sys.inputs 传入 JSON 格式
 
-#let data = json(sys.inputs.at("resume-data"))
+#let data = json.decode(sys.inputs.at("resume-data"))
 
 #set page(
   paper: "a4",

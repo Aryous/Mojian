@@ -10,6 +10,11 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    exclude: ['@myriaddreamin/typst.react', '@myriaddreamin/typst.ts'],
+    exclude: [
+      '@myriaddreamin/typst.react',
+      '@myriaddreamin/typst.ts',
+      '@myriaddreamin/typst-ts-web-compiler',
+      '@myriaddreamin/typst-ts-renderer',
+    ],
   },
 })

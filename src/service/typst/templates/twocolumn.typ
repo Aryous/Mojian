@@ -2,7 +2,7 @@
 // 左栏：个人信息 + 技能，右栏：工作/教育/项目
 // 数据通过 sys.inputs 传入 JSON 格式
 
-#let data = json(sys.inputs.at("resume-data"))
+#let data = json.decode(sys.inputs.at("resume-data"))
 
 #set page(
   paper: "a4",
