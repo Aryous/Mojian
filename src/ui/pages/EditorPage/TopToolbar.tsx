@@ -24,7 +24,7 @@ export function TopToolbar({
   const navigate = useNavigate()
 
   const handleBack = useCallback(() => {
-    navigate('/')
+    navigate('/dashboard')
   }, [navigate])
 
   return (
@@ -36,7 +36,7 @@ export function TopToolbar({
             type="button"
             className={styles.backBtn}
             onClick={handleBack}
-            aria-label="返回首页"
+            aria-label="返回工作台"
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
               <path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />

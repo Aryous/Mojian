@@ -105,3 +105,9 @@ export interface ResumeSummary {
   createdAt: number
   updatedAt: number
 }
+
+/** 简历填充进度 */
+export interface ResumeProgress {
+  filled: number
+  total: number
+}

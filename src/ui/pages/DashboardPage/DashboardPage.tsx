@@ -4,8 +4,7 @@ import { useNavigate } from 'react-router'
 import { motion, AnimatePresence } from 'motion/react'
 import { TEMPLATES } from '@/config/templates'
 import { useResumeStore } from '@/runtime/store'
-import type { ResumeProgress } from '@/service/resume/progress'
-import type { ResumeSummary } from '@/types'
+import type { ResumeSummary, ResumeProgress } from '@/types'
 import styles from './DashboardPage.module.css'
 
 /** Read cached SVG preview from localStorage */

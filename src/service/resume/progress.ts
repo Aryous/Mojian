@@ -1,12 +1,9 @@
 // Service 层：简历填充进度计算
 // 依赖：Types
 
-import type { Resume } from '@/types'
+import type { Resume, ResumeProgress } from '@/types'
 
-export interface ResumeProgress {
-  filled: number
-  total: number
-}
+export type { ResumeProgress }
 
 export function getResumeProgress(resume: Resume): ResumeProgress {
   const total = 5

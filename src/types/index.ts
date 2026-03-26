@@ -13,6 +13,7 @@ export type {
   Resume,
   ResumeCreateInput,
   ResumeSummary,
+  ResumeProgress,
 } from './resume'
 
 export type {

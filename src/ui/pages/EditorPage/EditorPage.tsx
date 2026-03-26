@@ -116,7 +116,7 @@ export function EditorPage() {
       <div className={styles.empty}>
         <CloudEmpty
           message="未找到该简历"
-          action={{ label: '返回首页', onClick: () => navigate('/') }}
+          action={{ label: '返回工作台', onClick: () => navigate('/dashboard') }}
         />
       </div>
     )
