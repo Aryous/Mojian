@@ -161,6 +161,19 @@
   --tpl-card-active-border: var(--sem-action-primary); /* 选中模板左边框色 */
   --tpl-card-hover-bg: rgba(28, 18, 8, 0.03);      /* 悬停模板卡片背景 */
 
+  /* ===== L3 腰封 (Obi) ===== */
+  --obi-bg-start: #2C3548;
+  --obi-bg-end: #232C3D;
+  --obi-border: #3A4560;
+  --obi-text: #E8E2D6;
+  --obi-text-muted: rgba(232, 226, 214, 0.6);
+  --obi-accent-line: #B8423A;
+  --obi-seal: #C4883A;
+  --obi-progress-track: rgba(255, 255, 255, 0.1);
+  --obi-progress-low: #B8423A;
+  --obi-progress-mid: #E8B86D;
+  --obi-progress-done: #7DC88B;
+
   /* ===== 缓动曲线 ===== */
   --ease-ink-spread: cubic-bezier(0.22, 0.61, 0.36, 1);   /* 进入 — 墨水扩散 */
   --ease-ink-fade: cubic-bezier(0.55, 0, 0.68, 0.19);     /* 退出 — 墨迹褪去 */
