@@ -1,89 +1,97 @@
-// 顶部工具栏 — 窗棂风格全局导航
-// design-spec §5.4: TopToolbar
-import { useCallback } from 'react'
+// src/ui/pages/EditorPage/TopToolbar.tsx
+// Slim toolbar: back + brand + editable title | template trigger + export PDF
+import { useCallback, useState, type ChangeEvent, type KeyboardEvent } from 'react'
 import { useNavigate } from 'react-router'
-import { TEMPLATES, type TemplateMeta } from '@/config'
-import { SealButton, LatticePattern } from '@/ui/components'
+import { usePreviewStore } from '@/runtime/store'
+import type { Resume } from '@/types'
 import styles from './TopToolbar.module.css'
 
 interface TopToolbarProps {
   title: string
   templateId: string
-  onTemplateChange: (templateId: string) => void
-  onToggleAi: () => void
-  aiOpen: boolean
+  templateName: string
+  resume: Resume
+  onTitleChange: (title: string) => void
+  onOpenTemplatePopover: () => void
 }
 
 export function TopToolbar({
   title,
-  templateId,
-  onTemplateChange,
-  onToggleAi,
-  aiOpen,
+  templateName,
+  resume,
+  onTitleChange,
+  onOpenTemplatePopover,
 }: TopToolbarProps) {
   const navigate = useNavigate()
+  const { exporting, compiling, exportPdf } = usePreviewStore()
+  const [localTitle, setLocalTitle] = useState(title)
 
   const handleBack = useCallback(() => {
     navigate('/dashboard')
   }, [navigate])
 
+  const handleTitleBlur = useCallback(() => {
+    const trimmed = localTitle.trim()
+    if (trimmed && trimmed !== title) {
+      onTitleChange(trimmed)
+    } else {
+      setLocalTitle(title)
+    }
+  }, [localTitle, title, onTitleChange])
+
+  const handleTitleKeyDown = useCallback((e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.currentTarget.blur()
+    }
+  }, [])
+
+  const handleExport = useCallback(() => {
+    exportPdf(resume)
+  }, [exportPdf, resume])
+
   return (
     <header className={styles.root}>
-      <div className={styles.content}>
-        {/* 左侧：品牌 + 返回 */}
-        <div className={styles.left}>
-          <button
-            type="button"
-            className={styles.backBtn}
-            onClick={handleBack}
-            aria-label="返回工作台"
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-              <path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
-          <span className={styles.brand}>墨简</span>
-          <span className={styles.separator}>|</span>
-          <span className={styles.docTitle}>{title}</span>
-        </div>
-
-        {/* 中间：模板切换 + AI 入口 */}
-        <div className={styles.center}>
-          {TEMPLATES.map((t: TemplateMeta) => (
-            <button
-              key={t.id}
-              type="button"
-              className={`${styles.templateBtn} ${templateId === t.id ? styles.templateBtnActive : ''}`}
-              onClick={() => onTemplateChange(t.id)}
-              title={t.description}
-            >
-              {t.name}
-            </button>
-          ))}
-          <button
-            type="button"
-            className={`${styles.aiBtn} ${aiOpen ? styles.aiBtnActive : ''}`}
-            onClick={onToggleAi}
-            aria-label="AI 智能优化"
-            aria-expanded={aiOpen}
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-              <circle cx="8" cy="8" r="3" stroke="currentColor" strokeWidth="1.2" />
-              <path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M3.05 12.95l1.41-1.41M11.54 4.46l1.41-1.41" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-            </svg>
-            <span>AI 优化</span>
-          </button>
-        </div>
-
-        {/* 右侧：导出 */}
-        <div className={styles.right}>
-          <SealButton>导出</SealButton>
-        </div>
+      <div className={styles.left}>
+        <button
+          type="button"
+          className={styles.backBtn}
+          onClick={handleBack}
+          aria-label="返回工作台"
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+        <span className={styles.brand}>墨简</span>
+        <span className={styles.separator}>|</span>
+        <input
+          className={styles.titleInput}
+          value={localTitle}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setLocalTitle(e.target.value)}
+          onBlur={handleTitleBlur}
+          onKeyDown={handleTitleKeyDown}
+          onFocus={(e) => e.target.select()}
+          aria-label="简历标题"
+        />
       </div>
-
-      {/* 底部窗棂纹装饰线 */}
-      <div className={styles.lattice}>
-        <LatticePattern size={16} />
+      <div className={styles.right}>
+        <button
+          type="button"
+          className={styles.templateTrigger}
+          onClick={onOpenTemplatePopover}
+        >
+          <span className={styles.templateThumb} />
+          <span>{templateName}</span>
+          <span className={styles.templateArrow}>&#9662;</span>
+        </button>
+        <button
+          type="button"
+          className={styles.exportBtn}
+          onClick={handleExport}
+          disabled={exporting || compiling}
+        >
+          {exporting ? '导出中...' : '导出 PDF'}
+        </button>
       </div>
     </header>
   )

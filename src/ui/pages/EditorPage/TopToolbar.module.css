@@ -1,162 +1,159 @@
-/* 顶部工具栏 — 窗棂风格全局导航 */
-/* design-spec §5.4: TopToolbar */
+/* src/ui/pages/EditorPage/TopToolbar.module.css */
+/* Slim toolbar — 48px height */
 
 .root {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  background-color: var(--sem-bg-primary);
-}
-
-.content {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 56px;
-  padding: 0 var(--space-6);
+  height: 48px;
+  padding: 0 var(--space-4);
+  background-color: var(--sem-bg-primary);
+  border-bottom: 1px solid var(--color-paper-aged);
+  position: relative;
+  z-index: 100;
 }
 
-/* ===== 左侧：品牌 + 文档标题 ===== */
+/* ===== Left: back + brand + title ===== */
 
 .left {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  min-width: 0;
-  flex: 1;
-  max-width: 40%;
+  gap: var(--space-2);
 }
 
 .backBtn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   background: transparent;
   color: var(--sem-text-secondary);
   cursor: pointer;
-  transition: color var(--duration-fast) var(--ease-brush-touch),
-              background-color var(--duration-fast) var(--ease-brush-touch);
+  transition: background-color var(--duration-fast) var(--ease-brush-touch);
 }
 
 .backBtn:hover {
-  color: var(--sem-text-primary);
   background-color: var(--sem-bg-secondary);
 }
 
 .brand {
   font-family: var(--font-family-display);
-  font-size: var(--font-h2);
+  font-size: 15px;
   font-weight: var(--weight-bold);
-  line-height: var(--leading-tight);
-  letter-spacing: var(--tracking-tight);
   color: var(--sem-text-primary);
   flex-shrink: 0;
 }
 
 .separator {
-  color: var(--sem-border-default);
-  font-size: var(--font-body);
-  line-height: var(--leading-tight);
+  color: var(--sem-text-disabled);
+  font-size: var(--font-small);
   flex-shrink: 0;
   user-select: none;
+  margin: 0 var(--space-1);
 }
 
-.docTitle {
+.titleInput {
   font-family: var(--font-family-body);
-  font-size: var(--font-body);
-  line-height: var(--leading-tight);
+  font-size: var(--font-small);
   color: var(--sem-text-secondary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  background: transparent;
+  border: none;
+  border-bottom: 1px dashed transparent;
+  padding: 3px var(--space-2);
+  outline: none;
+  width: 140px;
 }
 
-/* ===== 中间：模板切换 + AI 入口 ===== */
+.titleInput:hover {
+  border-bottom-color: var(--sem-text-disabled);
+}
 
-.center {
+.titleInput:focus {
+  color: var(--sem-text-primary);
+  border-bottom-color: var(--sem-action-ai);
+  border-bottom-style: solid;
+}
+
+/* ===== Right: template trigger + export ===== */
+
+.right {
   display: flex;
   align-items: center;
   gap: var(--space-2);
 }
 
-.templateBtn {
-  padding: var(--space-1) var(--space-3);
-  border: 1px solid var(--sem-border-default);
-  border-radius: var(--radius-sm);
-  background: transparent;
-  color: var(--sem-text-secondary);
-  font-family: var(--font-family-display);
-  font-size: var(--font-small);
-  line-height: var(--leading-tight);
-  cursor: pointer;
-  transition:
-    border-color var(--duration-fast) var(--ease-brush-touch),
-    color var(--duration-fast) var(--ease-brush-touch),
-    background-color var(--duration-fast) var(--ease-brush-touch);
-}
-
-.templateBtn:hover {
-  border-color: var(--sem-border-strong);
-  color: var(--sem-text-primary);
-}
-
-.templateBtnActive {
-  background-color: var(--sem-bg-ink);
-  color: var(--sem-text-inverse);
-  border-color: var(--sem-bg-ink);
-}
-
-.templateBtnActive:hover {
-  background-color: var(--sem-action-secondary);
-  border-color: var(--sem-action-secondary);
-  color: var(--sem-text-inverse);
-}
-
-.aiBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  padding: var(--space-1) var(--space-3);
-  border: 1px solid var(--sem-action-ai);
-  border-radius: var(--radius-sm);
-  background: transparent;
-  color: var(--sem-action-ai);
-  font-family: var(--font-family-display);
-  font-size: var(--font-small);
-  line-height: var(--leading-tight);
-  cursor: pointer;
-  margin-left: var(--space-2);
-  transition:
-    background-color var(--duration-fast) var(--ease-brush-touch),
-    color var(--duration-fast) var(--ease-brush-touch);
-}
-
-.aiBtn:hover {
-  background-color: var(--sem-action-ai);
-  color: var(--sem-text-inverse);
-}
-
-.aiBtnActive {
-  background-color: var(--sem-action-ai);
-  color: var(--sem-text-inverse);
-}
-
-/* ===== 右侧：导出 ===== */
-
-.right {
+.templateTrigger {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-2);
+  height: 30px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--sem-text-disabled);
+  background: transparent;
+  color: var(--sem-text-secondary);
+  font-family: var(--font-family-body);
+  font-size: var(--font-caption);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-brush-touch);
 }
 
-/* ===== 底部窗棂纹装饰线 ===== */
+.templateTrigger:hover {
+  background-color: var(--sem-bg-secondary);
+}
 
-.lattice {
-  height: 8px;
+.templateThumb {
+  display: block;
+  width: 16px;
+  height: 22px;
+  border: 1px solid var(--sem-text-disabled);
+  border-radius: 1px;
+  background: #fff;
+  position: relative;
   overflow: hidden;
-  opacity: 0.15;
+}
+
+.templateThumb::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 2px;
+  right: 2px;
+  height: 2px;
+  background: var(--sem-text-primary);
+  border-radius: 1px;
+  box-shadow:
+    0 4px 0 var(--color-paper-aged),
+    0 7px 0 var(--color-paper-aged);
+}
+
+.templateArrow {
+  font-size: 8px;
+  opacity: 0.5;
+}
+
+.exportBtn {
+  height: 30px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--sem-action-primary);
+  color: var(--sem-text-inverse);
+  border: none;
+  font-family: var(--font-family-body);
+  font-size: var(--font-caption);
+  font-weight: var(--weight-bold);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-brush-touch);
+}
+
+.exportBtn:hover {
+  background: var(--sem-action-primary-hover);
+}
+
+.exportBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
