@@ -14,3 +14,8 @@ export type {
   ResumeCreateInput,
   ResumeSummary,
 } from './resume'
+
+export type {
+  AiOptimizeOption,
+  AiOptimizeResult,
+} from './ai'

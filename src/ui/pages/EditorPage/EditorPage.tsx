@@ -1,5 +1,5 @@
 // 简历编辑器页面（双栏：左编辑 + 右预览）
-import { useEffect, useCallback } from 'react'
+import { useEffect, useCallback, useMemo } from 'react'
 import { useParams, useNavigate } from 'react-router'
 import { motion, AnimatePresence } from 'motion/react'
 import { useResumeStore } from '@/runtime/store'
@@ -7,6 +7,7 @@ import { TEMPLATES } from '@/config'
 import { PaperCard, SealButton, InkDivider, CloudEmpty } from '@/ui/components'
 import { SectionEditor } from './SectionEditor'
 import { ResumePreview } from './ResumePreview'
+import { AiPanel } from './AiPanel'
 import type { Resume } from '@/types'
 import styles from './EditorPage.module.css'
 
@@ -53,6 +54,37 @@ export function EditorPage() {
   const visibleSections = currentResume.sections
     .filter((s) => s.visible)
     .sort((a, b) => a.sortOrder - b.sortOrder)
+
+  // 收集简历文本内容供 AI 优化使用
+  const resumeTextContent = useMemo(() => {
+    const parts: string[] = []
+    const { personal, education, work, skills, projects } = currentResume
+    if (personal.summary) parts.push(personal.summary)
+    for (const edu of education) {
+      if (edu.description) parts.push(edu.description)
+    }
+    for (const w of work) {
+      if (w.description) parts.push(w.description)
+    }
+    for (const s of skills) {
+      parts.push(`${s.name} (${s.level})`)
+    }
+    for (const p of projects) {
+      if (p.description) parts.push(p.description)
+    }
+    return parts.join('\n\n')
+  }, [currentResume])
+
+  const handleAiAccept = useCallback(
+    (optimized: string) => {
+      // 将优化结果写入 personal.summary 作为默认行为
+      // 未来可以精确到具体 section
+      updateCurrentResume({
+        personal: { ...currentResume.personal, summary: optimized },
+      })
+    },
+    [currentResume, updateCurrentResume],
+  )
 
   return (
     <div className={styles.root}>
@@ -101,6 +133,9 @@ export function EditorPage() {
               </motion.div>
             ))}
           </AnimatePresence>
+
+          {/* AI 优化面板 */}
+          <AiPanel content={resumeTextContent} onAccept={handleAiAccept} />
         </div>
 
         {/* 右栏：预览 */}

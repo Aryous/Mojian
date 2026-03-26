@@ -1,0 +1,223 @@
+/* AI 优化面板 — 靛青色调，与主朱砂操作区分 */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* ===== API Key 配置区 ===== */
+
+.keySection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.keyRow {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-end;
+}
+
+.keyInput {
+  flex: 1;
+}
+
+.keyHint {
+  font-family: var(--font-family-body);
+  font-size: var(--font-caption);
+  color: var(--sem-text-tertiary);
+  line-height: var(--leading-normal);
+  margin: 0;
+}
+
+.keyStatus {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) var(--space-3);
+  background: var(--sem-bg-secondary);
+  border: 1px solid var(--sem-border-default);
+  border-radius: var(--radius-sm);
+}
+
+.keyStatusText {
+  font-family: var(--font-family-body);
+  font-size: var(--font-small);
+  color: var(--sem-status-success);
+}
+
+/* ===== 标题 ===== */
+
+.title {
+  font-family: var(--font-family-display);
+  font-size: var(--font-h2);
+  font-weight: var(--weight-medium);
+  color: var(--sem-text-primary);
+  margin: 0;
+}
+
+.subtitle {
+  font-family: var(--font-family-body);
+  font-size: var(--font-small);
+  color: var(--sem-text-tertiary);
+  margin: 0;
+}
+
+/* ===== 优化选项卡片 ===== */
+
+.optionsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.optionCard {
+  padding: var(--space-4);
+  border: 1px solid var(--sem-border-default);
+  border-radius: var(--radius-sm);
+  background: var(--sem-bg-secondary);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-brush-touch);
+  text-align: left;
+  font-family: inherit;
+}
+
+.optionCard:hover {
+  border-color: var(--sem-action-ai);
+  background: var(--sem-bg-primary);
+  box-shadow: var(--shadow-subtle);
+}
+
+.optionCard:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.optionCard:disabled:hover {
+  border-color: var(--sem-border-default);
+  background: var(--sem-bg-secondary);
+  box-shadow: none;
+}
+
+.optionName {
+  font-family: var(--font-family-display);
+  font-size: var(--font-body);
+  font-weight: var(--weight-medium);
+  color: var(--sem-text-primary);
+  margin: 0 0 var(--space-1) 0;
+}
+
+.optionDesc {
+  font-family: var(--font-family-body);
+  font-size: var(--font-caption);
+  color: var(--sem-text-tertiary);
+  margin: 0;
+  line-height: var(--leading-normal);
+}
+
+/* ===== 优化中状态 ===== */
+
+.optimizing {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  color: var(--sem-text-secondary);
+  font-family: var(--font-family-body);
+  font-size: var(--font-small);
+}
+
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--sem-border-default);
+  border-top-color: var(--sem-action-ai);
+  border-radius: var(--radius-full);
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===== 错误提示 ===== */
+
+.error {
+  padding: var(--space-3);
+  background: transparent;
+  border: 1px solid var(--sem-status-error);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-family-body);
+  font-size: var(--font-small);
+  color: var(--sem-status-error);
+  line-height: var(--leading-normal);
+}
+
+/* ===== 结果对比 ===== */
+
+.resultSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.diffContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.diffColumn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.diffLabel {
+  font-family: var(--font-family-display);
+  font-size: var(--font-caption);
+  font-weight: var(--weight-medium);
+  color: var(--sem-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+.diffText {
+  padding: var(--space-3);
+  background: var(--sem-bg-secondary);
+  border: 1px solid var(--sem-border-default);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-family-body);
+  font-size: var(--font-small);
+  color: var(--sem-text-primary);
+  line-height: var(--leading-normal);
+  white-space: pre-wrap;
+  word-break: break-word;
+  min-height: 80px;
+}
+
+.diffTextNew {
+  border-color: var(--sem-action-ai);
+}
+
+.resultActions {
+  display: flex;
+  gap: var(--space-3);
+}
+
+/* ===== 无内容提示 ===== */
+
+.emptyHint {
+  font-family: var(--font-family-body);
+  font-size: var(--font-small);
+  color: var(--sem-text-disabled);
+  text-align: center;
+  padding: var(--space-4);
+  margin: 0;
+}
