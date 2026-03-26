@@ -1,0 +1,13 @@
+/* 设计令牌入口 — 全局 CSS 变量定义 */
+/* 详见 docs/DESIGN.md */
+:root {
+  /* L1 基础色（中国传统色） */
+  --color-ink-deep: #1C1208;
+  --color-ink-medium: #3B2E1A;
+  --color-ink-light: #6B5B3E;
+  --color-paper-warm: #F5F0E8;
+  --color-paper-aged: #E8DCC8;
+  --color-seal-red: #C23B22;
+  --color-jade-green: #2D6A4F;
+  --color-glaze-blue: #1B4965;
+}
