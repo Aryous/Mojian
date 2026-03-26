@@ -5,6 +5,7 @@
 import { create } from 'zustand'
 import type { Resume } from '@/types'
 import { compileToSvg, compileToPdf } from '@/service/typst'
+import { getResumeProgress } from '@/service/resume/progress'
 
 interface PreviewState {
   /** 编译产物（SVG 字符串） */
@@ -35,6 +36,15 @@ export const usePreviewStore = create<PreviewState>((set) => ({
     try {
       const result = await compileToSvg(resume)
       set({ svg: result, compiling: false })
+
+      // Cache SVG preview and progress to localStorage for Dashboard
+      try {
+        localStorage.setItem(`mojian:preview:${resume.id}`, result)
+        const progress = getResumeProgress(resume)
+        localStorage.setItem(`mojian:progress:${resume.id}`, JSON.stringify(progress))
+      } catch {
+        // localStorage full or unavailable — non-critical, skip silently
+      }
     } catch (e) {
       set({
         error: e instanceof Error ? e.message : 'Compilation failed',

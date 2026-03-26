@@ -72,6 +72,15 @@ export const useResumeStore = create<ResumeState>((set, get) => ({
     if (currentResume?.id === id) {
       set({ currentResume: null })
     }
+
+    // Clear cached preview and progress
+    try {
+      localStorage.removeItem(`mojian:preview:${id}`)
+      localStorage.removeItem(`mojian:progress:${id}`)
+    } catch {
+      // non-critical
+    }
+
     await get().loadResumes()
   },
 
