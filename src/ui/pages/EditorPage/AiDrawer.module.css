@@ -1,0 +1,302 @@
+/* src/ui/pages/EditorPage/AiDrawer.module.css */
+/* AI drawer — obi indigo color scheme */
+
+.drawer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 340px;
+  background: linear-gradient(180deg, var(--obi-bg-start) 0%, var(--obi-bg-end) 100%);
+  box-shadow: -4px 0 16px rgba(0, 0, 0, 0.15);
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform var(--duration-normal) var(--ease-ink-spread);
+}
+
+.drawerOpen {
+  transform: translateX(0);
+}
+
+/* Vermillion accent line on left edge */
+.drawer::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: var(--space-3);
+  bottom: var(--space-3);
+  width: 3px;
+  background: var(--obi-accent-line);
+  border-radius: 0 1.5px 1.5px 0;
+}
+
+/* ===== Header ===== */
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px var(--space-4);
+  border-bottom: 1px solid var(--obi-border);
+}
+
+.headerTitle {
+  font-family: var(--font-family-display);
+  font-size: 15px;
+  font-weight: var(--weight-bold);
+  color: var(--obi-text);
+}
+
+.headerClose {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-md);
+  border: none;
+  background: transparent;
+  color: var(--obi-text-muted);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--duration-fast) var(--ease-brush-touch);
+}
+
+.headerClose:hover {
+  color: var(--obi-text);
+}
+
+/* ===== Quick Actions ===== */
+
+.actions {
+  padding: var(--space-3) var(--space-4);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+  border-bottom: 1px solid var(--obi-border);
+}
+
+.actionCard {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid var(--obi-border);
+  background: rgba(58, 69, 96, 0.2);
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font-family-body);
+  color: var(--obi-text);
+  transition: all var(--duration-fast) var(--ease-brush-touch);
+}
+
+.actionCard:hover:not(:disabled) {
+  background: rgba(58, 69, 96, 0.4);
+  border-color: rgba(232, 226, 214, 0.2);
+}
+
+.actionCard:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.actionIcon {
+  display: block;
+  font-family: "Noto Serif SC", "Source Han Serif SC", "SimSun", serif;
+  font-size: 18px;
+  font-weight: var(--weight-bold);
+  color: var(--obi-seal);
+  opacity: 0.9;
+  margin-bottom: var(--space-1);
+}
+
+.actionName {
+  display: block;
+  font-size: 11px;
+  font-weight: var(--weight-bold);
+  color: var(--obi-text);
+  line-height: 1.3;
+}
+
+.actionDesc {
+  display: block;
+  font-size: 9px;
+  color: var(--obi-text-muted);
+  margin-top: 2px;
+  line-height: 1.3;
+  opacity: 0.75;
+}
+
+/* ===== Chat area ===== */
+
+.chat {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chat::-webkit-scrollbar { width: 3px; }
+.chat::-webkit-scrollbar-thumb {
+  background: rgba(232, 226, 214, 0.15);
+  border-radius: 2px;
+}
+
+.chatHint {
+  align-self: center;
+  font-size: 11px;
+  color: var(--obi-text-muted);
+  text-align: center;
+  padding: 20px 0;
+  opacity: 0.6;
+}
+
+.msg {
+  max-width: 85%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-family: var(--font-family-body);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--obi-text);
+}
+
+.msgAi {
+  align-self: flex-start;
+  background: rgba(58, 69, 96, 0.35);
+  border-bottom-left-radius: 3px;
+}
+
+.msgUser {
+  align-self: flex-end;
+  background: rgba(232, 226, 214, 0.12);
+  border-bottom-right-radius: 3px;
+}
+
+/* ===== No API key ===== */
+
+.noKey {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+  text-align: center;
+  font-family: var(--font-family-body);
+  font-size: var(--font-small);
+  color: var(--obi-text-muted);
+}
+
+/* ===== Suggestion Chips ===== */
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0 var(--space-4) var(--space-2);
+}
+
+.chip {
+  padding: 5px 10px;
+  border-radius: 12px;
+  border: 1px solid var(--obi-border);
+  background: transparent;
+  color: var(--obi-text-muted);
+  font-family: var(--font-family-body);
+  font-size: 11px;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-brush-touch);
+}
+
+.chip:hover:not(:disabled) {
+  background: rgba(58, 69, 96, 0.3);
+  border-color: rgba(232, 226, 214, 0.25);
+  color: var(--obi-text);
+}
+
+.chip:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ===== Input Bar ===== */
+
+.inputBar {
+  padding: 10px 12px;
+  border-top: 1px solid var(--obi-border);
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  background: rgba(35, 44, 61, 0.5);
+}
+
+.input {
+  flex: 1;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--obi-border);
+  background: rgba(58, 69, 96, 0.25);
+  color: var(--obi-text);
+  font-family: var(--font-family-body);
+  font-size: 13px;
+  padding: 0 var(--space-3);
+  outline: none;
+  transition: border-color 0.2s var(--ease-brush-touch);
+}
+
+.input::placeholder {
+  color: var(--obi-text-muted);
+  opacity: 0.5;
+}
+
+.input:focus {
+  border-color: rgba(232, 226, 214, 0.3);
+}
+
+.input:disabled {
+  opacity: 0.5;
+}
+
+.sendBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: none;
+  background: var(--obi-accent-line);
+  color: var(--obi-text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background var(--duration-fast) var(--ease-brush-touch);
+}
+
+.sendBtn:hover:not(:disabled) {
+  background: #9a362f;
+}
+
+.sendBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===== Spinner ===== */
+
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--obi-border);
+  border-top-color: var(--obi-text);
+  border-radius: var(--radius-full);
+  animation: spin 1s var(--ease-ink-spread) infinite;
+  margin-right: var(--space-2);
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
