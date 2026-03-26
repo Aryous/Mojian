@@ -1,13 +1,122 @@
 /* 设计令牌入口 — 全局 CSS 变量定义 */
-/* 详见 docs/DESIGN.md */
+/* 权威来源: docs/design-docs/design-spec.md */
+/* 三层体系: L1 基础色 → L2 语义色 → L3 组件色(各组件 .module.css 内定义) */
+
 :root {
-  /* L1 基础色（中国传统色） */
-  --color-ink-deep: #1C1208;
-  --color-ink-medium: #3B2E1A;
-  --color-ink-light: #6B5B3E;
-  --color-paper-warm: #F5F0E8;
-  --color-paper-aged: #E8DCC8;
-  --color-seal-red: #C23B22;
-  --color-jade-green: #2D6A4F;
-  --color-glaze-blue: #1B4965;
+  /* ===== L1 基础色（中国传统色） ===== */
+  --color-ink-deep: #1C1208;       /* 玄色 — 天地未分之色 */
+  --color-ink-medium: #3B2E1A;     /* 黧色 — 浓墨半干 */
+  --color-ink-light: #6B5B3E;      /* 淡墨 */
+  --color-ink-faint: #9B8E7E;      /* 极淡墨 — 干笔淡扫 */
+  --color-paper-base: #F5EDD6;     /* 缣色 — 宣纸本色 */
+  --color-paper-warm: #F0E6CE;     /* 牙色 — 宣纸暖调 */
+  --color-paper-aged: #D4C4A0;     /* 枯色 — 旧纸 */
+  --color-vermillion: #C23B22;     /* 朱砂 — 印泥之色 */
+  --color-celadon: #7BA05B;        /* 青瓷 — 龙泉窑瓷色 */
+  --color-gold: #C9A84C;           /* 赤金 — 金箔 */
+  --color-glaze: #1B4965;          /* 靛青 — 蓝染深色 */
+
+  /* ===== L2 语义色 ===== */
+  /* 背景 */
+  --sem-bg-primary: var(--color-paper-base);
+  --sem-bg-secondary: var(--color-paper-warm);
+  --sem-bg-tertiary: var(--color-paper-aged);
+  --sem-bg-ink: var(--color-ink-deep);
+
+  /* 文字 */
+  --sem-text-primary: var(--color-ink-deep);
+  --sem-text-secondary: var(--color-ink-medium);
+  --sem-text-tertiary: var(--color-ink-light);
+  --sem-text-disabled: var(--color-ink-faint);
+  --sem-text-inverse: var(--color-paper-base);
+
+  /* 操作 */
+  --sem-action-primary: var(--color-vermillion);
+  --sem-action-primary-hover: #A83220;
+  --sem-action-secondary: var(--color-ink-medium);
+  --sem-action-ai: var(--color-glaze);
+
+  /* 边框 */
+  --sem-border-default: var(--color-ink-faint);
+  --sem-border-strong: var(--color-ink-light);
+
+  /* 状态 */
+  --sem-status-success: var(--color-celadon);
+  --sem-status-error: var(--color-vermillion);
+  --sem-status-info: var(--color-glaze);
+  --sem-status-warning: var(--color-gold);
+
+  /* 焦点 */
+  --sem-focus-ring: var(--color-glaze);
+
+  /* ===== 字体 ===== */
+  --font-family-display: "LXGW WenKai", "Songti SC", "STSong", serif;
+  --font-family-body: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+  --font-family-mono: "SF Mono", "JetBrains Mono", "Fira Code", monospace;
+
+  --font-display: 2rem;       /* 32px — 页面大标题 */
+  --font-h1: 1.5rem;          /* 24px — 章节标题 */
+  --font-h2: 1.25rem;         /* 20px — 子标题 */
+  --font-h3: 1.125rem;        /* 18px — 模块标题 */
+  --font-body: 1rem;          /* 16px — 正文 */
+  --font-small: 0.875rem;     /* 14px — 辅助文字 */
+  --font-caption: 0.75rem;    /* 12px — 标注 */
+
+  --leading-tight: 1.25;
+  --leading-normal: 1.625;    /* 中文正文需要更大行高 */
+  --leading-relaxed: 1.875;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-bold: 700;
+
+  /* ===== 间距（4px 基线网格） ===== */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-24: 96px;
+
+  /* ===== 圆角 ===== */
+  --radius-none: 0px;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-full: 9999px;
+
+  /* ===== 阴影 ===== */
+  --shadow-subtle: 0 1px 2px rgba(28, 18, 8, 0.06);
+  --shadow-medium: 0 2px 8px rgba(28, 18, 8, 0.10);
+  --shadow-strong: 0 4px 16px rgba(28, 18, 8, 0.14);
+
+  /* ===== 缓动曲线 ===== */
+  --ease-ink-spread: cubic-bezier(0.22, 0.61, 0.36, 1);   /* 进入 — 墨水扩散 */
+  --ease-ink-fade: cubic-bezier(0.55, 0, 0.68, 0.19);     /* 退出 — 墨迹褪去 */
+  --ease-brush-touch: cubic-bezier(0.25, 0.1, 0.25, 1);   /* 交互 — 毛笔触纸 */
+
+  /* ===== 时长 ===== */
+  --duration-instant: 100ms;
+  --duration-fast: 150ms;
+  --duration-normal: 350ms;
+  --duration-slow: 450ms;
+}
+
+/* ===== 无障碍：减少动画 ===== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ===== 全局焦点样式 ===== */
+:focus-visible {
+  outline: 2px solid var(--sem-focus-ring);
+  outline-offset: 2px;
 }

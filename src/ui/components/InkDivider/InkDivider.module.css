@@ -1,0 +1,21 @@
+/* 墨线分割线 — 模拟毛笔划线的自然不均匀感 */
+
+.root {
+  width: 100%;
+  padding: var(--space-1) 0;
+}
+
+.line {
+  display: block;
+  width: 100%;
+  height: 4px;
+  color: var(--sem-border-default);
+}
+
+.thin {
+  opacity: 0.5;
+}
+
+.ornamental {
+  /* 装饰变体无额外样式，SVG 内部处理 */
+}

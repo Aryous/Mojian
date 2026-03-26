@@ -1,0 +1,8 @@
+/* 窗棂纹样 — 万字纹 SVG pattern */
+
+.root {
+  display: block;
+  width: 100%;
+  height: 100%;
+  color: var(--sem-border-default);
+}

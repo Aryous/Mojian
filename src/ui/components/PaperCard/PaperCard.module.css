@@ -1,0 +1,36 @@
+/* 宣纸卡片 — 内容承载容器 */
+/* 纹理方案：已裁决为纯 CSS（SVG 内联噪点），零网络请求 */
+
+.root {
+  position: relative;
+  padding: var(--space-6);
+  border: 1px solid var(--sem-border-default);
+  border-radius: var(--radius-sm);
+  background-color: var(--sem-bg-secondary);
+}
+
+/* 宣纸纤维纹理 — 纯 CSS SVG 噪点 */
+.root::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  opacity: 0.05;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+.default {
+  box-shadow: var(--shadow-subtle);
+}
+
+.flat {
+  box-shadow: none;
+}
+
+.aged {
+  background-color: var(--sem-bg-tertiary);
+  box-shadow: var(--shadow-subtle);
+}

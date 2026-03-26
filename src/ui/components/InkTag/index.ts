@@ -1,0 +1,1 @@
+export { InkTag } from './InkTag'

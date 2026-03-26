@@ -1,0 +1,33 @@
+/* 墨韵提示 — 悬停/聚焦信息提示 */
+
+.root {
+  position: relative;
+  display: inline-flex;
+}
+
+.tooltip {
+  position: absolute;
+  bottom: calc(100% + var(--space-2));
+  left: 50%;
+  transform: translateX(-50%);
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+  background-color: var(--sem-bg-ink);
+  box-shadow: var(--shadow-medium);
+  font-family: var(--font-family-body);
+  font-size: var(--font-small);
+  color: var(--sem-text-inverse);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 100;
+}
+
+.arrow {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid var(--sem-bg-ink);
+}

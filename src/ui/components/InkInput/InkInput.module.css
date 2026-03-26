@@ -1,0 +1,76 @@
+/* 墨线输入框 — 以墨线为底边框 */
+
+.root {
+  position: relative;
+  padding-top: var(--space-4);
+}
+
+.input {
+  display: block;
+  width: 100%;
+  padding: var(--space-2) var(--space-1);
+  border: none;
+  border-bottom: 2px solid var(--sem-border-default);
+  border-radius: 0;
+  background: transparent;
+  font-family: var(--font-family-body);
+  font-size: var(--font-body);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-normal);
+  color: var(--sem-text-primary);
+  transition: border-color var(--duration-fast) var(--ease-brush-touch);
+}
+
+.input::placeholder {
+  color: transparent;
+}
+
+.input:focus {
+  outline: none;
+  border-bottom-color: var(--sem-text-primary);
+}
+
+.input:disabled {
+  opacity: 0.5;
+  border-bottom-style: dashed;
+}
+
+/* 标签 — 浮动动画 */
+.label {
+  position: absolute;
+  top: calc(var(--space-4) + var(--space-2));
+  left: var(--space-1);
+  font-family: var(--font-family-body);
+  font-size: var(--font-body);
+  color: var(--sem-text-tertiary);
+  pointer-events: none;
+  transition:
+    transform var(--duration-fast) var(--ease-brush-touch),
+    font-size var(--duration-fast) var(--ease-brush-touch),
+    color var(--duration-fast) var(--ease-brush-touch);
+}
+
+/* 标签上浮：聚焦 或 有内容时 */
+.input:focus + .label,
+.input:not(:placeholder-shown) + .label {
+  transform: translateY(calc(-1 * var(--space-4) - var(--space-1)));
+  font-size: var(--font-small);
+  color: var(--sem-text-secondary);
+}
+
+/* 错误态 */
+.error .input {
+  border-bottom-color: var(--sem-status-error);
+}
+
+.error .label {
+  color: var(--sem-status-error);
+}
+
+.errorText {
+  display: block;
+  margin-top: var(--space-1);
+  font-family: var(--font-family-body);
+  font-size: var(--font-caption);
+  color: var(--sem-status-error);
+}

@@ -1,0 +1,1 @@
+export { InkDivider } from './InkDivider'

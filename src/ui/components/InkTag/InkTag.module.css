@@ -1,0 +1,16 @@
+/* 墨韵标签 — 信息标注 */
+
+.root {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--sem-border-default);
+  border-radius: var(--radius-sm);
+  background-color: var(--sem-bg-tertiary);
+  font-family: var(--font-family-body);
+  font-size: var(--font-caption);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-tight);
+  color: var(--sem-text-secondary);
+  user-select: none;
+}

@@ -1,0 +1,1 @@
+export { InkTooltip } from './InkTooltip'

@@ -1,0 +1,57 @@
+/* 印章按钮 — 模拟方形篆刻印章 */
+
+.root {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  border: none;
+  border-radius: var(--radius-none);
+  font-family: var(--font-family-display);
+  font-size: var(--font-body);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  cursor: pointer;
+  user-select: none;
+  transform: rotate(-1deg);
+  transition: background-color var(--duration-fast) var(--ease-brush-touch);
+}
+
+.root:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: rotate(0deg);
+}
+
+/* 主操作：朱砂底色 */
+.primary {
+  background-color: var(--sem-action-primary);
+  color: var(--sem-text-inverse);
+}
+
+.primary:hover:not(:disabled) {
+  background-color: var(--sem-action-primary-hover);
+}
+
+/* 次要操作：透明底 + 墨色边框 */
+.secondary {
+  background-color: transparent;
+  color: var(--sem-text-primary);
+  border: 1px solid var(--sem-border-strong);
+}
+
+.secondary:hover:not(:disabled) {
+  background-color: var(--sem-bg-tertiary);
+}
+
+/* 幽灵按钮：透明底 + 墨色文字 */
+.ghost {
+  background-color: transparent;
+  color: var(--sem-text-secondary);
+}
+
+.ghost:hover:not(:disabled) {
+  color: var(--sem-text-primary);
+  background-color: var(--sem-bg-secondary);
+}
