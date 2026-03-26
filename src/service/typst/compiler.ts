@@ -9,9 +9,13 @@ let initPromise: Promise<void> | null = null
 
 // 模板源码（构建时内联）
 import classicTemplate from './templates/classic.typ?raw'
+import twocolumnTemplate from './templates/twocolumn.typ?raw'
+import academicTemplate from './templates/academic.typ?raw'
 
 const TEMPLATES: Record<string, string> = {
   classic: classicTemplate,
+  twocolumn: twocolumnTemplate,
+  academic: academicTemplate,
 }
 
 /** 初始化编译器（单例，懒加载） */

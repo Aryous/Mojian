@@ -3,6 +3,7 @@ import { useEffect, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router'
 import { motion, AnimatePresence } from 'motion/react'
 import { useResumeStore } from '@/runtime/store'
+import { TEMPLATES } from '@/config'
 import { PaperCard, SealButton, InkDivider, CloudEmpty } from '@/ui/components'
 import { SectionEditor } from './SectionEditor'
 import { ResumePreview } from './ResumePreview'
@@ -60,6 +61,19 @@ export function EditorPage() {
           ← 返回
         </SealButton>
         <h1 className={styles.title}>{currentResume.title}</h1>
+        <div className={styles.templatePicker}>
+          {TEMPLATES.map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              className={`${styles.templateBtn} ${currentResume.templateId === t.id ? styles.templateBtnActive : ''}`}
+              onClick={() => handleUpdate({ templateId: t.id })}
+              title={t.description}
+            >
+              {t.name}
+            </button>
+          ))}
+        </div>
       </header>
 
       <InkDivider />
