@@ -12,7 +12,7 @@ interface ResumePreviewProps {
 const COMPILE_DELAY = 600
 
 export function ResumePreview({ resume }: ResumePreviewProps) {
-  const { artifact, error, compiling, compile } = usePreviewStore()
+  const { artifact, error, compiling, exporting, compile, exportPdf } = usePreviewStore()
 
   // 防抖触发编译
   useEffect(() => {
@@ -28,6 +28,14 @@ export function ResumePreview({ resume }: ResumePreviewProps) {
       <div className={styles.header}>
         <span className={styles.label}>预览</span>
         {compiling && <span className={styles.status}>编译中…</span>}
+        <button
+          type="button"
+          className={styles.exportBtn}
+          disabled={exporting || compiling}
+          onClick={() => exportPdf(resume)}
+        >
+          {exporting ? '导出中…' : '导出 PDF'}
+        </button>
       </div>
       <div className={styles.canvas}>
         {error ? (

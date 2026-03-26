@@ -27,6 +27,30 @@
   color: var(--sem-text-tertiary);
 }
 
+.exportBtn {
+  margin-left: auto;
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--sem-border-default);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--sem-text-secondary);
+  font-family: var(--font-family-display);
+  font-size: var(--font-caption);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.exportBtn:hover:not(:disabled) {
+  background: var(--sem-bg-ink);
+  color: var(--color-paper-base);
+  border-color: var(--sem-bg-ink);
+}
+
+.exportBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .canvas {
   flex: 1;
   overflow: auto;
