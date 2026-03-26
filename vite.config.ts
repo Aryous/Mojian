@@ -9,4 +9,7 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  optimizeDeps: {
+    exclude: ['@myriaddreamin/typst.react', '@myriaddreamin/typst.ts'],
+  },
 })
