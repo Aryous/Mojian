@@ -1,0 +1,331 @@
+/* DashboardPage — 简历管理工作台 */
+/* 响应式卡片网格 + 腰封信息层 */
+
+.root {
+  min-height: 100vh;
+  background-color: var(--sem-bg-primary);
+}
+
+.topbar {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: var(--space-10, 40px) var(--space-8) 0;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+.title {
+  font-family: var(--font-family-display);
+  font-size: var(--font-h1);
+  font-weight: var(--weight-bold);
+  color: var(--sem-text-primary);
+  margin: 0;
+  letter-spacing: var(--tracking-tight);
+}
+
+.count {
+  font-family: var(--font-family-body);
+  font-size: var(--font-caption);
+  color: var(--sem-text-disabled);
+  letter-spacing: var(--tracking-wide);
+}
+
+/* ===== Card Grid ===== */
+
+.grid {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: var(--space-8);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-6);
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+    padding: var(--space-6) var(--space-4);
+  }
+}
+
+/* ===== New Card (dashed) ===== */
+
+.cardNew {
+  aspect-ratio: 210 / 297;
+  border: 2px dashed rgba(120, 100, 80, 0.25);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--duration-normal) var(--ease-ink-spread);
+  background: rgba(245, 237, 214, 0.4);
+}
+
+.cardNew:hover {
+  border-color: rgba(120, 100, 80, 0.5);
+  background: rgba(245, 237, 214, 0.7);
+  transform: translateY(-4px);
+}
+
+.cardNew:focus-visible {
+  outline: 2px solid var(--sem-focus-ring);
+  outline-offset: 2px;
+}
+
+.cardNewIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(120, 100, 80, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: var(--sem-text-tertiary);
+  transition: all var(--duration-normal) var(--ease-ink-spread);
+}
+
+.cardNew:hover .cardNewIcon {
+  background: rgba(120, 100, 80, 0.15);
+  transform: scale(1.1);
+}
+
+.cardNewLabel {
+  margin-top: var(--space-3);
+  font-family: var(--font-family-body);
+  font-size: var(--font-body);
+  color: var(--sem-text-tertiary);
+  letter-spacing: var(--tracking-normal);
+}
+
+/* ===== Resume Card ===== */
+
+.card {
+  aspect-ratio: 210 / 297;
+  border-radius: var(--radius-md);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all var(--duration-normal) var(--ease-ink-spread);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.card:focus-visible {
+  outline: 2px solid var(--sem-focus-ring);
+  outline-offset: 2px;
+}
+
+.cardPreview {
+  position: absolute;
+  inset: 0;
+  background: #ffffff;
+}
+
+.cardPreview > svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Fallback thumbnail when no cached SVG */
+.cardFallback {
+  position: absolute;
+  inset: 0;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--sem-text-disabled);
+}
+
+/* Delete button — top right, hover only */
+.cardDelete {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  border: none;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity var(--duration-fast) ease;
+  z-index: 3;
+}
+
+.card:hover .cardDelete {
+  opacity: 1;
+}
+
+.cardDelete:hover {
+  background: rgba(184, 66, 58, 0.7);
+}
+
+/* ===== Obi (腰封) ===== */
+
+.obi {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 15%;
+  z-index: 2;
+  padding: var(--space-3) var(--space-4);
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(30, 40, 60, 0.05) 2px,
+      rgba(30, 40, 60, 0.05) 4px
+    ),
+    linear-gradient(180deg, var(--obi-bg-start), var(--obi-bg-end));
+  border-top: 1.5px solid var(--obi-border);
+  border-bottom: 1.5px solid var(--obi-border);
+  box-shadow:
+    0 -2px 6px rgba(44, 36, 23, 0.08),
+    0 3px 8px rgba(44, 36, 23, 0.1);
+  transition: box-shadow var(--duration-normal) var(--ease-ink-spread);
+}
+
+.card:hover .obi {
+  box-shadow:
+    0 -3px 10px rgba(44, 36, 23, 0.1),
+    0 5px 14px rgba(44, 36, 23, 0.14);
+}
+
+/* Left accent line */
+.obi::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 4px;
+  bottom: 4px;
+  width: 3px;
+  background: var(--obi-accent-line);
+  border-radius: 0 1.5px 1.5px 0;
+}
+
+/* Right seal stamp */
+.obi::after {
+  content: '简';
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%) rotate(-3deg);
+  width: 24px;
+  height: 24px;
+  border: 1.5px solid var(--obi-seal);
+  border-radius: 2px;
+  font-family: var(--font-family-display);
+  font-size: 12px;
+  color: var(--obi-seal);
+  line-height: 24px;
+  text-align: center;
+  opacity: 0.45;
+}
+
+.obiTitle {
+  font-family: var(--font-family-display);
+  font-size: 13px;
+  font-weight: var(--weight-semibold, 600);
+  color: var(--obi-text);
+  line-height: var(--leading-tight);
+  margin-bottom: 4px;
+  margin-left: var(--space-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-right: 36px;
+}
+
+.obiMeta {
+  font-family: var(--font-family-body);
+  font-size: 10px;
+  color: var(--obi-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: var(--space-2);
+  padding-right: 36px;
+}
+
+.obiDot {
+  width: 2.5px;
+  height: 2.5px;
+  border-radius: 50%;
+  background: var(--obi-text-muted);
+}
+
+.obiProgress {
+  margin-top: 6px;
+  margin-left: var(--space-2);
+  margin-right: 36px;
+  height: 2px;
+  background: var(--obi-progress-track);
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.obiProgressFill {
+  height: 100%;
+  border-radius: 1px;
+  transition: width var(--duration-normal) var(--ease-ink-spread);
+}
+
+/* ===== Empty state ===== */
+
+.emptyHint {
+  grid-column: 2 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-12) var(--space-6);
+  font-family: var(--font-family-body);
+  font-size: var(--font-body);
+  color: var(--sem-text-disabled);
+  text-align: center;
+}
+
+/* ===== Loading ===== */
+
+.loading {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  padding: var(--space-16);
+  font-family: var(--font-family-body);
+  font-size: var(--font-body);
+  color: var(--sem-text-tertiary);
+}
+
+/* Progress bar color variants */
+.progressLow {
+  background: var(--obi-progress-low);
+}
+
+.progressMid {
+  background: var(--obi-progress-mid);
+}
+
+.progressDone {
+  background: var(--obi-progress-done);
+}
