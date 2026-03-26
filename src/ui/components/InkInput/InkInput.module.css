@@ -85,6 +85,25 @@
   color: var(--sem-text-secondary);
 }
 
+/* Multiline (textarea) */
+.textarea {
+  resize: vertical;
+  min-height: 60px;
+  line-height: var(--leading-normal);
+  border-bottom-width: 2px;
+}
+
+.multiline {
+  padding-top: calc(var(--space-4) + var(--space-2));
+}
+
+/* 多行模式标签始终上浮 */
+.multiline .label {
+  transform: translateY(calc(-1 * var(--space-4) - var(--space-1)));
+  font-size: var(--font-small);
+  color: var(--sem-text-secondary);
+}
+
 /* 错误态 */
 .error .input {
   border-bottom-color: var(--sem-status-error);

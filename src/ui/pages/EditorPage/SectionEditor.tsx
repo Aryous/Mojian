@@ -26,6 +26,11 @@ function inputHandler(fn: (value: string) => void) {
   return (e: ChangeEvent<HTMLInputElement>) => fn(e.target.value)
 }
 
+/** 从原生 textarea change event 提取 value 调用 handler */
+function textareaHandler(fn: (value: string) => void) {
+  return (e: ChangeEvent<HTMLTextAreaElement>) => fn(e.target.value)
+}
+
 // ─── 个人信息 ─────────────────────────────────
 function PersonalEditor({ resume, onUpdate }: Omit<SectionEditorProps, 'type'>) {
   const { personal } = resume
@@ -51,7 +56,7 @@ function PersonalEditor({ resume, onUpdate }: Omit<SectionEditorProps, 'type'>) 
         <InkInput label="所在地" hint="如：上海" value={personal.location} onChange={inputHandler((v) => handleChange('location', v))} />
         <InkInput label="网站" hint="https://" value={personal.website} onChange={inputHandler((v) => handleChange('website', v))} />
       </div>
-      <InkInput label="个人简介" hint="用一两句话介绍自己的核心优势" value={personal.summary} onChange={inputHandler((v) => handleChange('summary', v))} />
+      <InkInput label="个人简介" hint="用一两句话介绍自己的核心优势" value={personal.summary} onChange={textareaHandler((v) => handleChange('summary', v))} multiline />
     </div>
   )
 }
@@ -146,7 +151,7 @@ function EducationEditor({ resume, onUpdate }: Omit<SectionEditorProps, 'type'>)
             <InkInput label="开始时间" hint="2020-09" value={item.startDate} onChange={inputHandler((v) => onChange('startDate', v))} />
             <InkInput label="结束时间" hint="2024-06" value={item.endDate} onChange={inputHandler((v) => onChange('endDate', v))} />
           </div>
-          <InkInput label="描述" hint="GPA、荣誉、相关课程等" value={item.description} onChange={inputHandler((v) => onChange('description', v))} />
+          <InkInput label="描述" hint="GPA、荣誉、相关课程等" value={item.description} onChange={textareaHandler((v) => onChange('description', v))} multiline rows={2} />
         </div>
       )}
     />
@@ -179,7 +184,7 @@ function WorkEditor({ resume, onUpdate }: Omit<SectionEditorProps, 'type'>) {
             <InkInput label="开始时间" hint="2022-03" value={item.startDate} onChange={inputHandler((v) => onChange('startDate', v))} />
             <InkInput label="结束时间" hint="至今" value={item.endDate} onChange={inputHandler((v) => onChange('endDate', v))} />
           </div>
-          <InkInput label="描述" hint="核心职责与量化成果" value={item.description} onChange={inputHandler((v) => onChange('description', v))} />
+          <InkInput label="描述" hint="核心职责与量化成果" value={item.description} onChange={textareaHandler((v) => onChange('description', v))} multiline />
         </div>
       )}
     />
@@ -237,7 +242,7 @@ function ProjectsEditor({ resume, onUpdate }: Omit<SectionEditorProps, 'type'>) 
             <InkInput label="结束时间" hint="2023-12" value={item.endDate} onChange={inputHandler((v) => onChange('endDate', v))} />
             <InkInput label="链接" hint="https://github.com/..." value={item.url} onChange={inputHandler((v) => onChange('url', v))} />
           </div>
-          <InkInput label="描述" hint="项目背景、技术方案与成果" value={item.description} onChange={inputHandler((v) => onChange('description', v))} />
+          <InkInput label="描述" hint="项目背景、技术方案与成果" value={item.description} onChange={textareaHandler((v) => onChange('description', v))} multiline />
         </div>
       )}
     />
