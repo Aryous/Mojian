@@ -19,7 +19,7 @@
 .popover {
   position: fixed;
   top: 52px;
-  right: 120px;
+  right: 80px;
   background: var(--sem-bg-primary);
   border: 1px solid var(--color-paper-aged);
   border-radius: 8px;
@@ -28,14 +28,21 @@
   z-index: 201;
   transform: translateY(-8px);
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
-  transition: all 0.25s var(--ease-ink-spread);
+  transition: transform 0.25s var(--ease-ink-spread),
+              opacity 0.25s var(--ease-ink-spread),
+              visibility 0s 0.25s;
 }
 
 .popoverOpen {
   transform: translateY(0);
   opacity: 1;
+  visibility: visible;
   pointer-events: all;
+  transition: transform 0.25s var(--ease-ink-spread),
+              opacity 0.25s var(--ease-ink-spread),
+              visibility 0s 0s;
 }
 
 .title {

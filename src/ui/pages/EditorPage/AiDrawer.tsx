@@ -1,6 +1,6 @@
 // src/ui/pages/EditorPage/AiDrawer.tsx
 // AI drawer: quick actions + chat + input bar — obi indigo color scheme
-import { useState, useCallback, useRef, useEffect, type KeyboardEvent } from 'react'
+import { useState, useCallback, useRef, useEffect, type KeyboardEvent, type ChangeEvent } from 'react'
 import { useAiStore } from '@/runtime/store'
 import styles from './AiDrawer.module.css'
 
@@ -33,10 +33,16 @@ const SUGGESTION_CHIPS = [
 ]
 
 export function AiDrawer({ open, onClose, content, onAccept }: AiDrawerProps) {
-  const { apiKeySet, optimizing, optimize, result, clearResult } = useAiStore()
+  const { apiKeySet, optimizing, optimize, result, clearResult, loadApiKey, setApiKey, removeApiKey } = useAiStore()
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [inputValue, setInputValue] = useState('')
+  const [keyInput, setKeyInput] = useState('')
   const chatRef = useRef<HTMLDivElement>(null)
+
+  // Load API key status on mount
+  useEffect(() => {
+    loadApiKey()
+  }, [loadApiKey])
 
   // Auto-scroll to bottom on new message
   useEffect(() => {
@@ -58,7 +64,7 @@ export function AiDrawer({ open, onClose, content, onAccept }: AiDrawerProps) {
   }, [result, onAccept, clearResult])
 
   const sendMessage = useCallback((text: string) => {
-    if (!text.trim() || !content.trim() || optimizing) return
+    if (!text.trim() || optimizing) return
 
     setMessages((prev) => [
       ...prev,
@@ -89,6 +95,20 @@ export function AiDrawer({ open, onClose, content, onAccept }: AiDrawerProps) {
     }
   }, [inputValue, sendMessage])
 
+  const handleSaveKey = useCallback(() => {
+    const trimmed = keyInput.trim()
+    if (trimmed) {
+      setApiKey(trimmed)
+      setKeyInput('')
+    }
+  }, [keyInput, setApiKey])
+
+  const handleKeyInputKeyDown = useCallback((e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSaveKey()
+    }
+  }, [handleSaveKey])
+
   return (
     <div className={`${styles.drawer} ${open ? styles.drawerOpen : ''}`} role="region" aria-label="AI 智能优化">
       <div className={styles.header}>
@@ -101,9 +121,44 @@ export function AiDrawer({ open, onClose, content, onAccept }: AiDrawerProps) {
       </div>
 
       {!apiKeySet ? (
-        <div className={styles.noKey}>请先在设置中配置 API Key 以启用 AI 功能</div>
+        <div className={styles.keySection}>
+          <p className={styles.keyHint}>
+            请输入 OpenRouter API Key 以启用 AI 功能。
+            可在 openrouter.ai 免费注册获取。
+          </p>
+          <div className={styles.keyRow}>
+            <input
+              type="password"
+              className={styles.keyInput}
+              value={keyInput}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => setKeyInput(e.target.value)}
+              onKeyDown={handleKeyInputKeyDown}
+              placeholder="sk-or-..."
+              aria-label="OpenRouter API Key"
+              maxLength={200}
+              autoComplete="off"
+            />
+            <button
+              type="button"
+              className={styles.keySaveBtn}
+              onClick={handleSaveKey}
+              disabled={!keyInput.trim()}
+            >
+              保存
+            </button>
+          </div>
+        </div>
       ) : (
         <>
+          {/* API Key status */}
+          <div className={styles.keyStatus}>
+            <span className={styles.keyStatusDot} />
+            <span className={styles.keyStatusText}>API Key 已配置</span>
+            <button type="button" className={styles.keyRemoveBtn} onClick={removeApiKey}>
+              清除
+            </button>
+          </div>
+
           {/* Quick Actions */}
           <div className={styles.actions}>
             {QUICK_ACTIONS.map((a) => (
@@ -112,7 +167,7 @@ export function AiDrawer({ open, onClose, content, onAccept }: AiDrawerProps) {
                 type="button"
                 className={styles.actionCard}
                 onClick={() => sendMessage(a.prompt)}
-                disabled={optimizing || !content.trim()}
+                disabled={optimizing}
               >
                 <span className={styles.actionIcon}>{a.icon}</span>
                 <span className={styles.actionName}>{a.name}</span>
@@ -147,7 +202,7 @@ export function AiDrawer({ open, onClose, content, onAccept }: AiDrawerProps) {
                 type="button"
                 className={styles.chip}
                 onClick={() => sendMessage(chip.prompt)}
-                disabled={optimizing || !content.trim()}
+                disabled={optimizing}
               >
                 {chip.label}
               </button>
@@ -162,7 +217,7 @@ export function AiDrawer({ open, onClose, content, onAccept }: AiDrawerProps) {
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleInputKeyDown}
               placeholder="告诉 AI 你想怎么优化..."
-              disabled={optimizing || !content.trim()}
+              disabled={optimizing}
             />
             <button
               type="button"

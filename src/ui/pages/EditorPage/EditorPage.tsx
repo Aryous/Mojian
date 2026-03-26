@@ -3,9 +3,9 @@
 import { useEffect, useCallback, useMemo, useState } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router'
 import { motion, AnimatePresence } from 'motion/react'
-import { useResumeStore } from '@/runtime/store'
+import { useResumeStore, useAiStore } from '@/runtime/store'
 import { TEMPLATES } from '@/config'
-import { CloudEmpty } from '@/ui/components'
+import { CloudEmpty, PaperToast } from '@/ui/components'
 import { TopToolbar } from './TopToolbar'
 import { TemplatePopover } from './TemplatePopover'
 import { SectionEditor } from './SectionEditor'
@@ -20,6 +20,7 @@ export function EditorPage() {
   const navigate = useNavigate()
   const location = useLocation()
   const { currentResume, loading, openResume, updateCurrentResume, closeResume } = useResumeStore()
+  const { error: aiError, clearResult: clearAiError } = useAiStore()
   const [aiOpen, setAiOpen] = useState(false)
   const [tplOpen, setTplOpen] = useState(false)
 
@@ -225,6 +226,12 @@ export function EditorPage() {
           />
         </aside>
       </div>
+
+      <PaperToast
+        message={aiError}
+        variant="error"
+        onDismiss={clearAiError}
+      />
     </div>
   )
 }

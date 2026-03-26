@@ -8,6 +8,7 @@ export { CloudEmpty } from './CloudEmpty'
 export { InkTag } from './InkTag'
 export { InkTooltip } from './InkTooltip'
 export { InkWash } from './InkWash'
+export { PaperToast } from './PaperToast'
 
 // 分子组件
 export { HeroSection } from './HeroSection'

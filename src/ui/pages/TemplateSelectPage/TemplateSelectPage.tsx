@@ -337,16 +337,6 @@ export function TemplateSelectPage() {
             })}
           </div>
 
-          {/* Sidebar footer with confirm button (secondary) */}
-          <div className={styles.sidebarFooter}>
-            <SealButton
-              variant="secondary"
-              onClick={handleConfirm}
-              disabled={creating}
-            >
-              {creating ? '创建中...' : '使用此模板'}
-            </SealButton>
-          </div>
         </nav>
 
         {/* Right: preview area with paper */}

@@ -92,12 +92,13 @@ export async function compileToVector(resume: Resume): Promise<Uint8Array> {
   const templateId = resume.templateId || 'classic'
   const templateSource = TEMPLATES[templateId] ?? TEMPLATES['classic']!
 
-  // 添加模板源码
-  c.addSource('/main.typ', templateSource)
+  // 每个模板用独立路径，避免编译器缓存冲突导致切换模板时仍使用旧产物
+  const mainPath = `/resume-${templateId}.typ`
+  c.addSource(mainPath, templateSource)
 
   // 编译，传入简历数据
   const result = await c.compile({
-    mainFilePath: '/main.typ',
+    mainFilePath: mainPath,
     format: 0, // CompileFormatEnum.vector
     diagnostics: 'full',
     inputs: {
@@ -135,10 +136,11 @@ export async function compileToPdf(resume: Resume): Promise<Uint8Array> {
   const templateId = resume.templateId || 'classic'
   const templateSource = TEMPLATES[templateId] ?? TEMPLATES['classic']!
 
-  c.addSource('/main.typ', templateSource)
+  const mainPath = `/resume-${templateId}.typ`
+  c.addSource(mainPath, templateSource)
 
   const result = await c.compile({
-    mainFilePath: '/main.typ',
+    mainFilePath: mainPath,
     format: 1, // CompileFormatEnum.pdf
     diagnostics: 'full',
     inputs: {
