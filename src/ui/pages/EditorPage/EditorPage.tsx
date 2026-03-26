@@ -40,19 +40,21 @@ function DraggableSectionCard({
     >
       <div className={styles.sectionCard}>
         <div className={styles.sectionHeader}>
-          <div
-            className={styles.dragHandle}
-            onPointerDown={(e) => controls.start(e)}
-          >
-            <svg width="10" height="14" viewBox="0 0 10 14" fill="none" aria-hidden="true">
-              <circle cx="3" cy="2" r="1.2" fill="currentColor" />
-              <circle cx="7" cy="2" r="1.2" fill="currentColor" />
-              <circle cx="3" cy="7" r="1.2" fill="currentColor" />
-              <circle cx="7" cy="7" r="1.2" fill="currentColor" />
-              <circle cx="3" cy="12" r="1.2" fill="currentColor" />
-              <circle cx="7" cy="12" r="1.2" fill="currentColor" />
-            </svg>
-          </div>
+          {section.type !== 'personal' && (
+            <div
+              className={styles.dragHandle}
+              onPointerDown={(e) => controls.start(e)}
+            >
+              <svg width="10" height="14" viewBox="0 0 10 14" fill="none" aria-hidden="true">
+                <circle cx="3" cy="2" r="1.2" fill="currentColor" />
+                <circle cx="7" cy="2" r="1.2" fill="currentColor" />
+                <circle cx="3" cy="7" r="1.2" fill="currentColor" />
+                <circle cx="7" cy="7" r="1.2" fill="currentColor" />
+                <circle cx="3" cy="12" r="1.2" fill="currentColor" />
+                <circle cx="7" cy="12" r="1.2" fill="currentColor" />
+              </svg>
+            </div>
+          )}
           <h2 className={styles.sectionTitle}>{section.title}</h2>
           {section.type !== 'skills' && (
             <button

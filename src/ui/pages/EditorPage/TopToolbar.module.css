@@ -1,5 +1,5 @@
 /* src/ui/pages/EditorPage/TopToolbar.module.css */
-/* Slim toolbar */
+/* C1 水墨横幅 — 深色工具栏 + V3 朱点引触发器 */
 
 .root {
   display: grid;
@@ -7,10 +7,55 @@
   align-items: center;
   height: var(--editor-toolbar-height);
   padding: 0 var(--space-4);
-  background-color: var(--sem-bg-primary);
-  border-bottom: 1px solid var(--sem-border-default);
+  background-color: var(--color-ink-medium);
   position: relative;
   z-index: 100;
+  overflow: hidden;
+}
+
+/* ===== 墨晕漂浮 — 工具栏深处缓缓游动的墨色气团 ===== */
+.root::before {
+  content: '';
+  position: absolute;
+  right: 14%;
+  top: -36%;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(59, 46, 26, 0.45) 0%,
+    rgba(59, 46, 26, 0.15) 40%,
+    transparent 70%);
+  filter: blur(18px);
+  animation: ink-drift 14s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes ink-drift {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(-40px, 6px) scale(1.08); }
+}
+
+/* ===== 墨痕底线 — 不规则墨迹替代实线分隔 ===== */
+.root::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: repeating-linear-gradient(90deg,
+    var(--color-ink-medium) 0,
+    var(--color-ink-light) 2px,
+    transparent 2px,
+    transparent 6px,
+    var(--color-ink-medium) 6px,
+    var(--color-ink-light) 8px,
+    transparent 8px,
+    transparent 15px);
+  opacity: 0.4;
+  mask-image: linear-gradient(90deg, transparent 3%, black 10%, black 90%, transparent 97%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 3%, black 10%, black 90%, transparent 97%);
 }
 
 /* ===== Left: back + brand + title ===== */
@@ -20,36 +65,41 @@
   align-items: center;
   gap: var(--space-2);
   justify-self: start;
+  position: relative;
+  z-index: 1;
 }
 
 .backBtn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   border: none;
   border-radius: var(--radius-md);
   background: transparent;
-  color: var(--sem-text-secondary);
+  color: var(--ink-surface-text-muted);
   cursor: pointer;
-  transition: background-color var(--duration-fast) var(--ease-brush-touch);
+  transition: background-color var(--duration-fast) var(--ease-brush-touch),
+              color var(--duration-fast) var(--ease-brush-touch);
 }
 
 .backBtn:hover {
-  background-color: var(--sem-bg-secondary);
+  background-color: var(--ink-surface-bg-card);
+  color: var(--ink-surface-text-body);
 }
 
 .brand {
   font-family: var(--font-family-display);
-  font-size: var(--font-h3);
+  font-size: var(--font-body);
   font-weight: var(--weight-bold);
-  color: var(--sem-text-primary);
+  color: var(--ink-surface-text-body);
   flex-shrink: 0;
+  letter-spacing: 0.1em;
 }
 
 .separator {
-  color: var(--sem-text-disabled);
+  color: var(--ink-surface-border);
   font-size: var(--font-small);
   flex-shrink: 0;
   user-select: none;
@@ -58,22 +108,24 @@
 
 .titleInput {
   font-family: var(--font-family-body);
-  font-size: var(--font-small);
-  color: var(--sem-text-secondary);
+  font-size: var(--font-caption);
+  color: var(--ink-surface-text-muted);
   background: transparent;
   border: none;
   border-bottom: 1px dashed transparent;
   padding: var(--space-1) var(--space-2);
   outline: none;
   width: 140px;
+  transition: color var(--duration-fast) var(--ease-brush-touch),
+              border-color var(--duration-fast) var(--ease-brush-touch);
 }
 
 .titleInput:hover {
-  border-bottom-color: var(--sem-text-disabled);
+  border-bottom-color: var(--ink-surface-border-subtle);
 }
 
 .titleInput:focus {
-  color: var(--sem-text-primary);
+  color: var(--ink-surface-text-body);
   border-bottom-color: var(--sem-action-ai);
   border-bottom-style: solid;
 }
@@ -82,6 +134,8 @@
 
 .center {
   justify-self: center;
+  position: relative;
+  z-index: 1;
 }
 
 /* ===== Right: export ===== */
@@ -91,82 +145,95 @@
   align-items: center;
   gap: var(--space-2);
   justify-self: end;
+  position: relative;
+  z-index: 1;
 }
 
-/* ===== Skeuomorphic book trigger (线装书) ===== */
+/* ===== V3 朱点引 — 朱砂圆点 + 模板名 ===== */
+/* 朱砂圆点是印章语言的最小单位。hover 时引线指向下方卷轴。 */
 
 .templateTrigger {
   display: flex;
-  align-items: stretch;
-  height: 30px;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  background: transparent;
-  position: relative;
-  transition: transform var(--duration-fast) var(--ease-brush-touch),
-              filter var(--duration-fast) var(--ease-brush-touch);
-}
-
-.templateTrigger:hover {
-  transform: translateY(-1px) rotate(-0.5deg);
-}
-
-.templateTrigger:active {
-  transform: translateY(0) rotate(0deg);
-}
-
-/* Book spine — dark binding strip with thread holes */
-.triggerSpine {
-  width: 7px;
-  background: var(--sem-text-secondary);
-  border-radius: 1px 0 0 1px;
-  display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 4px;
+  gap: var(--space-2);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: var(--space-1) var(--space-2);
   position: relative;
+}
+
+.templateTrigger:hover .triggerDot {
+  opacity: 0.80;
+  box-shadow: 0 0 8px rgba(194, 59, 34, 0.25);
+}
+
+.templateTrigger:hover .triggerDot::after {
+  height: 14px;
+}
+
+.templateTrigger:hover .triggerName {
+  color: var(--ink-surface-text-body);
+}
+
+.templateTrigger:hover .triggerCaret {
+  color: var(--ink-surface-text-muted);
+  transform: translateY(2px);
+}
+
+/* 朱砂圆点 */
+.triggerDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--sem-action-primary);
+  opacity: 0.50;
+  position: relative;
+  transition: opacity var(--duration-normal) var(--ease-ink-spread),
+              box-shadow var(--duration-normal) var(--ease-ink-spread);
   flex-shrink: 0;
 }
 
-/* Thread binding dots — three holes along the spine */
-.triggerSpine::before {
+/* 引线 — hover 时从圆点向下延伸，指向即将展开的卷轴 */
+.triggerDot::after {
   content: '';
-  width: 2px;
-  height: 2px;
-  border-radius: var(--radius-full);
-  background: var(--color-paper-aged);
-  box-shadow:
-    0 -5px 0 var(--color-paper-aged),
-    0 5px 0 var(--color-paper-aged);
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 1px;
+  height: 0;
+  background: linear-gradient(180deg,
+    rgba(194, 59, 34, 0.40) 0%,
+    rgba(194, 59, 34, 0.0) 100%);
+  transform: translateX(-50%);
+  transition: height var(--duration-normal) var(--ease-ink-spread);
 }
 
-/* Book cover — paper-textured surface */
-.triggerCover {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-  padding: 0 var(--space-3);
-  background: var(--sem-bg-secondary);
-  border: 1px solid var(--color-paper-aged);
-  border-left: none;
-  border-radius: 0 1px 1px 0;
-  box-shadow: var(--shadow-subtle);
-}
-
-.templateTrigger:hover .triggerCover {
-  box-shadow: var(--shadow-medium);
-  background: var(--color-paper-base);
-}
-
+/* 模板名 */
 .triggerName {
   font-family: var(--font-family-display);
-  font-size: var(--font-caption);
+  font-size: var(--font-small);
   font-weight: var(--weight-bold);
-  color: var(--sem-text-primary);
+  color: var(--ink-surface-text-label);
+  letter-spacing: 0.08em;
   white-space: nowrap;
-  letter-spacing: var(--tracking-wide);
+  transition: color var(--duration-fast) var(--ease-brush-touch);
 }
 
-/* 导出按钮使用 SealButton 组件，无需自定义样式 */
+/* 向下小箭头 */
+.triggerCaret {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-surface-text-placeholder);
+  font-size: 8px;
+  transition: color var(--duration-fast) var(--ease-brush-touch),
+              transform var(--duration-normal) var(--ease-ink-spread);
+}
+
+/* ===== Reduced motion ===== */
+@media (prefers-reduced-motion: reduce) {
+  .root::before {
+    animation: none;
+  }
+}

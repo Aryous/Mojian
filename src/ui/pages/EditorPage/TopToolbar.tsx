@@ -81,10 +81,9 @@ export function TopToolbar({
           onClick={onOpenTemplateDrawer}
           aria-label={`当前模板：${templateName}，点击切换`}
         >
-          <span className={styles.triggerSpine} aria-hidden="true" />
-          <span className={styles.triggerCover}>
-            <span className={styles.triggerName}>{templateName}</span>
-          </span>
+          <span className={styles.triggerDot} aria-hidden="true" />
+          <span className={styles.triggerName}>{templateName}</span>
+          <span className={styles.triggerCaret} aria-hidden="true">&#9662;</span>
         </button>
       </div>
       <div className={styles.right}>
