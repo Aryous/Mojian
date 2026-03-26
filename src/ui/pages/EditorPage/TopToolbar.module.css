@@ -1,14 +1,14 @@
 /* src/ui/pages/EditorPage/TopToolbar.module.css */
-/* Slim toolbar — 48px height */
+/* Slim toolbar */
 
 .root {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 48px;
+  height: var(--editor-toolbar-height);
   padding: 0 var(--space-4);
   background-color: var(--sem-bg-primary);
-  border-bottom: 1px solid var(--color-paper-aged);
+  border-bottom: 1px solid var(--sem-border-default);
   position: relative;
   z-index: 100;
 }
@@ -41,7 +41,7 @@
 
 .brand {
   font-family: var(--font-family-display);
-  font-size: 15px;
+  font-size: var(--font-h3);
   font-weight: var(--weight-bold);
   color: var(--sem-text-primary);
   flex-shrink: 0;
@@ -62,7 +62,7 @@
   background: transparent;
   border: none;
   border-bottom: 1px dashed transparent;
-  padding: 3px var(--space-2);
+  padding: var(--space-1) var(--space-2);
   outline: none;
   width: 140px;
 }
@@ -107,11 +107,11 @@
 
 .templateThumb {
   display: block;
-  width: 16px;
+  width: var(--space-4);
   height: 22px;
   border: 1px solid var(--sem-text-disabled);
   border-radius: 1px;
-  background: #fff;
+  background: var(--color-paper-base);
   position: relative;
   overflow: hidden;
 }
@@ -119,41 +119,20 @@
 .templateThumb::after {
   content: '';
   position: absolute;
-  top: 3px;
+  top: var(--space-1);
   left: 2px;
   right: 2px;
   height: 2px;
   background: var(--sem-text-primary);
   border-radius: 1px;
   box-shadow:
-    0 4px 0 var(--color-paper-aged),
-    0 7px 0 var(--color-paper-aged);
+    0 var(--space-1) 0 var(--sem-border-default),
+    0 var(--space-2) 0 var(--sem-border-default);
 }
 
 .templateArrow {
-  font-size: 8px;
-  opacity: 0.5;
-}
-
-.exportBtn {
-  height: 30px;
-  padding: 0 var(--space-4);
-  border-radius: var(--radius-md);
-  background: var(--sem-action-primary);
-  color: var(--sem-text-inverse);
-  border: none;
-  font-family: var(--font-family-body);
   font-size: var(--font-caption);
-  font-weight: var(--weight-bold);
-  cursor: pointer;
-  transition: background-color var(--duration-fast) var(--ease-brush-touch);
-}
-
-.exportBtn:hover {
-  background: var(--sem-action-primary-hover);
-}
-
-.exportBtn:disabled {
   opacity: 0.5;
-  cursor: not-allowed;
 }
+
+/* 导出按钮使用 SealButton 组件，无需自定义样式 */

@@ -3,6 +3,7 @@
 import { useCallback, useState, type ChangeEvent, type KeyboardEvent } from 'react'
 import { useNavigate } from 'react-router'
 import { usePreviewStore } from '@/runtime/store'
+import { SealButton } from '@/ui/components'
 import type { Resume } from '@/types'
 import styles from './TopToolbar.module.css'
 
@@ -79,19 +80,19 @@ export function TopToolbar({
           type="button"
           className={styles.templateTrigger}
           onClick={onOpenTemplatePopover}
+          aria-label={`当前模板：${templateName}，点击切换`}
         >
           <span className={styles.templateThumb} />
           <span>{templateName}</span>
           <span className={styles.templateArrow}>&#9662;</span>
         </button>
-        <button
-          type="button"
-          className={styles.exportBtn}
+        <SealButton
+          size="sm"
           onClick={handleExport}
           disabled={exporting || compiling}
         >
           {exporting ? '导出中...' : '导出 PDF'}
-        </button>
+        </SealButton>
       </div>
     </header>
   )

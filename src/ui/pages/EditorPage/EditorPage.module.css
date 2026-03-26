@@ -1,7 +1,18 @@
 /* src/ui/pages/EditorPage/EditorPage.module.css */
 /* Editor page — 42/58 split layout */
 
+/* L3 组件令牌 */
 .root {
+  --editor-toolbar-height: 48px;
+  --editor-card-bg: #FEFBF2;  /* 暖白，比宣纸底色明显更亮 */
+  --editor-card-border: rgba(212, 196, 160, 0.4);
+  --editor-ai-btn-border: rgba(27, 73, 101, 0.25);
+  --editor-ai-btn-bg: rgba(27, 73, 101, 0.03);
+  --editor-ai-btn-hover-bg: rgba(27, 73, 101, 0.1);
+  --editor-ai-btn-hover-border: rgba(27, 73, 101, 0.4);
+  --editor-scrollbar-thumb: rgba(107, 91, 62, 0.2);
+  --editor-scrollbar-thumb-hover: rgba(107, 91, 62, 0.4);
+
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -24,38 +35,46 @@
   max-width: 520px;
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
-  padding: var(--space-4) 18px 80px;
+  gap: var(--space-6);
+  padding: var(--space-4) var(--space-4) var(--space-24);
   overflow-y: auto;
-  max-height: calc(100vh - 48px);
+  max-height: calc(100vh - var(--editor-toolbar-height));
   background-color: var(--sem-bg-primary);
 }
 
 /* Custom thin scrollbar */
-.editor::-webkit-scrollbar { width: 4px; }
+.editor::-webkit-scrollbar { width: var(--space-1); }
 .editor::-webkit-scrollbar-track { background: transparent; }
-.editor::-webkit-scrollbar-thumb { background: rgba(107, 91, 62, 0.2); border-radius: 2px; }
-.editor::-webkit-scrollbar-thumb:hover { background: rgba(107, 91, 62, 0.4); }
+.editor::-webkit-scrollbar-thumb { background: var(--editor-scrollbar-thumb); border-radius: var(--radius-sm); }
+.editor::-webkit-scrollbar-thumb:hover { background: var(--editor-scrollbar-thumb-hover); }
 
 /* Preview panel ~58% */
 .preview {
   flex: 58;
   min-width: 0;
-  border-left: 1px solid var(--color-paper-aged);
-  max-height: calc(100vh - 48px);
+  border-left: 1px solid var(--sem-border-default);
+  max-height: calc(100vh - var(--editor-toolbar-height));
   overflow: hidden;
   position: relative;
+}
+
+/* ===== Section list (Reorder.Group) ===== */
+
+.sectionList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
 }
 
 /* ===== Section cards ===== */
 
 .sectionCard {
-  background: #fff;
-  border-radius: var(--space-3);
-  border: 1px solid rgba(212, 196, 160, 0.5);
-  box-shadow: var(--shadow-subtle);
+  background: var(--editor-card-bg);
+  border-radius: 6px;
+  border: 1px solid var(--editor-card-border);
+  box-shadow: var(--shadow-medium);
   padding: var(--space-4);
-  transition: box-shadow 0.2s var(--ease-brush-touch);
+  transition: box-shadow var(--duration-fast) var(--ease-brush-touch);
 }
 
 .sectionCard:hover {
@@ -73,7 +92,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 16px;
+  width: var(--space-4);
   flex-shrink: 0;
   cursor: grab;
   color: var(--sem-text-disabled);
@@ -98,30 +117,30 @@
 .sectionTitle {
   flex: 1;
   font-family: var(--font-family-display);
-  font-size: 15px;
+  font-size: var(--font-h3);
   font-weight: var(--weight-bold);
   line-height: var(--leading-tight);
   color: var(--sem-text-primary);
   margin: 0;
-  padding-left: 10px;
-  border-left: 3px solid var(--sem-action-primary);
+  padding-left: var(--space-2);
+  border-left: 2px solid var(--sem-action-primary);
 }
 
 .sectionAiBtn {
   display: flex;
   align-items: center;
   gap: var(--space-1);
-  height: 24px;
+  height: var(--space-6);
   padding: 0 var(--space-2);
   border-radius: var(--radius-md);
-  border: 1px solid rgba(27, 73, 101, 0.25);
-  background: rgba(27, 73, 101, 0.03);
+  border: 1px solid var(--editor-ai-btn-border);
+  background: var(--editor-ai-btn-bg);
   color: var(--sem-action-ai);
   font-family: var(--font-family-body);
-  font-size: 10px;
+  font-size: var(--font-caption);
   cursor: pointer;
   opacity: 0;
-  transition: opacity 0.2s var(--ease-brush-touch),
+  transition: opacity var(--duration-fast) var(--ease-brush-touch),
               background-color var(--duration-fast) var(--ease-brush-touch);
 }
 
@@ -130,8 +149,8 @@
 }
 
 .sectionAiBtn:hover {
-  background: rgba(27, 73, 101, 0.1);
-  border-color: rgba(27, 73, 101, 0.4);
+  background: var(--editor-ai-btn-hover-bg);
+  border-color: var(--editor-ai-btn-hover-border);
 }
 
 /* ===== Loading / Empty states ===== */

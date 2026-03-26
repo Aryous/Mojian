@@ -45,11 +45,8 @@ export function ResumePreview({ resume, shifted }: ResumePreviewProps) {
 
   return (
     <div className={styles.root}>
-      <div className={styles.header}>
-        <span className={styles.label}>预览</span>
-        {compiling && <span className={styles.status}>编译中...</span>}
-      </div>
       <div className={`${styles.canvas} ${shifted ? styles.canvasShifted : ''}`}>
+        {compiling && <span className={styles.compilingBadge}>编译中...</span>}
         {error ? (
           <div className={styles.error}>
             <p>渲染失败</p>

@@ -3,9 +3,11 @@ import type { ReactNode } from 'react'
 import styles from './SealButton.module.css'
 
 type SealButtonVariant = 'primary' | 'secondary' | 'ghost'
+type SealButtonSize = 'default' | 'sm'
 
 interface SealButtonProps {
   variant?: SealButtonVariant
+  size?: SealButtonSize
   children: ReactNode
   className?: string
   disabled?: boolean
@@ -15,6 +17,7 @@ interface SealButtonProps {
 
 export function SealButton({
   variant = 'primary',
+  size = 'default',
   children,
   className,
   disabled,
@@ -23,7 +26,7 @@ export function SealButton({
 }: SealButtonProps) {
   return (
     <motion.button
-      className={`${styles.root} ${styles[variant]} ${className ?? ''}`}
+      className={`${styles.root} ${styles[variant]} ${size === 'sm' ? styles.sm : ''} ${className ?? ''}`}
       disabled={disabled}
       type={type}
       onClick={onClick}

@@ -35,7 +35,7 @@ function DraggableSectionCard({
       as="div"
       dragListener={false}
       dragControls={controls}
-      whileDrag={{ scale: 1.015, boxShadow: '0 4px 16px rgba(28,18,8,0.14)' }}
+      whileDrag={{ scale: 1.015, boxShadow: 'var(--shadow-strong)' }}
       style={{ position: 'relative' }}
     >
       <div className={styles.sectionCard}>
@@ -263,6 +263,7 @@ export function EditorPage() {
             values={visibleSections}
             onReorder={handleSectionReorder}
             as="div"
+            className={styles.sectionList}
           >
             {visibleSections.map((section) => (
               <DraggableSectionCard
