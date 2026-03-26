@@ -1,0 +1,81 @@
+/* LandingPage -- Bold skeuomorphic classical Chinese landing */
+/* Visual rhythm: Hero (80vh) -> ink wash break -> Features -> Footer */
+
+.root {
+  min-height: 100vh;
+  background-color: var(--sem-bg-primary);
+}
+
+/* ===== Section Break: ink wash divider ===== */
+
+.sectionBreak {
+  position: relative;
+  padding: var(--space-2) var(--space-16);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.inkWashLine {
+  width: 100%;
+  max-width: 520px;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--sem-border-default) 10%,
+    var(--sem-action-primary) 40%,
+    var(--sem-action-primary) 60%,
+    var(--sem-border-default) 90%,
+    transparent 100%
+  );
+  opacity: 0.45;
+  transform-origin: center;
+}
+
+/* ===== Hero Actions ===== */
+
+.heroActions {
+  display: flex;
+  gap: var(--space-4);
+  align-items: center;
+}
+
+/* ===== Footer ===== */
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-12) var(--space-8) var(--space-8);
+}
+
+.footerDivider {
+  max-width: 240px;
+  margin-bottom: var(--space-6);
+}
+
+.footerText {
+  margin: 0;
+  font-family: var(--font-family-display);
+  font-size: var(--font-small);
+  color: var(--sem-text-disabled);
+  letter-spacing: var(--tracking-wide);
+}
+
+/* Footer brand name -- hover vermillion tint */
+.footerBrand {
+  transition: color var(--duration-normal) var(--ease-brush-touch);
+  cursor: default;
+}
+
+.footerBrand:hover {
+  color: var(--delight-footer-hover-color);
+}
+
+/* ===== Compact desktop ===== */
+@media (max-width: 1279px) {
+  .sectionBreak {
+    padding: var(--space-2) var(--space-8);
+  }
+}
