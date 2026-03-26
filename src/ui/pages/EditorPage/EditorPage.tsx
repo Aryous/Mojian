@@ -32,6 +32,37 @@ export function EditorPage() {
     [updateCurrentResume],
   )
 
+  // 收集简历文本内容供 AI 优化使用（所有 hooks 必须在 early return 之前）
+  const resumeTextContent = useMemo(() => {
+    if (!currentResume) return ''
+    const parts: string[] = []
+    const { personal, education, work, skills, projects } = currentResume
+    if (personal.summary) parts.push(personal.summary)
+    for (const edu of education) {
+      if (edu.description) parts.push(edu.description)
+    }
+    for (const w of work) {
+      if (w.description) parts.push(w.description)
+    }
+    for (const s of skills) {
+      parts.push(`${s.name} (${s.level})`)
+    }
+    for (const p of projects) {
+      if (p.description) parts.push(p.description)
+    }
+    return parts.join('\n\n')
+  }, [currentResume])
+
+  const handleAiAccept = useCallback(
+    (optimized: string) => {
+      if (!currentResume) return
+      updateCurrentResume({
+        personal: { ...currentResume.personal, summary: optimized },
+      })
+    },
+    [currentResume, updateCurrentResume],
+  )
+
   // loading 或 effect 尚未触发（有 id 但 currentResume 还没加载）
   if (loading || (id && !currentResume)) {
     return (
@@ -55,37 +86,6 @@ export function EditorPage() {
   const visibleSections = currentResume.sections
     .filter((s) => s.visible)
     .sort((a, b) => a.sortOrder - b.sortOrder)
-
-  // 收集简历文本内容供 AI 优化使用
-  const resumeTextContent = useMemo(() => {
-    const parts: string[] = []
-    const { personal, education, work, skills, projects } = currentResume
-    if (personal.summary) parts.push(personal.summary)
-    for (const edu of education) {
-      if (edu.description) parts.push(edu.description)
-    }
-    for (const w of work) {
-      if (w.description) parts.push(w.description)
-    }
-    for (const s of skills) {
-      parts.push(`${s.name} (${s.level})`)
-    }
-    for (const p of projects) {
-      if (p.description) parts.push(p.description)
-    }
-    return parts.join('\n\n')
-  }, [currentResume])
-
-  const handleAiAccept = useCallback(
-    (optimized: string) => {
-      // 将优化结果写入 personal.summary 作为默认行为
-      // 未来可以精确到具体 section
-      updateCurrentResume({
-        personal: { ...currentResume.personal, summary: optimized },
-      })
-    },
-    [currentResume, updateCurrentResume],
-  )
 
   return (
     <div className={styles.root}>
