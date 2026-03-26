@@ -15,7 +15,6 @@ export function InkDivider({
   return (
     <div
       className={`${styles.root} ${className ?? ''}`}
-      role="separator"
       aria-hidden="true"
       {...props}
     >
@@ -33,10 +32,18 @@ export function InkDivider({
               stroke="currentColor"
               strokeWidth="1.2"
             />
-            {/* 小祥云装饰 */}
-            <circle cx="400" cy="2" r="2" fill="currentColor" opacity="0.5" />
+            {/* 小祥云装饰 — 呼应 CloudEmpty 的云纹语汇 */}
+            <g transform="translate(388, -1)" opacity="0.5">
+              <path
+                d="M0 5 Q0 2 3 2 Q4 0 7 0 Q10 0 11 2 Q14 1 15 3 Q17 3 17 5 Q17 7 14 7 L3 7 Q0 7 0 5 Z"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="0.8"
+                strokeLinecap="round"
+              />
+            </g>
             <path
-              d="M430 2 C500 1.2, 600 2.8, 800 2"
+              d="M418 2 C500 1.2, 600 2.8, 800 2"
               fill="none"
               stroke="currentColor"
               strokeWidth="1.2"

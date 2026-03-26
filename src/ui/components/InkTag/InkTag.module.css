@@ -13,4 +13,8 @@
   line-height: var(--leading-tight);
   color: var(--sem-text-secondary);
   user-select: none;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

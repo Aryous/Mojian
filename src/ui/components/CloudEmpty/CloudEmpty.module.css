@@ -13,6 +13,23 @@
   width: 120px;
   height: 60px;
   color: var(--sem-text-disabled);
+  animation: cloudDrift var(--delight-cloud-drift-duration) var(--ease-brush-touch) infinite alternate;
+}
+
+/* Slow meandering drift -- horizontal + vertical for a floating-in-sky feel */
+@keyframes cloudDrift {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(calc(var(--delight-cloud-drift-range) * 0.6), calc(var(--delight-cloud-drift-range) * -0.5)) scale(1.02);
+  }
+  66% {
+    transform: translate(calc(var(--delight-cloud-drift-range) * -0.3), calc(var(--delight-cloud-drift-range) * -0.8)) scale(0.98);
+  }
+  100% {
+    transform: translate(calc(var(--delight-cloud-drift-range) * 0.4), calc(var(--delight-cloud-drift-range) * -0.3)) scale(1.01);
+  }
 }
 
 .message {

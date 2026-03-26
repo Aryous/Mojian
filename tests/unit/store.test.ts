@@ -193,7 +193,7 @@ describe('Runtime 层：previewStore 初始状态', () => {
   it('初始状态正确', async () => {
     const { usePreviewStore } = await import('@/runtime/store/previewStore')
     const state = usePreviewStore.getState()
-    expect(state.artifact).toBeNull()
+    expect(state.svg).toBeNull()
     expect(state.error).toBeNull()
     expect(state.compiling).toBe(false)
     expect(state.exporting).toBe(false)
@@ -203,7 +203,7 @@ describe('Runtime 层：previewStore 初始状态', () => {
     const { usePreviewStore } = await import('@/runtime/store/previewStore')
     // 手动设置一些状态
     usePreviewStore.setState({
-      artifact: new Uint8Array([1, 2, 3]),
+      svg: '<svg>test</svg>',
       error: 'some error',
       compiling: true,
       exporting: true,
@@ -211,7 +211,7 @@ describe('Runtime 层：previewStore 初始状态', () => {
     usePreviewStore.getState().clear()
 
     const state = usePreviewStore.getState()
-    expect(state.artifact).toBeNull()
+    expect(state.svg).toBeNull()
     expect(state.error).toBeNull()
     expect(state.compiling).toBe(false)
     expect(state.exporting).toBe(false)

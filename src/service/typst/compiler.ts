@@ -1,21 +1,35 @@
 // Service 层：Typst WASM 编译器封装
 // 依赖：Types, @myriaddreamin/typst.ts
+// 渲染路径：compiler(vector) → renderer(SVG string) → dangerouslySetInnerHTML
 
-import { createTypstCompiler, type TypstCompiler, preloadRemoteFonts } from '@myriaddreamin/typst.ts'
+import {
+  createTypstCompiler,
+  createTypstRenderer,
+  type TypstCompiler,
+  type TypstRenderer,
+  preloadRemoteFonts,
+} from '@myriaddreamin/typst.ts'
 import type { Resume } from '@/types'
 
 let compiler: TypstCompiler | null = null
 let initPromise: Promise<void> | null = null
 
+let renderer: TypstRenderer | null = null
+let rendererInitPromise: Promise<void> | null = null
+
 // 模板源码（构建时内联）
 import classicTemplate from './templates/classic.typ?raw'
 import twocolumnTemplate from './templates/twocolumn.typ?raw'
 import academicTemplate from './templates/academic.typ?raw'
+import modernTemplate from './templates/modern.typ?raw'
+import minimalTemplate from './templates/minimal.typ?raw'
 
 const TEMPLATES: Record<string, string> = {
   classic: classicTemplate,
   twocolumn: twocolumnTemplate,
   academic: academicTemplate,
+  modern: modernTemplate,
+  minimal: minimalTemplate,
 }
 
 /** 初始化编译器（单例，懒加载） */
@@ -39,6 +53,25 @@ async function ensureCompiler(): Promise<TypstCompiler> {
 
   await initPromise
   return compiler!
+}
+
+/** 初始化渲染器（单例，懒加载） */
+async function ensureRenderer(): Promise<TypstRenderer> {
+  if (renderer) return renderer
+
+  if (!rendererInitPromise) {
+    rendererInitPromise = (async () => {
+      const r = createTypstRenderer()
+      await r.init({
+        getModule: () =>
+          '/node_modules/@myriaddreamin/typst-ts-renderer/pkg/typst_ts_renderer_bg.wasm',
+      })
+      renderer = r
+    })()
+  }
+
+  await rendererInitPromise
+  return renderer!
 }
 
 /** 将简历数据序列化为模板可消费的 JSON */
@@ -82,6 +115,17 @@ export async function compileToVector(resume: Resume): Promise<Uint8Array> {
   ).join('\n') ?? 'Unknown compilation error'
 
   throw new Error(`Typst compilation failed:\n${errors}`)
+}
+
+/** 编译简历为 SVG 字符串（用于预览） */
+export async function compileToSvg(resume: Resume): Promise<string> {
+  const vectorData = await compileToVector(resume)
+  const r = await ensureRenderer()
+  const svg = await r.renderSvg({
+    artifactContent: vectorData,
+    format: 'vector',
+  })
+  return svg
 }
 
 /** 编译简历为 PDF（用于导出） */

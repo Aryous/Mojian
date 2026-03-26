@@ -1,4 +1,4 @@
-import type { SVGAttributes } from 'react'
+import { useId, type SVGAttributes } from 'react'
 import styles from './LatticePattern.module.css'
 
 interface LatticePatternProps extends SVGAttributes<SVGSVGElement> {
@@ -15,7 +15,8 @@ export function LatticePattern({
   className,
   ...props
 }: LatticePatternProps) {
-  const patternId = 'mojian-lattice-swastika'
+  const instanceId = useId()
+  const patternId = `mojian-lattice-${instanceId}`
 
   return (
     <svg

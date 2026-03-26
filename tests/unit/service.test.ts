@@ -20,6 +20,12 @@ vi.mock('@/service/typst/templates/twocolumn.typ?raw', () => ({
 vi.mock('@/service/typst/templates/academic.typ?raw', () => ({
   default: '// academic template',
 }))
+vi.mock('@/service/typst/templates/modern.typ?raw', () => ({
+  default: '// modern template',
+}))
+vi.mock('@/service/typst/templates/minimal.typ?raw', () => ({
+  default: '// minimal template',
+}))
 
 // Mock localStorage for settings
 const localStorageMock = (() => {
@@ -45,10 +51,10 @@ const localStorageMock = (() => {
 vi.stubGlobal('localStorage', localStorageMock)
 
 describe('Service 层：Typst 模板', () => {
-  it('getTemplateIds 返回三个模板 ID', async () => {
+  it('getTemplateIds 返回五个模板 ID', async () => {
     const { getTemplateIds } = await import('@/service/typst/compiler')
     const ids = getTemplateIds()
-    expect(ids).toEqual(['classic', 'twocolumn', 'academic'])
+    expect(ids).toEqual(['classic', 'twocolumn', 'academic', 'modern', 'minimal'])
   })
 })
 

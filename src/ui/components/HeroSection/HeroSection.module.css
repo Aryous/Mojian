@@ -1,0 +1,336 @@
+/* HeroSection -- Dramatic ink-drop entrance, asymmetric composition */
+/* Title sweeps in from left. Ink drop expands from center on load. */
+/* Seal stamp drops from above as signature moment. */
+
+.root {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 80vh;
+  padding: var(--space-24) var(--space-16);
+  background-color: var(--sem-bg-primary);
+  overflow: hidden;
+}
+
+/* --- Paper fiber texture --- */
+.paperTexture {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  opacity: 0.06;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+/* --- Large-scale ink wash background -- dramatic sumi-e effect --- */
+.inkWashBackground {
+  position: absolute;
+  top: -10%;
+  right: -5%;
+  width: 70%;
+  height: 120%;
+  background: radial-gradient(
+    ellipse 80% 60% at 70% 40%,
+    var(--sem-text-disabled) 0%,
+    transparent 50%
+  );
+  opacity: 0.05;
+  pointer-events: none;
+  filter: blur(60px);
+}
+
+/* --- Lattice corner accents --- */
+.latticeTopLeft,
+.latticeBottomRight {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  opacity: var(--hero-lattice-opacity);
+  pointer-events: none;
+}
+
+.latticeTopLeft {
+  top: var(--space-6);
+  left: var(--space-6);
+}
+
+.latticeBottomRight {
+  bottom: var(--space-6);
+  right: var(--space-6);
+}
+
+/* --- Ink wash ambient blobs --- bolder opacity --- */
+.inkBlob1,
+.inkBlob2,
+.inkBlob3 {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(80px);
+  animation: blobDrift 10s var(--ease-brush-touch) infinite alternate;
+}
+
+.inkBlob1 {
+  width: 600px;
+  height: 600px;
+  top: -120px;
+  right: 5%;
+  background: radial-gradient(
+    ellipse at center,
+    var(--sem-text-disabled) 0%,
+    transparent 70%
+  );
+  opacity: var(--hero-ink-blob-opacity);
+}
+
+.inkBlob2 {
+  width: 500px;
+  height: 500px;
+  bottom: -80px;
+  left: 10%;
+  background: radial-gradient(
+    ellipse at center,
+    var(--sem-action-primary) 0%,
+    transparent 70%
+  );
+  opacity: var(--hero-vermillion-blob-opacity);
+  animation-delay: -3s;
+  animation-duration: 12s;
+}
+
+.inkBlob3 {
+  width: 420px;
+  height: 420px;
+  top: 20%;
+  right: 20%;
+  background: radial-gradient(
+    ellipse at center,
+    var(--sem-status-warning) 0%,
+    transparent 70%
+  );
+  opacity: var(--hero-gold-blob-opacity);
+  animation-delay: -6s;
+  animation-duration: 14s;
+}
+
+@keyframes blobDrift {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    transform: translate(15px, -12px) scale(1.06);
+  }
+}
+
+/* --- Ink drop entrance (signature animation) --- */
+.inkDrop {
+  position: absolute;
+  top: 50%;
+  left: 40%;
+  width: 120vmax;
+  height: 120vmax;
+  margin-top: -60vmax;
+  margin-left: -60vmax;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    var(--sem-text-primary) 0%,
+    var(--sem-text-secondary) 30%,
+    transparent 60%
+  );
+  pointer-events: none;
+}
+
+/* --- Cloud wisps -- slow meandering drift --- */
+.cloudWisp {
+  position: absolute;
+  top: var(--space-12);
+  right: var(--space-12);
+  width: 200px;
+  height: 80px;
+  color: var(--sem-text-disabled);
+  opacity: var(--hero-cloud-opacity);
+  animation: cloudDriftA var(--delight-cloud-drift-duration) var(--ease-brush-touch) infinite alternate;
+}
+
+.cloudWisp2 {
+  position: absolute;
+  bottom: var(--space-16);
+  left: var(--space-24);
+  width: 140px;
+  height: 52px;
+  color: var(--sem-text-disabled);
+  opacity: 0.25;
+  animation: cloudDriftB 12s var(--ease-brush-touch) infinite alternate;
+}
+
+@keyframes cloudDriftA {
+  0% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(8px, -6px);
+  }
+  100% {
+    transform: translate(-4px, -10px);
+  }
+}
+
+@keyframes cloudDriftB {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-6px, -4px) scale(1.03);
+  }
+  100% {
+    transform: translate(4px, -8px) scale(0.97);
+  }
+}
+
+/* --- Decorative vertical seal (right side) --- */
+.decorativeSeal {
+  position: absolute;
+  right: var(--space-16);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 88px;
+  color: var(--sem-action-primary);
+}
+
+/* --- Content (left-aligned, asymmetric) --- */
+.content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 720px;
+  padding-left: var(--space-8);
+}
+
+/* Seal stamp -- drops from above beside the title */
+.sealStamp {
+  position: absolute;
+  top: -8px;
+  left: calc(100% - var(--space-4));
+  width: var(--hero-seal-stamp-size);
+  height: var(--hero-seal-stamp-size);
+  color: var(--sem-action-primary);
+  pointer-events: none;
+}
+
+/* Faint impression left on paper */
+.sealImpression {
+  position: absolute;
+  top: -6px;
+  left: calc(100% - var(--space-3));
+  width: var(--hero-seal-stamp-size);
+  height: var(--hero-seal-stamp-size);
+  color: var(--sem-action-primary);
+  pointer-events: none;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-family-display);
+  font-size: var(--hero-title-size);
+  font-weight: var(--weight-bold);
+  line-height: 1.05;
+  letter-spacing: var(--hero-title-tracking);
+  color: var(--sem-text-primary);
+}
+
+/* Bold brush stroke -- SVG hand-drawn path, vermillion */
+.brushStroke {
+  width: var(--hero-brush-width);
+  height: 12px;
+  margin-top: var(--space-3);
+  color: var(--hero-brush-color);
+  opacity: var(--hero-brush-opacity);
+  transform-origin: left center;
+  overflow: visible;
+}
+
+.brushSvg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.subtitle {
+  margin: var(--space-6) 0 0;
+  font-family: var(--font-family-body);
+  font-size: var(--hero-subtitle-size);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-relaxed);
+  color: var(--sem-text-secondary);
+  max-width: 440px;
+}
+
+.cta {
+  margin-top: var(--space-8);
+}
+
+/* Scale up CTA for hero prominence */
+.cta :global(button) {
+  font-size: var(--font-h3);
+  padding: var(--space-4) var(--space-8);
+}
+
+/* --- Paper edge --- */
+.paperEdge {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--space-3);
+  background: var(--hero-paper-edge-shadow);
+  pointer-events: none;
+}
+
+/* --- Compact desktop --- */
+@media (max-width: 1279px) {
+  .root {
+    min-height: 70vh;
+    padding: var(--space-16) var(--space-8);
+  }
+
+  .content {
+    padding-left: var(--space-4);
+    max-width: 600px;
+  }
+
+  .latticeTopLeft,
+  .latticeBottomRight {
+    width: 120px;
+    height: 120px;
+  }
+
+  .decorativeSeal {
+    right: var(--space-8);
+  }
+
+  .cloudWisp {
+    width: 160px;
+    right: var(--space-8);
+    top: var(--space-8);
+  }
+
+  .cloudWisp2 {
+    width: 100px;
+    left: var(--space-8);
+  }
+
+  .sealStamp,
+  .sealImpression {
+    display: none;
+  }
+
+  .inkWashBackground {
+    width: 80%;
+    opacity: 0.04;
+  }
+}

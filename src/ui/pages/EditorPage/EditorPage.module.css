@@ -1,96 +1,217 @@
+/* 编辑器页面布局 */
+/* design-spec §5.4: EditorLayout — 双栏 55/45 */
+
 .root {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: var(--space-4) var(--space-4);
-  min-height: 100vh;
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-  margin-bottom: var(--space-4);
-}
-
-.title {
-  font-family: var(--font-family-display);
-  font-size: var(--font-h1);
-  font-weight: var(--weight-bold);
-  color: var(--sem-text-primary);
-  margin: 0;
-}
-
-.columns {
-  display: flex;
-  gap: var(--space-6);
-  margin-top: var(--space-4);
-  align-items: flex-start;
-}
-
-.editor {
-  flex: 1;
-  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  min-height: 100vh;
+  background-color: var(--sem-bg-primary);
 }
 
-.preview {
-  flex: 0 0 420px;
-  position: sticky;
-  top: var(--space-4);
-  max-height: calc(100vh - var(--space-8));
+/* ===== 工作区：编辑 + 预览 双栏 ===== */
+
+.workspace {
+  display: flex;
+  flex: 1;
+  position: relative;
   overflow: hidden;
 }
 
+/* 编辑区 ~55% */
+.editor {
+  flex: 55;
+  min-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding: var(--space-6);
+  overflow-y: auto;
+  max-height: calc(100vh - 64px);
+}
+
+/* 预览区 ~45% */
+.preview {
+  flex: 45;
+  min-width: 0;
+  border-left: 1px solid var(--sem-border-default);
+  max-height: calc(100vh - 64px);
+  overflow: hidden;
+}
+
+/* ===== Section 标题 ===== */
+
+/* 朱砂左缘 — 模拟古书批注红线，强化模块边界辨识 */
 .sectionTitle {
   font-family: var(--font-family-display);
-  font-size: var(--font-h2);
-  font-weight: var(--weight-medium);
+  font-size: var(--font-h3);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
   color: var(--sem-text-primary);
   margin: 0 0 var(--space-4) 0;
+  padding-left: var(--space-3);
+  border-left: 3px solid var(--sem-action-primary);
 }
 
-.templatePicker {
+/* ===== AI 右侧抽屉 ===== */
+/* design-spec §5.3: AIOptionPanel — 右侧抽屉 360px */
+
+.aiDrawer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 360px;
+  background: linear-gradient(
+    180deg,
+    var(--color-ink-deep) 0%,
+    var(--color-ink-medium) 100%
+  );
+  box-shadow: var(--shadow-strong);
   display: flex;
-  gap: var(--space-2);
-  margin-left: auto;
+  flex-direction: column;
+  z-index: 40;
 }
 
-.templateBtn {
-  padding: var(--space-1) var(--space-3);
-  border: 1px solid var(--sem-border-default);
+.aiDrawerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-6);
+  border-bottom: 1px solid var(--ink-surface-border-subtle);
+}
+
+.aiDrawerTitle {
+  font-family: var(--font-family-display);
+  font-size: var(--font-h3);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--sem-text-inverse);
+  margin: 0;
+}
+
+.aiDrawerClose {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
   border-radius: var(--radius-sm);
   background: transparent;
-  color: var(--sem-text-secondary);
-  font-family: var(--font-family-display);
-  font-size: var(--font-caption);
+  color: var(--sem-text-inverse);
   cursor: pointer;
-  transition: all 0.2s ease;
+  opacity: 0.6;
+  transition: opacity var(--duration-fast) var(--ease-brush-touch);
 }
 
-.templateBtn:hover {
-  border-color: var(--sem-text-tertiary);
-  color: var(--sem-text-primary);
+.aiDrawerClose:hover,
+.aiDrawerClose:focus-visible {
+  opacity: 1;
 }
 
-.templateBtnActive {
-  background: var(--sem-bg-ink);
-  color: var(--color-paper-base);
-  border-color: var(--sem-bg-ink);
+.aiDrawerBody {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-4) var(--space-6);
 }
 
-.templateBtnActive:hover {
-  background: var(--color-ink-medium);
-  border-color: var(--color-ink-medium);
-  color: var(--color-paper-base);
-}
+/* ===== 加载 / 空态 ===== */
 
 .loading,
 .empty {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 60vh;
+  gap: var(--space-4);
+  font-family: var(--font-family-body);
+  font-size: var(--font-body);
   color: var(--sem-text-tertiary);
+}
+
+/* 墨水晕染加载动画 — design-spec §6.4 */
+/* 三层同心墨环，错开启动形成涟漪扩散 */
+.inkLoader {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+}
+
+.inkDot {
+  position: absolute;
+  display: block;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  background-color: var(--sem-text-tertiary);
+  animation: inkSpread 1.2s var(--ease-ink-spread) infinite;
+}
+
+/* 第二层涟漪 */
+.inkDot::before,
+.inkDot::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--sem-text-tertiary);
+  animation: inkRipple 1.2s var(--ease-ink-spread) infinite;
+}
+
+/* 第三层涟漪 — 更大延迟 */
+.inkDot::after {
+  inset: -10px;
+  animation-delay: 0.2s;
+}
+
+@keyframes inkSpread {
+  0% {
+    transform: scale(0.2);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 0.2;
+  }
+  100% {
+    transform: scale(0.2);
+    opacity: 0.8;
+  }
+}
+
+@keyframes inkRipple {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+/* ===== 响应式 ===== */
+/* design-spec §7.1: 仅桌面端 ≥1024px */
+
+@media (max-width: 1279px) {
+  .editor {
+    flex: 50;
+  }
+
+  .preview {
+    flex: 50;
+  }
+
+  .editor {
+    padding: var(--space-4);
+  }
 }

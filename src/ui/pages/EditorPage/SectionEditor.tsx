@@ -40,18 +40,18 @@ function PersonalEditor({ resume, onUpdate }: Omit<SectionEditorProps, 'type'>) 
   return (
     <div className={styles.fields}>
       <div className={styles.row}>
-        <InkInput label="姓名" value={personal.name} onChange={inputHandler((v) => handleChange('name', v))} />
-        <InkInput label="职位" value={personal.title} onChange={inputHandler((v) => handleChange('title', v))} />
+        <InkInput label="姓名" hint="如：张三" value={personal.name} onChange={inputHandler((v) => handleChange('name', v))} />
+        <InkInput label="职位" hint="如：前端工程师" value={personal.title} onChange={inputHandler((v) => handleChange('title', v))} />
       </div>
       <div className={styles.row}>
-        <InkInput label="邮箱" value={personal.email} onChange={inputHandler((v) => handleChange('email', v))} />
-        <InkInput label="电话" value={personal.phone} onChange={inputHandler((v) => handleChange('phone', v))} />
+        <InkInput label="邮箱" hint="your@email.com" value={personal.email} onChange={inputHandler((v) => handleChange('email', v))} />
+        <InkInput label="电话" hint="138-xxxx-xxxx" value={personal.phone} onChange={inputHandler((v) => handleChange('phone', v))} />
       </div>
       <div className={styles.row}>
-        <InkInput label="所在地" value={personal.location} onChange={inputHandler((v) => handleChange('location', v))} />
-        <InkInput label="网站" value={personal.website} onChange={inputHandler((v) => handleChange('website', v))} />
+        <InkInput label="所在地" hint="如：上海" value={personal.location} onChange={inputHandler((v) => handleChange('location', v))} />
+        <InkInput label="网站" hint="https://" value={personal.website} onChange={inputHandler((v) => handleChange('website', v))} />
       </div>
-      <InkInput label="个人简介" value={personal.summary} onChange={inputHandler((v) => handleChange('summary', v))} />
+      <InkInput label="个人简介" hint="用一两句话介绍自己的核心优势" value={personal.summary} onChange={inputHandler((v) => handleChange('summary', v))} />
     </div>
   )
 }
@@ -138,15 +138,15 @@ function EducationEditor({ resume, onUpdate }: Omit<SectionEditorProps, 'type'>)
       renderItem={(item, onChange) => (
         <div className={styles.fields}>
           <div className={styles.row}>
-            <InkInput label="学校" value={item.school} onChange={inputHandler((v) => onChange('school', v))} />
-            <InkInput label="学位" value={item.degree} onChange={inputHandler((v) => onChange('degree', v))} />
+            <InkInput label="学校" hint="如：清华大学" value={item.school} onChange={inputHandler((v) => onChange('school', v))} />
+            <InkInput label="学位" hint="如：本科" value={item.degree} onChange={inputHandler((v) => onChange('degree', v))} />
           </div>
           <div className={styles.row}>
-            <InkInput label="专业" value={item.field} onChange={inputHandler((v) => onChange('field', v))} />
-            <InkInput label="开始时间" value={item.startDate} onChange={inputHandler((v) => onChange('startDate', v))} />
-            <InkInput label="结束时间" value={item.endDate} onChange={inputHandler((v) => onChange('endDate', v))} />
+            <InkInput label="专业" hint="如：计算机科学" value={item.field} onChange={inputHandler((v) => onChange('field', v))} />
+            <InkInput label="开始时间" hint="2020-09" value={item.startDate} onChange={inputHandler((v) => onChange('startDate', v))} />
+            <InkInput label="结束时间" hint="2024-06" value={item.endDate} onChange={inputHandler((v) => onChange('endDate', v))} />
           </div>
-          <InkInput label="描述" value={item.description} onChange={inputHandler((v) => onChange('description', v))} />
+          <InkInput label="描述" hint="GPA、荣誉、相关课程等" value={item.description} onChange={inputHandler((v) => onChange('description', v))} />
         </div>
       )}
     />
@@ -172,14 +172,14 @@ function WorkEditor({ resume, onUpdate }: Omit<SectionEditorProps, 'type'>) {
       renderItem={(item, onChange) => (
         <div className={styles.fields}>
           <div className={styles.row}>
-            <InkInput label="公司" value={item.company} onChange={inputHandler((v) => onChange('company', v))} />
-            <InkInput label="职位" value={item.position} onChange={inputHandler((v) => onChange('position', v))} />
+            <InkInput label="公司" hint="如：字节跳动" value={item.company} onChange={inputHandler((v) => onChange('company', v))} />
+            <InkInput label="职位" hint="如：高级工程师" value={item.position} onChange={inputHandler((v) => onChange('position', v))} />
           </div>
           <div className={styles.row}>
-            <InkInput label="开始时间" value={item.startDate} onChange={inputHandler((v) => onChange('startDate', v))} />
-            <InkInput label="结束时间" value={item.endDate} onChange={inputHandler((v) => onChange('endDate', v))} />
+            <InkInput label="开始时间" hint="2022-03" value={item.startDate} onChange={inputHandler((v) => onChange('startDate', v))} />
+            <InkInput label="结束时间" hint="至今" value={item.endDate} onChange={inputHandler((v) => onChange('endDate', v))} />
           </div>
-          <InkInput label="描述" value={item.description} onChange={inputHandler((v) => onChange('description', v))} />
+          <InkInput label="描述" hint="核心职责与量化成果" value={item.description} onChange={inputHandler((v) => onChange('description', v))} />
         </div>
       )}
     />
@@ -201,8 +201,8 @@ function SkillsEditor({ resume, onUpdate }: Omit<SectionEditorProps, 'type'>) {
       })}
       renderItem={(item, onChange) => (
         <div className={styles.row}>
-          <InkInput label="技能名称" value={item.name} onChange={inputHandler((v) => onChange('name', v))} />
-          <InkInput label="水平" value={item.level} onChange={inputHandler((v) => onChange('level', v))} />
+          <InkInput label="技能名称" hint="如：React / Python" value={item.name} onChange={inputHandler((v) => onChange('name', v))} />
+          <InkInput label="水平" hint="如：精通 / 熟练" value={item.level} onChange={inputHandler((v) => onChange('level', v))} />
         </div>
       )}
     />
@@ -229,15 +229,15 @@ function ProjectsEditor({ resume, onUpdate }: Omit<SectionEditorProps, 'type'>) 
       renderItem={(item, onChange) => (
         <div className={styles.fields}>
           <div className={styles.row}>
-            <InkInput label="项目名称" value={item.name} onChange={inputHandler((v) => onChange('name', v))} />
-            <InkInput label="角色" value={item.role} onChange={inputHandler((v) => onChange('role', v))} />
+            <InkInput label="项目名称" hint="如：智能推荐系统" value={item.name} onChange={inputHandler((v) => onChange('name', v))} />
+            <InkInput label="角色" hint="如：技术负责人" value={item.role} onChange={inputHandler((v) => onChange('role', v))} />
           </div>
           <div className={styles.row}>
-            <InkInput label="开始时间" value={item.startDate} onChange={inputHandler((v) => onChange('startDate', v))} />
-            <InkInput label="结束时间" value={item.endDate} onChange={inputHandler((v) => onChange('endDate', v))} />
-            <InkInput label="链接" value={item.url} onChange={inputHandler((v) => onChange('url', v))} />
+            <InkInput label="开始时间" hint="2023-01" value={item.startDate} onChange={inputHandler((v) => onChange('startDate', v))} />
+            <InkInput label="结束时间" hint="2023-12" value={item.endDate} onChange={inputHandler((v) => onChange('endDate', v))} />
+            <InkInput label="链接" hint="https://github.com/..." value={item.url} onChange={inputHandler((v) => onChange('url', v))} />
           </div>
-          <InkInput label="描述" value={item.description} onChange={inputHandler((v) => onChange('description', v))} />
+          <InkInput label="描述" hint="项目背景、技术方案与成果" value={item.description} onChange={inputHandler((v) => onChange('description', v))} />
         </div>
       )}
     />

@@ -11,6 +11,7 @@
 
 .row > * {
   flex: 1;
+  min-width: 0;
 }
 
 .listEditor {
@@ -21,15 +22,16 @@
 
 .listItem {
   position: relative;
-  padding: var(--space-4);
+  padding: var(--space-4) var(--space-4) var(--space-4) var(--space-4);
+  padding-right: var(--space-8);
   background: var(--sem-bg-secondary);
   border-radius: var(--radius-md);
 }
 
 .removeBtn {
   position: absolute;
-  top: var(--space-2);
-  right: var(--space-2);
+  top: var(--space-3);
+  right: var(--space-3);
   width: 24px;
   height: 24px;
   display: flex;
@@ -42,17 +44,25 @@
   cursor: pointer;
   border-radius: var(--radius-full);
   transition: color var(--duration-fast) var(--ease-brush-touch),
-              background var(--duration-fast) var(--ease-brush-touch);
+              background var(--duration-fast) var(--ease-brush-touch),
+              transform var(--duration-fast) var(--ease-brush-touch);
 }
 
 .removeBtn:hover {
   color: var(--sem-status-error);
-  background: rgba(194, 59, 34, 0.08);
+  background-color: var(--sem-bg-tertiary);
+  transform: rotate(90deg);
+}
+
+.removeBtn:active {
+  transform: rotate(90deg) scale(0.9);
 }
 
 .placeholder {
   padding: var(--space-8);
   text-align: center;
-  color: var(--sem-text-tertiary);
+  font-family: var(--font-family-body);
   font-size: var(--font-small);
+  line-height: var(--leading-normal);
+  color: var(--sem-text-tertiary);
 }

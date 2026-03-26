@@ -21,8 +21,35 @@
   transition: border-color var(--duration-fast) var(--ease-brush-touch);
 }
 
+/* 墨线扩散效果 — 从中心向两端扩展的浓墨线 */
+.root::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background-color: var(--sem-text-primary);
+  transition:
+    width var(--duration-normal) var(--ease-ink-spread),
+    left var(--duration-normal) var(--ease-ink-spread);
+  pointer-events: none;
+}
+
+.root:focus-within::after {
+  left: 0;
+  width: 100%;
+}
+
+/* 默认隐藏占位符（标签充当占位符角色） */
 .input::placeholder {
   color: transparent;
+  transition: color var(--duration-fast) var(--ease-brush-touch);
+}
+
+/* 聚焦时显示占位符（标签已上浮，显示真正的 placeholder） */
+.input:focus::placeholder {
+  color: var(--sem-text-disabled);
 }
 
 .input:focus {
@@ -61,6 +88,10 @@
 /* 错误态 */
 .error .input {
   border-bottom-color: var(--sem-status-error);
+}
+
+.error::after {
+  background-color: var(--sem-status-error);
 }
 
 .error .label {

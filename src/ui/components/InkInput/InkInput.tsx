@@ -4,11 +4,14 @@ import styles from './InkInput.module.css'
 interface InkInputProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string
   error?: string
+  /** 聚焦后显示的占位提示文字 */
+  hint?: string
 }
 
 export function InkInput({
   label,
   error,
+  hint,
   className,
   id: externalId,
   ...props
@@ -21,7 +24,7 @@ export function InkInput({
       <input
         id={id}
         className={styles.input}
-        placeholder=" "
+        placeholder={hint ?? ' '}
         aria-invalid={error ? 'true' : undefined}
         aria-describedby={error ? `${id}-error` : undefined}
         {...props}

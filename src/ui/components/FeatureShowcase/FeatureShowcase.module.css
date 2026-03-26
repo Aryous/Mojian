@@ -1,0 +1,197 @@
+/* FeatureShowcase -- Editorial feature rows, NOT card grid */
+/* Each row: ink accent bar | icon with splash | text, with large ordinal watermark */
+
+.root {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--space-16) var(--space-8) var(--space-24);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.item {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-6);
+  padding: var(--space-8) var(--space-6);
+  padding-left: var(--space-8);
+  transition:
+    transform var(--duration-fast) var(--ease-brush-touch);
+}
+
+.item:hover {
+  transform: translateX(var(--space-1));
+}
+
+.item:hover .ordinal {
+  opacity: 0.12;
+}
+
+.item:hover .iconCol {
+  color: var(--accent-color, var(--sem-action-primary));
+}
+
+/* Ink splash dots appear on hover */
+.item:hover .inkSplash {
+  opacity: 1;
+}
+
+.item:hover .inkSplash .splashDot {
+  animation: splashOut 0.5s var(--ease-ink-spread) forwards;
+}
+
+.item:hover .inkSplash .splashDot:nth-child(2) {
+  animation-delay: 0.05s;
+}
+
+.item:hover .inkSplash .splashDot:nth-child(3) {
+  animation-delay: 0.1s;
+}
+
+/* Accent bar -- the left border, now thicker and animated */
+.accentBar {
+  position: absolute;
+  left: 0;
+  top: var(--space-4);
+  bottom: var(--space-4);
+  width: var(--feature-accent-width);
+  background-color: var(--accent-color, var(--sem-action-primary));
+  border-radius: 0 1px 1px 0;
+  transition: width var(--duration-normal) var(--ease-ink-spread);
+}
+
+.item:hover .accentBar {
+  width: 6px;
+}
+
+/* Large background ordinal -- dramatic watermark */
+.ordinal {
+  position: absolute;
+  top: -12px;
+  right: var(--space-4);
+  font-family: var(--font-family-display);
+  font-size: var(--feature-number-size);
+  font-weight: var(--weight-bold);
+  line-height: 1;
+  color: var(--sem-text-primary);
+  opacity: var(--feature-number-opacity);
+  pointer-events: none;
+  user-select: none;
+  transition: opacity var(--duration-fast) var(--ease-brush-touch);
+}
+
+/* Icon column */
+.iconCol {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--feature-icon-size);
+  height: var(--feature-icon-size);
+  color: var(--sem-text-secondary);
+  transition: color var(--duration-fast) var(--ease-brush-touch);
+}
+
+.iconCol svg {
+  width: 52px;
+  height: 52px;
+}
+
+/* Ink splash effect -- three small dots that fly out on hover */
+.inkSplash {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-fast) var(--ease-brush-touch);
+}
+
+.splashDot {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: var(--accent-color, var(--sem-action-primary));
+  opacity: 0;
+}
+
+.splashDot:nth-child(1) {
+  top: -4px;
+  left: 8px;
+}
+
+.splashDot:nth-child(2) {
+  top: 4px;
+  left: 12px;
+}
+
+.splashDot:nth-child(3) {
+  top: -8px;
+  left: 16px;
+}
+
+@keyframes splashOut {
+  0% {
+    opacity: 0.8;
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(10px, -8px) scale(0.5);
+  }
+}
+
+/* Text column */
+.textCol {
+  flex: 1;
+  min-width: 0;
+  padding-top: var(--space-1);
+}
+
+.title {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-family-display);
+  font-size: var(--font-h2);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--sem-text-primary);
+}
+
+.desc {
+  margin: 0;
+  font-family: var(--font-family-body);
+  font-size: var(--font-body);
+  line-height: var(--leading-normal);
+  color: var(--sem-text-tertiary);
+  max-width: 48ch;
+}
+
+/* Compact desktop */
+@media (max-width: 1279px) {
+  .root {
+    padding: var(--space-12) var(--space-6) var(--space-16);
+  }
+
+  .list {
+    gap: var(--space-8);
+  }
+
+  .ordinal {
+    font-size: calc(var(--feature-number-size) * 0.75);
+  }
+
+  .iconCol svg {
+    width: 44px;
+    height: 44px;
+  }
+}

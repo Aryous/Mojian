@@ -17,7 +17,7 @@
   border-radius: inherit;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
   background-size: 200px 200px;
-  opacity: 0.05;
+  opacity: 0.08;
   mix-blend-mode: multiply;
   pointer-events: none;
 }
@@ -33,4 +33,17 @@
 .aged {
   background-color: var(--sem-bg-tertiary);
   box-shadow: var(--shadow-subtle);
+}
+
+/* 3D paper-lift hover effect -- paper curling up from desk */
+.liftable {
+  perspective: var(--delight-card-perspective);
+  transition:
+    transform var(--duration-normal) var(--ease-brush-touch),
+    box-shadow var(--duration-normal) var(--ease-brush-touch);
+}
+
+.liftable:hover {
+  transform: perspective(var(--delight-card-perspective)) rotateX(var(--delight-card-lift-rotate)) translateY(var(--delight-card-lift-translate));
+  box-shadow: var(--shadow-medium), var(--delight-card-lift-shadow);
 }

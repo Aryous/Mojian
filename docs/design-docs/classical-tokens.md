@@ -61,6 +61,14 @@
 | `--font-small` | 0.875rem (14px) | 辅助文字 |
 | `--font-caption` | 0.75rem (12px) | 标注 |
 
+## 字间距
+
+| CSS 变量 | 值 | 用途 |
+|---|---|---|
+| `--tracking-tight` | -0.02em | 大标题收紧（≥24px） |
+| `--tracking-normal` | 0 | 正文默认 |
+| `--tracking-wide` | 0.05em | 大写标签/极小文字 |
+
 ## 间距
 
 基线网格 4px，变量名即倍数。
@@ -88,6 +96,92 @@
 | `--shadow-subtle` | 0 1px 2px rgba(28,18,8,0.06) |
 | `--shadow-medium` | 0 2px 8px rgba(28,18,8,0.10) |
 | `--shadow-strong` | 0 4px 16px rgba(28,18,8,0.14) |
+
+## L3 组件令牌
+
+### 墨砚面（ink-surface）
+
+用于深色背景（AI 面板等）上的浅色元素。
+
+| CSS 变量 | 值 | 用途 |
+|---|---|---|
+| `--ink-surface-text-body` | rgba(245,237,214,0.7) | 正文 |
+| `--ink-surface-text-secondary` | rgba(245,237,214,0.55) | 次要文字 |
+| `--ink-surface-text-label` | rgba(245,237,214,0.5) | 标签 |
+| `--ink-surface-text-muted` | rgba(245,237,214,0.4) | 极淡提示 |
+| `--ink-surface-text-hint` | rgba(245,237,214,0.6) | 引导说明 |
+| `--ink-surface-text-placeholder` | rgba(245,237,214,0.35) | 占位符 |
+| `--ink-surface-border` | rgba(245,237,214,0.15) | 卡片边框 |
+| `--ink-surface-border-subtle` | rgba(245,237,214,0.1) | 分隔线 |
+| `--ink-surface-border-input` | rgba(245,237,214,0.2) | 输入框边框 |
+| `--ink-surface-border-diff` | rgba(245,237,214,0.12) | 对比区块 |
+| `--ink-surface-bg-card` | rgba(245,237,214,0.06) | 卡片背景 |
+| `--ink-surface-bg-faint` | rgba(245,237,214,0.04) | 最淡背景 |
+| `--ink-surface-bg-input` | rgba(245,237,214,0.08) | 输入框背景 |
+| `--ink-surface-accent-bg` | rgba(27,73,101,0.2) | AI 靛青高亮 |
+| `--ink-surface-error-bg` | rgba(194,59,34,0.15) | 错误背景 |
+
+### Hero 区域
+
+用于 HeroSection 的大标题、装饰层等页面级组件。
+
+| CSS 变量 | 值 | 用途 |
+|---|---|---|
+| `--hero-title-size` | clamp(5rem, 10vw, 8rem) | Hero 大标题流体尺寸（更大胆） |
+| `--hero-title-tracking` | 0.14em | 标题字间距（更舒展） |
+| `--hero-subtitle-size` | clamp(1.125rem, 1.5vw, 1.375rem) | 副标题流体尺寸 |
+| `--hero-brush-color` | var(--sem-action-primary) | 毛笔装饰线颜色 |
+| `--hero-brush-opacity` | 0.9 | 毛笔装饰线透明度（更鲜明） |
+| `--hero-brush-width` | 220px | 毛笔装饰线宽度 |
+| `--hero-ink-blob-opacity` | 0.10 | 墨色墨晕透明度（加强） |
+| `--hero-vermillion-blob-opacity` | 0.08 | 朱砂墨晕透明度（加强） |
+| `--hero-gold-blob-opacity` | 0.06 | 赤金墨晕透明度（加强） |
+| `--hero-paper-edge-shadow` | linear-gradient(...) | 纸张底边阴影（加深） |
+| `--hero-lattice-opacity` | 0.12 | 窗棂角落装饰透明度（加强） |
+| `--hero-cloud-opacity` | 0.40 | 祥云装饰透明度（加强） |
+| `--hero-seal-stamp-size` | 56px | 印章标记尺寸 |
+
+### Feature 区域
+
+用于 FeatureShowcase 的编排式布局。
+
+| CSS 变量 | 值 | 用途 |
+|---|---|---|
+| `--feature-icon-size` | 64px | 功能图标尺寸 |
+| `--feature-accent-width` | 4px | 左侧彩色强调条宽度（加粗） |
+| `--feature-number-opacity` | 0.08 | 背景序号水印透明度（更可见） |
+| `--feature-number-size` | 6rem | 背景序号字号（更戏剧化） |
+
+### Delight 令牌
+
+用于惊喜时刻和微交互增强。
+
+| CSS 变量 | 值 | 用途 |
+|---|---|---|
+| `--delight-stamp-scale` | 1.06 | 印章按钮 hover 弹跳缩放 |
+| `--delight-stamp-rotate` | -2deg | 印章按钮 hover 微旋转 |
+| `--delight-stamp-glow` | 0 2px 12px rgba(194,59,34,0.25) | 印章按钮 hover 朱砂光晕 |
+| `--delight-card-perspective` | 800px | 卡片 3D 翻翘透视距离 |
+| `--delight-card-lift-rotate` | -2deg | 卡片 hover 翘起旋转角度 |
+| `--delight-card-lift-translate` | -4px | 卡片 hover 上浮距离 |
+| `--delight-card-lift-shadow` | 0 8px 24px rgba(28,18,8,0.06) | 卡片翘起时的纸张投影 |
+| `--delight-cloud-drift-range` | 12px | 祥云飘动范围 |
+| `--delight-cloud-drift-duration` | 8s | 祥云飘动周期 |
+| `--delight-footer-hover-color` | var(--sem-action-primary) | 页脚品牌名 hover 色 |
+
+### 模板选择页
+
+用于 TemplateSelectPage 的布局、纸张容器和模板卡片。
+
+| CSS 变量 | 值 | 用途 |
+|---|---|---|
+| `--tpl-sidebar-width` | 320px | 左栏模板列表宽度 |
+| `--tpl-preview-bg` | #2A2118 | 预览区深檀色背景（模拟书案） |
+| `--tpl-paper-shadow` | 多层 box-shadow | 纸张三层阴影（悬浮感） |
+| `--tpl-paper-edge-glow` | 0 0 40px rgba(245,237,214,0.06) | 纸张边缘柔光 |
+| `--tpl-card-active-bg` | rgba(28,18,8,0.05) | 选中模板卡片背景 |
+| `--tpl-card-active-border` | var(--sem-action-primary) | 选中模板左边框色（朱砂） |
+| `--tpl-card-hover-bg` | rgba(28,18,8,0.03) | 悬停模板卡片背景 |
 
 ## 缓动曲线 / 时长
 

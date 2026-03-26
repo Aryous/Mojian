@@ -1,54 +1,35 @@
+/* 简历预览面板 */
+
 .root {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: var(--sem-bg-tertiary);
-  border-radius: var(--radius-md);
-  overflow: hidden;
+  background-color: var(--sem-bg-tertiary);
 }
 
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-3) var(--space-4);
+  padding: var(--space-3) var(--space-6);
   border-bottom: 1px solid var(--sem-border-default);
+  gap: var(--space-3);
 }
 
 .label {
   font-family: var(--font-family-display);
   font-size: var(--font-small);
   font-weight: var(--weight-medium);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-wide);
   color: var(--sem-text-secondary);
 }
 
 .status {
+  font-family: var(--font-family-body);
   font-size: var(--font-caption);
   color: var(--sem-text-tertiary);
-}
-
-.exportBtn {
   margin-left: auto;
-  padding: var(--space-1) var(--space-3);
-  border: 1px solid var(--sem-border-default);
-  border-radius: var(--radius-sm);
-  background: transparent;
-  color: var(--sem-text-secondary);
-  font-family: var(--font-family-display);
-  font-size: var(--font-caption);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.exportBtn:hover:not(:disabled) {
-  background: var(--sem-bg-ink);
-  color: var(--color-paper-base);
-  border-color: var(--sem-bg-ink);
-}
-
-.exportBtn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }
 
 .canvas {
@@ -63,6 +44,18 @@
   max-width: 100%;
 }
 
+.svgPreview {
+  max-width: 100%;
+  background-color: #ffffff;
+  box-shadow: var(--shadow-medium);
+}
+
+.svgPreview > svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 .placeholder {
   display: flex;
   align-items: center;
@@ -70,12 +63,14 @@
   height: 100%;
   min-height: 200px;
   color: var(--sem-text-tertiary);
+  font-family: var(--font-family-body);
   font-size: var(--font-small);
 }
 
 .error {
   padding: var(--space-4);
   color: var(--sem-status-error);
+  font-family: var(--font-family-body);
   font-size: var(--font-small);
 }
 
@@ -86,8 +81,9 @@
   border-radius: var(--radius-sm);
   font-family: var(--font-family-mono);
   font-size: var(--font-caption);
+  line-height: var(--leading-normal);
   white-space: pre-wrap;
-  word-break: break-all;
+  overflow-wrap: break-word;
   overflow: auto;
   max-height: 200px;
 }

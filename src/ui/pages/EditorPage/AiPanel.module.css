@@ -1,9 +1,11 @@
-/* AI 优化面板 — 靛青色调，与主朱砂操作区分 */
+/* AI 优化面板 — 墨砚风格，深色背景上的浅色文字 */
+/* 嵌入 ink-deep→ink-medium 渐变抽屉中 */
 
 .root {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
+  color: var(--sem-text-inverse);
 }
 
 /* ===== API Key 配置区 ===== */
@@ -22,12 +24,29 @@
 
 .keyInput {
   flex: 1;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--ink-surface-border-input);
+  border-radius: var(--radius-sm);
+  background: var(--ink-surface-bg-input);
+  color: var(--sem-text-inverse);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-small);
+  transition: border-color var(--duration-fast) var(--ease-brush-touch);
+}
+
+.keyInput:focus {
+  outline: none;
+  border-color: var(--sem-action-ai);
+}
+
+.keyInput::placeholder {
+  color: var(--ink-surface-text-placeholder);
 }
 
 .keyHint {
   font-family: var(--font-family-body);
   font-size: var(--font-caption);
-  color: var(--sem-text-tertiary);
+  color: var(--ink-surface-text-hint);
   line-height: var(--leading-normal);
   margin: 0;
 }
@@ -35,33 +54,53 @@
 .keyStatus {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: var(--space-2);
   padding: var(--space-2) var(--space-3);
-  background: var(--sem-bg-secondary);
-  border: 1px solid var(--sem-border-default);
+  background: var(--ink-surface-bg-card);
+  border: 1px solid var(--ink-surface-border-subtle);
   border-radius: var(--radius-sm);
+}
+
+.keyStatusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background-color: var(--sem-status-success);
+  flex-shrink: 0;
 }
 
 .keyStatusText {
   font-family: var(--font-family-body);
   font-size: var(--font-small);
   color: var(--sem-status-success);
+  flex: 1;
+}
+
+.keyRemoveBtn {
+  border: none;
+  background: transparent;
+  color: var(--ink-surface-text-label);
+  font-family: var(--font-family-body);
+  font-size: var(--font-caption);
+  cursor: pointer;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  transition: color var(--duration-fast) var(--ease-brush-touch);
+}
+
+.keyRemoveBtn:hover {
+  color: var(--sem-text-inverse);
 }
 
 /* ===== 标题 ===== */
 
-.title {
-  font-family: var(--font-family-display);
-  font-size: var(--font-h2);
-  font-weight: var(--weight-medium);
-  color: var(--sem-text-primary);
-  margin: 0;
-}
-
 .subtitle {
-  font-family: var(--font-family-body);
+  font-family: var(--font-family-display);
   font-size: var(--font-small);
-  color: var(--sem-text-tertiary);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-wide);
+  color: var(--ink-surface-text-secondary);
   margin: 0;
 }
 
@@ -69,35 +108,47 @@
 
 .optionsGrid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: var(--space-3);
 }
 
 .optionCard {
   padding: var(--space-4);
-  border: 1px solid var(--sem-border-default);
+  border: 1px solid var(--ink-surface-border);
   border-radius: var(--radius-sm);
-  background: var(--sem-bg-secondary);
+  background: var(--ink-surface-bg-faint);
   cursor: pointer;
-  transition: all var(--duration-fast) var(--ease-brush-touch);
+  transition:
+    border-color var(--duration-fast) var(--ease-brush-touch),
+    background-color var(--duration-fast) var(--ease-brush-touch),
+    transform var(--duration-fast) var(--ease-brush-touch),
+    box-shadow var(--duration-fast) var(--ease-brush-touch);
   text-align: left;
   font-family: inherit;
+  color: inherit;
 }
 
 .optionCard:hover {
   border-color: var(--sem-action-ai);
-  background: var(--sem-bg-primary);
-  box-shadow: var(--shadow-subtle);
+  background: var(--ink-surface-accent-bg);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(27, 73, 101, 0.15);
+}
+
+.optionCard:active {
+  transform: translateY(0);
+  box-shadow: none;
 }
 
 .optionCard:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
 .optionCard:disabled:hover {
-  border-color: var(--sem-border-default);
-  background: var(--sem-bg-secondary);
+  border-color: var(--ink-surface-border);
+  background: var(--ink-surface-bg-faint);
+  transform: none;
   box-shadow: none;
 }
 
@@ -105,14 +156,14 @@
   font-family: var(--font-family-display);
   font-size: var(--font-body);
   font-weight: var(--weight-medium);
-  color: var(--sem-text-primary);
+  color: var(--sem-text-inverse);
   margin: 0 0 var(--space-1) 0;
 }
 
 .optionDesc {
   font-family: var(--font-family-body);
   font-size: var(--font-caption);
-  color: var(--sem-text-tertiary);
+  color: var(--ink-surface-text-secondary);
   margin: 0;
   line-height: var(--leading-normal);
 }
@@ -124,7 +175,7 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-4);
-  color: var(--sem-text-secondary);
+  color: var(--ink-surface-text-body);
   font-family: var(--font-family-body);
   font-size: var(--font-small);
 }
@@ -133,15 +184,23 @@
   display: inline-block;
   width: 16px;
   height: 16px;
-  border: 2px solid var(--sem-border-default);
+  border: 2px solid var(--ink-surface-border-input);
   border-top-color: var(--sem-action-ai);
   border-radius: var(--radius-full);
-  animation: spin 0.8s linear infinite;
+  animation: inkSpin 1s var(--ease-ink-spread) infinite;
 }
 
-@keyframes spin {
-  to {
+@keyframes inkSpin {
+  0% {
+    transform: rotate(0deg);
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
     transform: rotate(360deg);
+    opacity: 0.6;
   }
 }
 
@@ -149,12 +208,12 @@
 
 .error {
   padding: var(--space-3);
-  background: transparent;
+  background: var(--ink-surface-error-bg);
   border: 1px solid var(--sem-status-error);
   border-radius: var(--radius-sm);
   font-family: var(--font-family-body);
   font-size: var(--font-small);
-  color: var(--sem-status-error);
+  color: var(--sem-text-inverse);
   line-height: var(--leading-normal);
 }
 
@@ -167,8 +226,8 @@
 }
 
 .diffContainer {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   gap: var(--space-3);
 }
 
@@ -182,7 +241,7 @@
   font-family: var(--font-family-display);
   font-size: var(--font-caption);
   font-weight: var(--weight-medium);
-  color: var(--sem-text-tertiary);
+  color: var(--ink-surface-text-label);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin: 0;
@@ -190,16 +249,18 @@
 
 .diffText {
   padding: var(--space-3);
-  background: var(--sem-bg-secondary);
-  border: 1px solid var(--sem-border-default);
+  background: var(--ink-surface-bg-card);
+  border: 1px solid var(--ink-surface-border-diff);
   border-radius: var(--radius-sm);
   font-family: var(--font-family-body);
   font-size: var(--font-small);
-  color: var(--sem-text-primary);
+  color: var(--sem-text-inverse);
   line-height: var(--leading-normal);
   white-space: pre-wrap;
-  word-break: break-word;
-  min-height: 80px;
+  overflow-wrap: break-word;
+  min-height: 60px;
+  max-height: 200px;
+  overflow-y: auto;
 }
 
 .diffTextNew {
@@ -216,7 +277,7 @@
 .emptyHint {
   font-family: var(--font-family-body);
   font-size: var(--font-small);
-  color: var(--sem-text-disabled);
+  color: var(--ink-surface-text-muted);
   text-align: center;
   padding: var(--space-4);
   margin: 0;

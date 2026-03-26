@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest'
 import { TEMPLATES, AI_OPTIMIZE_OPTIONS, AI_BASE_URL } from '@/config'
 
 describe('Config 层：模板配置', () => {
-  it('TEMPLATES 包含 3 个模板', () => {
-    expect(TEMPLATES).toHaveLength(3)
+  it('TEMPLATES 包含 5 个模板', () => {
+    expect(TEMPLATES).toHaveLength(5)
   })
 
   it.each(TEMPLATES)('模板 "$id" 包含必需字段', (template) => {
@@ -15,9 +15,9 @@ describe('Config 层：模板配置', () => {
     expect(typeof template.description).toBe('string')
   })
 
-  it('模板 ID 分别为 classic / twocolumn / academic', () => {
+  it('模板 ID 分别为 classic / twocolumn / modern / minimal / academic', () => {
     const ids = TEMPLATES.map((t) => t.id)
-    expect(ids).toEqual(['classic', 'twocolumn', 'academic'])
+    expect(ids).toEqual(['classic', 'twocolumn', 'modern', 'minimal', 'academic'])
   })
 })
 
