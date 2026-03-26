@@ -38,6 +38,11 @@
   padding: var(--space-4);
   display: flex;
   justify-content: center;
+  transition: margin-right var(--duration-normal) var(--ease-ink-spread);
+}
+
+.canvasShifted {
+  margin-right: 340px;
 }
 
 .canvas > * {
