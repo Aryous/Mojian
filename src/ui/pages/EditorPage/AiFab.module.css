@@ -1,0 +1,53 @@
+/* src/ui/pages/EditorPage/AiFab.module.css */
+/* AI floating action button — obi indigo gradient */
+
+.fab {
+  position: absolute;
+  bottom: var(--space-6);
+  right: var(--space-6);
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--obi-bg-start) 0%, var(--obi-bg-end) 100%);
+  color: var(--obi-text);
+  border: none;
+  box-shadow: 0 4px 12px rgba(44, 53, 72, 0.4), 0 1px 3px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s var(--ease-ink-spread);
+  z-index: 50;
+}
+
+.fab:hover {
+  transform: scale(1.08) translateY(-2px);
+  box-shadow: 0 8px 24px rgba(44, 53, 72, 0.45), 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.fabHidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.8);
+}
+
+.tooltip {
+  position: absolute;
+  right: 58px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--obi-bg-start);
+  color: var(--obi-text);
+  font-family: var(--font-family-body);
+  font-size: var(--font-caption);
+  padding: 5px 10px;
+  border-radius: var(--radius-md);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s var(--ease-brush-touch);
+}
+
+.fab:hover .tooltip {
+  opacity: 1;
+}
