@@ -1,14 +1,17 @@
-// 简历编辑器页面（双栏：左编辑 55% + 右预览 45%）
-// AI 面板为右侧抽屉（design-spec §5.3）
+// src/ui/pages/EditorPage/EditorPage.tsx
+// Resume editor page — 42/58 split, AI drawer, template popover
 import { useEffect, useCallback, useMemo, useState } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router'
 import { motion, AnimatePresence } from 'motion/react'
 import { useResumeStore } from '@/runtime/store'
-import { PaperCard, CloudEmpty } from '@/ui/components'
+import { TEMPLATES } from '@/config'
+import { CloudEmpty } from '@/ui/components'
 import { TopToolbar } from './TopToolbar'
+import { TemplatePopover } from './TemplatePopover'
 import { SectionEditor } from './SectionEditor'
 import { ResumePreview } from './ResumePreview'
-import { AiPanel } from './AiPanel'
+import { AiDrawer } from './AiDrawer'
+import { AiFab } from './AiFab'
 import type { Resume } from '@/types'
 import styles from './EditorPage.module.css'
 
@@ -18,6 +21,7 @@ export function EditorPage() {
   const location = useLocation()
   const { currentResume, loading, openResume, updateCurrentResume, closeResume } = useResumeStore()
   const [aiOpen, setAiOpen] = useState(false)
+  const [tplOpen, setTplOpen] = useState(false)
 
   useEffect(() => {
     if (id) {
@@ -33,7 +37,6 @@ export function EditorPage() {
     const state = location.state as { templateId?: string } | null
     if (state?.templateId && currentResume && currentResume.templateId !== state.templateId) {
       updateCurrentResume({ templateId: state.templateId })
-      // Clear the navigation state to avoid re-applying on re-renders
       window.history.replaceState({}, '')
     }
   }, [location.state, currentResume, updateCurrentResume])
@@ -45,7 +48,21 @@ export function EditorPage() {
     [updateCurrentResume],
   )
 
-  // 收集简历文本内容供 AI 优化使用（所有 hooks 必须在 early return 之前）
+  const handleTitleChange = useCallback(
+    (title: string) => {
+      updateCurrentResume({ title })
+    },
+    [updateCurrentResume],
+  )
+
+  const handleTemplateChange = useCallback(
+    (templateId: string) => {
+      handleUpdate({ templateId })
+    },
+    [handleUpdate],
+  )
+
+  // Collect resume text content for AI optimization
   const resumeTextContent = useMemo(() => {
     if (!currentResume) return ''
     const parts: string[] = []
@@ -76,18 +93,15 @@ export function EditorPage() {
     [currentResume, updateCurrentResume],
   )
 
-  const handleTemplateChange = useCallback(
-    (templateId: string) => {
-      handleUpdate({ templateId })
-    },
-    [handleUpdate],
-  )
-
   const handleToggleAi = useCallback(() => {
     setAiOpen((prev) => !prev)
   }, [])
 
-  // Escape 关闭 AI 抽屉 — design-spec §8.4
+  const handleCloseAi = useCallback(() => {
+    setAiOpen(false)
+  }, [])
+
+  // Escape closes AI drawer
   useEffect(() => {
     if (!aiOpen) return
     const handleEsc = (e: KeyboardEvent) => {
@@ -99,14 +113,28 @@ export function EditorPage() {
     return () => document.removeEventListener('keydown', handleEsc)
   }, [aiOpen])
 
-  // loading 或 effect 尚未触发（有 id 但 currentResume 还没加载）
+  // Resolve current template name
+  const currentTemplateName = useMemo(() => {
+    if (!currentResume) return ''
+    return TEMPLATES.find((t) => t.id === currentResume.templateId)?.name ?? currentResume.templateId
+  }, [currentResume])
+
+  // Section AI button handler
+  const handleSectionAi = useCallback(
+    (_sectionTitle: string) => { // eslint-disable-line @typescript-eslint/no-unused-vars
+      setAiOpen(true)
+    },
+    [],
+  )
+
+  // Loading state
   if (loading || (id && !currentResume)) {
     return (
       <div className={styles.loading}>
         <div className={styles.inkLoader}>
           <span className={styles.inkDot} />
         </div>
-        <p>加载中…</p>
+        <p>加载中...</p>
       </div>
     )
   }
@@ -131,13 +159,21 @@ export function EditorPage() {
       <TopToolbar
         title={currentResume.title}
         templateId={currentResume.templateId}
-        onTemplateChange={handleTemplateChange}
-        onToggleAi={handleToggleAi}
-        aiOpen={aiOpen}
+        templateName={currentTemplateName}
+        resume={currentResume}
+        onTitleChange={handleTitleChange}
+        onOpenTemplatePopover={() => setTplOpen(true)}
+      />
+
+      <TemplatePopover
+        open={tplOpen}
+        currentTemplateId={currentResume.templateId}
+        onSelect={handleTemplateChange}
+        onClose={() => setTplOpen(false)}
       />
 
       <div className={styles.workspace}>
-        {/* 左栏：编辑器 (~55%) */}
+        {/* Left: Editor (42%) */}
         <main className={styles.editor} role="region" aria-label="简历编辑区">
           <AnimatePresence mode="popLayout">
             {visibleSections.map((section) => (
@@ -148,58 +184,46 @@ export function EditorPage() {
                 exit={{ opacity: 0, y: -12 }}
                 transition={{ duration: 0.35, ease: [0.22, 0.61, 0.36, 1] }}
               >
-                <PaperCard>
-                  <h2 className={styles.sectionTitle}>{section.title}</h2>
+                <div className={styles.sectionCard}>
+                  <div className={styles.sectionHeader}>
+                    <h2 className={styles.sectionTitle}>{section.title}</h2>
+                    {section.type !== 'skills' && (
+                      <button
+                        type="button"
+                        className={styles.sectionAiBtn}
+                        onClick={() => handleSectionAi(section.title)}
+                        aria-label={`AI 润色${section.title}`}
+                      >
+                        <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                          <circle cx="8" cy="8" r="3" stroke="currentColor" strokeWidth="1.2" />
+                          <path d="M8 1v2M8 13v2M1 8h2M13 8h2" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+                        </svg>
+                        AI 润色
+                      </button>
+                    )}
+                  </div>
                   <SectionEditor
                     type={section.type}
                     resume={currentResume}
                     onUpdate={handleUpdate}
                   />
-                </PaperCard>
+                </div>
               </motion.div>
             ))}
           </AnimatePresence>
         </main>
 
-        {/* 右栏：预览 (~45%) */}
+        {/* Right: Preview (58%) */}
         <aside className={styles.preview} role="region" aria-label="简历预览区">
-          <ResumePreview resume={currentResume} />
+          <ResumePreview resume={currentResume} shifted={aiOpen} />
+          <AiFab visible={!aiOpen} onClick={handleToggleAi} />
+          <AiDrawer
+            open={aiOpen}
+            onClose={handleCloseAi}
+            content={resumeTextContent}
+            onAccept={handleAiAccept}
+          />
         </aside>
-
-        {/* AI 右侧抽屉 */}
-        <AnimatePresence>
-          {aiOpen && (
-            <motion.aside
-              className={styles.aiDrawer}
-              role="region"
-              aria-label="AI 智能优化"
-              initial={{ x: '100%', opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: '100%', opacity: 0 }}
-              transition={{
-                duration: 0.35,
-                ease: [0.22, 0.61, 0.36, 1],
-              }}
-            >
-              <div className={styles.aiDrawerHeader}>
-                <h2 className={styles.aiDrawerTitle}>AI 智能优化</h2>
-                <button
-                  type="button"
-                  className={styles.aiDrawerClose}
-                  onClick={handleToggleAi}
-                  aria-label="关闭 AI 面板"
-                >
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                    <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                  </svg>
-                </button>
-              </div>
-              <div className={styles.aiDrawerBody}>
-                <AiPanel content={resumeTextContent} onAccept={handleAiAccept} />
-              </div>
-            </motion.aside>
-          )}
-        </AnimatePresence>
       </div>
     </div>
   )

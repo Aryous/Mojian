@@ -1,5 +1,5 @@
-/* 编辑器页面布局 */
-/* design-spec §5.4: EditorLayout — 双栏 55/45 */
+/* src/ui/pages/EditorPage/EditorPage.module.css */
+/* Editor page — 42/58 split layout */
 
 .root {
   display: flex;
@@ -8,7 +8,7 @@
   background-color: var(--sem-bg-primary);
 }
 
-/* ===== 工作区：编辑 + 预览 双栏 ===== */
+/* ===== Workspace: editor + preview ===== */
 
 .workspace {
   display: flex;
@@ -17,107 +17,97 @@
   overflow: hidden;
 }
 
-/* 编辑区 ~55% */
+/* Editor panel ~42% */
 .editor {
-  flex: 55;
-  min-width: 480px;
+  flex: 42;
+  min-width: 380px;
+  max-width: 520px;
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
-  padding: var(--space-6);
+  gap: 14px;
+  padding: var(--space-4) 18px 80px;
   overflow-y: auto;
-  max-height: calc(100vh - 64px);
+  max-height: calc(100vh - 48px);
+  background-color: var(--sem-bg-primary);
 }
 
-/* 预览区 ~45% */
+/* Custom thin scrollbar */
+.editor::-webkit-scrollbar { width: 4px; }
+.editor::-webkit-scrollbar-track { background: transparent; }
+.editor::-webkit-scrollbar-thumb { background: rgba(107, 91, 62, 0.2); border-radius: 2px; }
+.editor::-webkit-scrollbar-thumb:hover { background: rgba(107, 91, 62, 0.4); }
+
+/* Preview panel ~58% */
 .preview {
-  flex: 45;
+  flex: 58;
   min-width: 0;
-  border-left: 1px solid var(--sem-border-default);
-  max-height: calc(100vh - 64px);
+  border-left: 1px solid var(--color-paper-aged);
+  max-height: calc(100vh - 48px);
   overflow: hidden;
+  position: relative;
 }
 
-/* ===== Section 标题 ===== */
+/* ===== Section cards ===== */
 
-/* 朱砂左缘 — 模拟古书批注红线，强化模块边界辨识 */
-.sectionTitle {
-  font-family: var(--font-family-display);
-  font-size: var(--font-h3);
-  font-weight: var(--weight-bold);
-  line-height: var(--leading-tight);
-  letter-spacing: var(--tracking-tight);
-  color: var(--sem-text-primary);
-  margin: 0 0 var(--space-4) 0;
-  padding-left: var(--space-3);
-  border-left: 3px solid var(--sem-action-primary);
+.sectionCard {
+  background: #fff;
+  border-radius: 6px;
+  border: 1px solid rgba(212, 196, 160, 0.5);
+  box-shadow: var(--shadow-subtle);
+  padding: 14px var(--space-4);
+  transition: box-shadow 0.2s var(--ease-brush-touch);
 }
 
-/* ===== AI 右侧抽屉 ===== */
-/* design-spec §5.3: AIOptionPanel — 右侧抽屉 360px */
-
-.aiDrawer {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 360px;
-  background: linear-gradient(
-    180deg,
-    var(--color-ink-deep) 0%,
-    var(--color-ink-medium) 100%
-  );
-  box-shadow: var(--shadow-strong);
-  display: flex;
-  flex-direction: column;
-  z-index: 40;
+.sectionCard:hover {
+  box-shadow: var(--shadow-medium);
 }
 
-.aiDrawerHeader {
+.sectionHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-4) var(--space-6);
-  border-bottom: 1px solid var(--ink-surface-border-subtle);
+  margin-bottom: var(--space-3);
 }
 
-.aiDrawerTitle {
+.sectionTitle {
   font-family: var(--font-family-display);
-  font-size: var(--font-h3);
+  font-size: 15px;
   font-weight: var(--weight-bold);
   line-height: var(--leading-tight);
-  letter-spacing: var(--tracking-tight);
-  color: var(--sem-text-inverse);
+  color: var(--sem-text-primary);
   margin: 0;
+  padding-left: 10px;
+  border-left: 3px solid var(--sem-action-primary);
 }
 
-.aiDrawerClose {
+.sectionAiBtn {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border: none;
-  border-radius: var(--radius-sm);
-  background: transparent;
-  color: var(--sem-text-inverse);
+  gap: var(--space-1);
+  height: 24px;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(27, 73, 101, 0.25);
+  background: rgba(27, 73, 101, 0.03);
+  color: var(--sem-action-ai);
+  font-family: var(--font-family-body);
+  font-size: 10px;
   cursor: pointer;
-  opacity: 0.6;
-  transition: opacity var(--duration-fast) var(--ease-brush-touch);
+  opacity: 0;
+  transition: opacity 0.2s var(--ease-brush-touch),
+              background-color var(--duration-fast) var(--ease-brush-touch);
 }
 
-.aiDrawerClose:hover,
-.aiDrawerClose:focus-visible {
+.sectionCard:hover .sectionAiBtn {
   opacity: 1;
 }
 
-.aiDrawerBody {
-  flex: 1;
-  overflow-y: auto;
-  padding: var(--space-4) var(--space-6);
+.sectionAiBtn:hover {
+  background: rgba(27, 73, 101, 0.1);
+  border-color: rgba(27, 73, 101, 0.4);
 }
 
-/* ===== 加载 / 空态 ===== */
+/* ===== Loading / Empty states ===== */
 
 .loading,
 .empty {
@@ -132,8 +122,7 @@
   color: var(--sem-text-tertiary);
 }
 
-/* 墨水晕染加载动画 — design-spec §6.4 */
-/* 三层同心墨环，错开启动形成涟漪扩散 */
+/* Ink spread loading animation */
 .inkLoader {
   position: relative;
   display: flex;
@@ -153,7 +142,6 @@
   animation: inkSpread 1.2s var(--ease-ink-spread) infinite;
 }
 
-/* 第二层涟漪 */
 .inkDot::before,
 .inkDot::after {
   content: '';
@@ -164,54 +152,32 @@
   animation: inkRipple 1.2s var(--ease-ink-spread) infinite;
 }
 
-/* 第三层涟漪 — 更大延迟 */
 .inkDot::after {
   inset: -10px;
   animation-delay: 0.2s;
 }
 
 @keyframes inkSpread {
-  0% {
-    transform: scale(0.2);
-    opacity: 0.8;
-  }
-  50% {
-    transform: scale(1);
-    opacity: 0.2;
-  }
-  100% {
-    transform: scale(0.2);
-    opacity: 0.8;
-  }
+  0% { transform: scale(0.2); opacity: 0.8; }
+  50% { transform: scale(1); opacity: 0.2; }
+  100% { transform: scale(0.2); opacity: 0.8; }
 }
 
 @keyframes inkRipple {
-  0% {
-    transform: scale(0.6);
-    opacity: 0;
-  }
-  30% {
-    opacity: 0.4;
-  }
-  100% {
-    transform: scale(1.8);
-    opacity: 0;
-  }
+  0% { transform: scale(0.6); opacity: 0; }
+  30% { opacity: 0.4; }
+  100% { transform: scale(1.8); opacity: 0; }
 }
 
-/* ===== 响应式 ===== */
-/* design-spec §7.1: 仅桌面端 ≥1024px */
+/* ===== Responsive ===== */
 
 @media (max-width: 1279px) {
   .editor {
     flex: 50;
+    padding: var(--space-4);
   }
 
   .preview {
     flex: 50;
-  }
-
-  .editor {
-    padding: var(--space-4);
   }
 }
