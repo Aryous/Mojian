@@ -1,9 +1,16 @@
+import { BrowserRouter, Routes, Route } from 'react-router'
+import { HomePage } from '@/ui/pages/HomePage'
+import { EditorPage } from '@/ui/pages/EditorPage'
+import '@/ui/tokens/index.css'
+
 function App() {
   return (
-    <div>
-      <h1>墨简</h1>
-      <p>AI 驱动的中古风简历编辑器</p>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/editor/:id" element={<EditorPage />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
