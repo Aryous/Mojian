@@ -32,7 +32,8 @@ export function EditorPage() {
     [updateCurrentResume],
   )
 
-  if (loading) {
+  // loading 或 effect 尚未触发（有 id 但 currentResume 还没加载）
+  if (loading || (id && !currentResume)) {
     return (
       <div className={styles.loading}>
         <p>加载中…</p>
