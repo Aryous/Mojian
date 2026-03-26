@@ -1,3 +1,10 @@
+---
+paths:
+  - "src/ui/**/*.tsx"
+  - "src/ui/**/*.ts"
+  - "src/runtime/**/*.ts"
+---
+
 # React 编码规则
 
 所有 `src/ui/` 和 `src/runtime/` 中的 React 代码必须遵守以下规则。

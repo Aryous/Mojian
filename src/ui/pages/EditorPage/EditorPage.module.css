@@ -24,7 +24,7 @@
   max-width: 520px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: var(--space-4);
   padding: var(--space-4) 18px 80px;
   overflow-y: auto;
   max-height: calc(100vh - 48px);
@@ -51,10 +51,10 @@
 
 .sectionCard {
   background: #fff;
-  border-radius: 6px;
+  border-radius: var(--space-3);
   border: 1px solid rgba(212, 196, 160, 0.5);
   box-shadow: var(--shadow-subtle);
-  padding: 14px var(--space-4);
+  padding: var(--space-4);
   transition: box-shadow 0.2s var(--ease-brush-touch);
 }
 
@@ -69,7 +69,34 @@
   margin-bottom: var(--space-3);
 }
 
+.dragHandle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  flex-shrink: 0;
+  cursor: grab;
+  color: var(--sem-text-disabled);
+  opacity: 0;
+  touch-action: none;
+  transition: opacity var(--duration-fast) var(--ease-brush-touch),
+              color var(--duration-fast) var(--ease-brush-touch);
+}
+
+.sectionCard:hover .dragHandle {
+  opacity: 1;
+}
+
+.dragHandle:hover {
+  color: var(--sem-text-tertiary);
+}
+
+.dragHandle:active {
+  cursor: grabbing;
+}
+
 .sectionTitle {
+  flex: 1;
   font-family: var(--font-family-display);
   font-size: 15px;
   font-weight: var(--weight-bold);

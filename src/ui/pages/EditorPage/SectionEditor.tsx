@@ -70,6 +70,8 @@ interface ListItemEditorProps<T> {
   renderItem: (item: T, onChange: (field: keyof T, value: string) => void) => React.ReactNode
   createEmpty: () => T
   itemLabel: string
+  /** When set, shows a "sort by time" button that sorts items by this field (descending) */
+  sortField?: keyof T
 }
 
 function ListEditor<T extends { id: string }>({
@@ -79,6 +81,7 @@ function ListEditor<T extends { id: string }>({
   renderItem,
   createEmpty,
   itemLabel,
+  sortField,
 }: ListItemEditorProps<T>) {
   const handleItemChange = useCallback(
     (index: number, field: keyof T, value: string) => {
@@ -100,8 +103,28 @@ function ListEditor<T extends { id: string }>({
     [items, fieldKey, onUpdate],
   )
 
+  const sortByTime = useCallback(() => {
+    if (!sortField) return
+    const sorted = [...items].sort((a, b) => {
+      const aVal = String(a[sortField] ?? '')
+      const bVal = String(b[sortField] ?? '')
+      return bVal.localeCompare(aVal)
+    })
+    onUpdate({ [fieldKey]: sorted })
+  }, [items, fieldKey, onUpdate, sortField])
+
   return (
     <div className={styles.listEditor}>
+      {sortField && items.length > 1 && (
+        <div className={styles.listToolbar}>
+          <button type="button" className={styles.sortBtn} onClick={sortByTime}>
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+              <path d="M2 3h8M3 6h6M4 9h4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+            </svg>
+            按时间排序
+          </button>
+        </div>
+      )}
       {items.map((item, index) => (
         <div key={item.id} className={styles.listItem}>
           {renderItem(item, (field, value) => handleItemChange(index, field, value))}
@@ -166,6 +189,7 @@ function WorkEditor({ resume, onUpdate }: Omit<SectionEditorProps, 'type'>) {
       fieldKey="work"
       onUpdate={onUpdate}
       itemLabel="工作经历"
+      sortField="startDate"
       createEmpty={() => ({
         id: generateId(),
         company: '',
@@ -222,6 +246,7 @@ function ProjectsEditor({ resume, onUpdate }: Omit<SectionEditorProps, 'type'>) 
       fieldKey="projects"
       onUpdate={onUpdate}
       itemLabel="项目经验"
+      sortField="startDate"
       createEmpty={() => ({
         id: generateId(),
         name: '',

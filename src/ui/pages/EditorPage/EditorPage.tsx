@@ -2,7 +2,7 @@
 // Resume editor page — 42/58 split, AI drawer, template popover
 import { useEffect, useCallback, useMemo, useState } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router'
-import { motion, AnimatePresence } from 'motion/react'
+import { Reorder, useDragControls } from 'motion/react'
 import { useResumeStore, useAiStore } from '@/runtime/store'
 import { TEMPLATES } from '@/config'
 import { CloudEmpty, PaperToast } from '@/ui/components'
@@ -12,8 +12,72 @@ import { SectionEditor } from './SectionEditor'
 import { ResumePreview } from './ResumePreview'
 import { AiDrawer } from './AiDrawer'
 import { AiFab } from './AiFab'
-import type { Resume } from '@/types'
+import type { Resume, ResumeSection } from '@/types'
 import styles from './EditorPage.module.css'
+
+// ─── Draggable section card (needs its own component for useDragControls hook) ───
+function DraggableSectionCard({
+  section,
+  resume,
+  onUpdate,
+  onAi,
+}: {
+  section: ResumeSection
+  resume: Resume
+  onUpdate: (changes: Partial<Resume>) => void
+  onAi: (title: string) => void
+}) {
+  const controls = useDragControls()
+
+  return (
+    <Reorder.Item
+      value={section}
+      as="div"
+      dragListener={false}
+      dragControls={controls}
+      whileDrag={{ scale: 1.015, boxShadow: '0 4px 16px rgba(28,18,8,0.14)' }}
+      style={{ position: 'relative' }}
+    >
+      <div className={styles.sectionCard}>
+        <div className={styles.sectionHeader}>
+          <div
+            className={styles.dragHandle}
+            onPointerDown={(e) => controls.start(e)}
+          >
+            <svg width="10" height="14" viewBox="0 0 10 14" fill="none" aria-hidden="true">
+              <circle cx="3" cy="2" r="1.2" fill="currentColor" />
+              <circle cx="7" cy="2" r="1.2" fill="currentColor" />
+              <circle cx="3" cy="7" r="1.2" fill="currentColor" />
+              <circle cx="7" cy="7" r="1.2" fill="currentColor" />
+              <circle cx="3" cy="12" r="1.2" fill="currentColor" />
+              <circle cx="7" cy="12" r="1.2" fill="currentColor" />
+            </svg>
+          </div>
+          <h2 className={styles.sectionTitle}>{section.title}</h2>
+          {section.type !== 'skills' && (
+            <button
+              type="button"
+              className={styles.sectionAiBtn}
+              onClick={() => onAi(section.title)}
+              aria-label={`AI 润色${section.title}`}
+            >
+              <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <circle cx="8" cy="8" r="3" stroke="currentColor" strokeWidth="1.2" />
+                <path d="M8 1v2M8 13v2M1 8h2M13 8h2" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+              </svg>
+              AI 润色
+            </button>
+          )}
+        </div>
+        <SectionEditor
+          type={section.type}
+          resume={resume}
+          onUpdate={onUpdate}
+        />
+      </div>
+    </Reorder.Item>
+  )
+}
 
 export function EditorPage() {
   const { id } = useParams<{ id: string }>()
@@ -128,6 +192,28 @@ export function EditorPage() {
     [],
   )
 
+  // Visible sections — memoized for Reorder stability
+  const visibleSections = useMemo(
+    () =>
+      currentResume
+        ? currentResume.sections.filter((s) => s.visible).sort((a, b) => a.sortOrder - b.sortOrder)
+        : [],
+    [currentResume],
+  )
+
+  // Drag-reorder sections
+  const handleSectionReorder = useCallback(
+    (reordered: ResumeSection[]) => {
+      if (!currentResume) return
+      const updatedSections = currentResume.sections.map((s) => {
+        const newIndex = reordered.findIndex((r) => r.id === s.id)
+        return newIndex >= 0 ? { ...s, sortOrder: newIndex } : s
+      })
+      updateCurrentResume({ sections: updatedSections })
+    },
+    [currentResume, updateCurrentResume],
+  )
+
   // Loading state
   if (loading || (id && !currentResume)) {
     return (
@@ -151,10 +237,6 @@ export function EditorPage() {
     )
   }
 
-  const visibleSections = currentResume.sections
-    .filter((s) => s.visible)
-    .sort((a, b) => a.sortOrder - b.sortOrder)
-
   return (
     <div className={styles.root}>
       <TopToolbar
@@ -176,42 +258,22 @@ export function EditorPage() {
       <div className={styles.workspace}>
         {/* Left: Editor (42%) */}
         <main className={styles.editor} role="region" aria-label="简历编辑区">
-          <AnimatePresence mode="popLayout">
+          <Reorder.Group
+            axis="y"
+            values={visibleSections}
+            onReorder={handleSectionReorder}
+            as="div"
+          >
             {visibleSections.map((section) => (
-              <motion.div
+              <DraggableSectionCard
                 key={section.id}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: 0.35, ease: [0.22, 0.61, 0.36, 1] }}
-              >
-                <div className={styles.sectionCard}>
-                  <div className={styles.sectionHeader}>
-                    <h2 className={styles.sectionTitle}>{section.title}</h2>
-                    {section.type !== 'skills' && (
-                      <button
-                        type="button"
-                        className={styles.sectionAiBtn}
-                        onClick={() => handleSectionAi(section.title)}
-                        aria-label={`AI 润色${section.title}`}
-                      >
-                        <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                          <circle cx="8" cy="8" r="3" stroke="currentColor" strokeWidth="1.2" />
-                          <path d="M8 1v2M8 13v2M1 8h2M13 8h2" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-                        </svg>
-                        AI 润色
-                      </button>
-                    )}
-                  </div>
-                  <SectionEditor
-                    type={section.type}
-                    resume={currentResume}
-                    onUpdate={handleUpdate}
-                  />
-                </div>
-              </motion.div>
+                section={section}
+                resume={currentResume}
+                onUpdate={handleUpdate}
+                onAi={handleSectionAi}
+              />
             ))}
-          </AnimatePresence>
+          </Reorder.Group>
         </main>
 
         {/* Right: Preview (58%) */}

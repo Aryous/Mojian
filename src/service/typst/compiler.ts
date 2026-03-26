@@ -76,12 +76,19 @@ async function ensureRenderer(): Promise<TypstRenderer> {
 
 /** 将简历数据序列化为模板可消费的 JSON */
 function serializeResumeData(resume: Resume): string {
+  // Visible sections in sort order (excluding personal, always first)
+  const sectionOrder = resume.sections
+    .filter((s) => s.visible && s.type !== 'personal')
+    .sort((a, b) => a.sortOrder - b.sortOrder)
+    .map((s) => s.type)
+
   return JSON.stringify({
     personal: resume.personal,
     education: resume.education,
     work: resume.work,
     skills: resume.skills,
     projects: resume.projects,
+    sectionOrder,
   })
 }
 

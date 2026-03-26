@@ -28,6 +28,7 @@
 #let work = data.at("work", default: ())
 #let skills = data.at("skills", default: ())
 #let projects = data.at("projects", default: ())
+#let section-order = data.at("sectionOrder", default: ("education", "work", "projects", "skills"))
 
 // ─── 辅助 ───────────────────────────
 #let section-heading(label) = {
@@ -137,41 +138,40 @@
       text(size: 9.5pt, fill: luma(60))[#personal.at("summary", default: "")]
     }
 
-    // 工作经历
-    #if work.len() > 0 {
-      section-heading("工作经历")
-      for item in work {
-        grid(
-          columns: (1fr, auto),
-          text(size: 10.5pt, weight: "bold", fill: luma(20))[#item.at("company", default: "")],
-          date-range(item.at("startDate", default: ""), item.at("endDate", default: "")),
-        )
-        text(size: 9pt, fill: accent)[#item.at("position", default: "")]
-        if item.at("description", default: "") != "" {
-          v(0.2em)
-          text(size: 9pt, fill: luma(60))[#item.description]
+    // 按用户排序渲染主区域模块
+    #for sec in section-order {
+      if sec == "work" and work.len() > 0 {
+        section-heading("工作经历")
+        for item in work {
+          grid(
+            columns: (1fr, auto),
+            text(size: 10.5pt, weight: "bold", fill: luma(20))[#item.at("company", default: "")],
+            date-range(item.at("startDate", default: ""), item.at("endDate", default: "")),
+          )
+          text(size: 9pt, fill: accent)[#item.at("position", default: "")]
+          if item.at("description", default: "") != "" {
+            v(0.2em)
+            text(size: 9pt, fill: luma(60))[#item.description]
+          }
+          v(0.7em)
         }
-        v(0.7em)
-      }
-    }
-
-    // 项目经验
-    #if projects.len() > 0 {
-      section-heading("项目经验")
-      for item in projects {
-        grid(
-          columns: (1fr, auto),
-          text(size: 10.5pt, weight: "bold", fill: luma(20))[#item.at("name", default: "")],
-          date-range(item.at("startDate", default: ""), item.at("endDate", default: "")),
-        )
-        if item.at("role", default: "") != "" {
-          text(size: 9pt, fill: accent)[#item.at("role", default: "")]
+      } else if sec == "projects" and projects.len() > 0 {
+        section-heading("项目经验")
+        for item in projects {
+          grid(
+            columns: (1fr, auto),
+            text(size: 10.5pt, weight: "bold", fill: luma(20))[#item.at("name", default: "")],
+            date-range(item.at("startDate", default: ""), item.at("endDate", default: "")),
+          )
+          if item.at("role", default: "") != "" {
+            text(size: 9pt, fill: accent)[#item.at("role", default: "")]
+          }
+          if item.at("description", default: "") != "" {
+            v(0.2em)
+            text(size: 9pt, fill: luma(60))[#item.description]
+          }
+          v(0.7em)
         }
-        if item.at("description", default: "") != "" {
-          v(0.2em)
-          text(size: 9pt, fill: luma(60))[#item.description]
-        }
-        v(0.7em)
       }
     }
   ],

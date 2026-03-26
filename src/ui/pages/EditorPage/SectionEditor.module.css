@@ -20,6 +20,32 @@
   gap: var(--space-4);
 }
 
+.listToolbar {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.sortBtn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  border: none;
+  border-radius: var(--radius-md);
+  background: none;
+  font-family: var(--font-family-body);
+  font-size: var(--font-caption);
+  color: var(--sem-text-tertiary);
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-brush-touch),
+              background-color var(--duration-fast) var(--ease-brush-touch);
+}
+
+.sortBtn:hover {
+  color: var(--sem-text-secondary);
+  background-color: var(--sem-bg-secondary);
+}
+
 .listItem {
   position: relative;
   padding: var(--space-4) var(--space-4) var(--space-4) var(--space-4);

@@ -39,6 +39,7 @@
 #let work = data.at("work", default: ())
 #let skills = data.at("skills", default: ())
 #let projects = data.at("projects", default: ())
+#let section-order = data.at("sectionOrder", default: ("work", "education", "projects", "skills"))
 
 // ─── 顶部 ───────────────────────────
 #text(size: 24pt, weight: "bold", fill: luma(20))[
@@ -64,67 +65,60 @@
   text(size: 9.5pt, fill: luma(70))[#personal.at("summary", default: "")]
 }
 
-// ─── 工作 ───────────────────────────
-#if work.len() > 0 {
-  section-label("工作经历")
-  for item in work {
-    grid(
-      columns: (1fr, auto),
-      text(size: 10pt, weight: "bold", fill: luma(30))[#item.at("company", default: "")],
-      date-range(item.at("startDate", default: ""), item.at("endDate", default: "")),
-    )
-    text(size: 9pt, fill: luma(100))[#item.at("position", default: "")]
-    if item.at("description", default: "") != "" {
-      v(0.2em)
-      text(size: 9pt, fill: luma(70))[#item.description]
+// ─── 按用户排序渲染各模块 ────────────────
+#for sec in section-order {
+  if sec == "work" and work.len() > 0 {
+    section-label("工作经历")
+    for item in work {
+      grid(
+        columns: (1fr, auto),
+        text(size: 10pt, weight: "bold", fill: luma(30))[#item.at("company", default: "")],
+        date-range(item.at("startDate", default: ""), item.at("endDate", default: "")),
+      )
+      text(size: 9pt, fill: luma(100))[#item.at("position", default: "")]
+      if item.at("description", default: "") != "" {
+        v(0.2em)
+        text(size: 9pt, fill: luma(70))[#item.description]
+      }
+      v(0.7em)
     }
-    v(0.7em)
-  }
-}
-
-// ─── 教育 ───────────────────────────
-#if education.len() > 0 {
-  section-label("教育经历")
-  for item in education {
-    grid(
-      columns: (1fr, auto),
-      text(size: 10pt, weight: "bold", fill: luma(30))[#item.at("school", default: "")],
-      date-range(item.at("startDate", default: ""), item.at("endDate", default: "")),
-    )
-    text(size: 9pt, fill: luma(100))[#item.at("degree", default: "") · #item.at("field", default: "")]
-    if item.at("description", default: "") != "" {
-      v(0.2em)
-      text(size: 9pt, fill: luma(70))[#item.description]
+  } else if sec == "education" and education.len() > 0 {
+    section-label("教育经历")
+    for item in education {
+      grid(
+        columns: (1fr, auto),
+        text(size: 10pt, weight: "bold", fill: luma(30))[#item.at("school", default: "")],
+        date-range(item.at("startDate", default: ""), item.at("endDate", default: "")),
+      )
+      text(size: 9pt, fill: luma(100))[#item.at("degree", default: "") · #item.at("field", default: "")]
+      if item.at("description", default: "") != "" {
+        v(0.2em)
+        text(size: 9pt, fill: luma(70))[#item.description]
+      }
+      v(0.7em)
     }
-    v(0.7em)
-  }
-}
-
-// ─── 项目 ───────────────────────────
-#if projects.len() > 0 {
-  section-label("项目经验")
-  for item in projects {
-    grid(
-      columns: (1fr, auto),
-      text(size: 10pt, weight: "bold", fill: luma(30))[#item.at("name", default: "")],
-      date-range(item.at("startDate", default: ""), item.at("endDate", default: "")),
-    )
-    if item.at("role", default: "") != "" {
-      text(size: 9pt, fill: luma(100))[#item.at("role", default: "")]
+  } else if sec == "projects" and projects.len() > 0 {
+    section-label("项目经验")
+    for item in projects {
+      grid(
+        columns: (1fr, auto),
+        text(size: 10pt, weight: "bold", fill: luma(30))[#item.at("name", default: "")],
+        date-range(item.at("startDate", default: ""), item.at("endDate", default: "")),
+      )
+      if item.at("role", default: "") != "" {
+        text(size: 9pt, fill: luma(100))[#item.at("role", default: "")]
+      }
+      if item.at("description", default: "") != "" {
+        v(0.2em)
+        text(size: 9pt, fill: luma(70))[#item.description]
+      }
+      v(0.7em)
     }
-    if item.at("description", default: "") != "" {
-      v(0.2em)
-      text(size: 9pt, fill: luma(70))[#item.description]
+  } else if sec == "skills" and skills.len() > 0 {
+    section-label("技能")
+    for item in skills {
+      text(size: 9pt)[*#item.at("name", default: "")* #h(0.5em) #text(fill: luma(140))[#item.at("level", default: "")]]
+      h(1.5em)
     }
-    v(0.7em)
-  }
-}
-
-// ─── 技能 ───────────────────────────
-#if skills.len() > 0 {
-  section-label("技能")
-  for item in skills {
-    text(size: 9pt)[*#item.at("name", default: "")* #h(0.5em) #text(fill: luma(140))[#item.at("level", default: "")]]
-    h(1.5em)
   }
 }

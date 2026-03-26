@@ -40,6 +40,7 @@
 #let work = data.at("work", default: ())
 #let skills = data.at("skills", default: ())
 #let projects = data.at("projects", default: ())
+#let section-order = data.at("sectionOrder", default: ("education", "projects", "work", "skills"))
 
 // ─── 姓名与联系信息 ──────────────────────
 #align(center)[
@@ -67,71 +68,64 @@
   text(size: 10pt, style: "italic")[#personal.at("summary", default: "")]
 }
 
-// ─── 教育经历 ───────────────────────────
-#if education.len() > 0 {
-  section-title("教育背景")
-  for item in education {
-    grid(
-      columns: (1fr, auto),
-      [*#item.at("school", default: "")* \ #text(size: 9.5pt)[#item.at("degree", default: "") · #item.at("field", default: "")]],
-      align(right, date-range(item.at("startDate", default: ""), item.at("endDate", default: ""))),
-    )
-    if item.at("description", default: "") != "" {
-      v(0.1em)
-      text(size: 9.5pt)[#item.description]
-    }
-    v(0.4em)
-  }
-}
-
-// ─── 研究/项目经验 ──────────────────────
-#if projects.len() > 0 {
-  section-title("研究与项目")
-  for item in projects {
-    grid(
-      columns: (1fr, auto),
-      [*#item.at("name", default: "")* \ #text(size: 9.5pt, style: "italic")[#item.at("role", default: "")]],
-      align(right, date-range(item.at("startDate", default: ""), item.at("endDate", default: ""))),
-    )
-    if item.at("description", default: "") != "" {
-      v(0.1em)
-      text(size: 9.5pt)[#item.description]
-    }
-    if item.at("url", default: "") != "" {
-      text(size: 8.5pt, fill: rgb("#1B4965"))[#item.url]
-    }
-    v(0.4em)
-  }
-}
-
-// ─── 工作经历 ───────────────────────────
-#if work.len() > 0 {
-  section-title("工作经历")
-  for item in work {
-    grid(
-      columns: (1fr, auto),
-      [*#item.at("company", default: "")* \ #text(size: 9.5pt)[#item.at("position", default: "")]],
-      align(right, date-range(item.at("startDate", default: ""), item.at("endDate", default: ""))),
-    )
-    if item.at("description", default: "") != "" {
-      v(0.1em)
-      text(size: 9.5pt)[#item.description]
-    }
-    v(0.4em)
-  }
-}
-
-// ─── 技能 ───────────────────────────────
-#if skills.len() > 0 {
-  section-title("专业技能")
-  grid(
-    columns: (auto, 1fr),
-    gutter: 0.6em,
-    ..skills.map(item => {
-      (
-        text(weight: "bold", size: 9.5pt)[#item.at("name", default: "")],
-        text(size: 9pt, fill: luma(100))[#item.at("level", default: "")],
+// ─── 按用户排序渲染各模块 ────────────────
+#for sec in section-order {
+  if sec == "education" and education.len() > 0 {
+    section-title("教育背景")
+    for item in education {
+      grid(
+        columns: (1fr, auto),
+        [*#item.at("school", default: "")* \ #text(size: 9.5pt)[#item.at("degree", default: "") · #item.at("field", default: "")]],
+        align(right, date-range(item.at("startDate", default: ""), item.at("endDate", default: ""))),
       )
-    }).flatten()
-  )
+      if item.at("description", default: "") != "" {
+        v(0.1em)
+        text(size: 9.5pt)[#item.description]
+      }
+      v(0.4em)
+    }
+  } else if sec == "projects" and projects.len() > 0 {
+    section-title("研究与项目")
+    for item in projects {
+      grid(
+        columns: (1fr, auto),
+        [*#item.at("name", default: "")* \ #text(size: 9.5pt, style: "italic")[#item.at("role", default: "")]],
+        align(right, date-range(item.at("startDate", default: ""), item.at("endDate", default: ""))),
+      )
+      if item.at("description", default: "") != "" {
+        v(0.1em)
+        text(size: 9.5pt)[#item.description]
+      }
+      if item.at("url", default: "") != "" {
+        text(size: 8.5pt, fill: rgb("#1B4965"))[#item.url]
+      }
+      v(0.4em)
+    }
+  } else if sec == "work" and work.len() > 0 {
+    section-title("工作经历")
+    for item in work {
+      grid(
+        columns: (1fr, auto),
+        [*#item.at("company", default: "")* \ #text(size: 9.5pt)[#item.at("position", default: "")]],
+        align(right, date-range(item.at("startDate", default: ""), item.at("endDate", default: ""))),
+      )
+      if item.at("description", default: "") != "" {
+        v(0.1em)
+        text(size: 9.5pt)[#item.description]
+      }
+      v(0.4em)
+    }
+  } else if sec == "skills" and skills.len() > 0 {
+    section-title("专业技能")
+    grid(
+      columns: (auto, 1fr),
+      gutter: 0.6em,
+      ..skills.map(item => {
+        (
+          text(weight: "bold", size: 9.5pt)[#item.at("name", default: "")],
+          text(size: 9pt, fill: luma(100))[#item.at("level", default: "")],
+        )
+      }).flatten()
+    )
+  }
 }

@@ -38,6 +38,7 @@
 #let work = data.at("work", default: ())
 #let skills = data.at("skills", default: ())
 #let projects = data.at("projects", default: ())
+#let section-order = data.at("sectionOrder", default: ("work", "education", "projects", "skills"))
 
 // ─── 姓名头部（全宽） ──────────────────────
 #align(center)[
@@ -88,58 +89,53 @@
     }
   },
 
-  // ─── 右栏 ─────────────────────────
+  // ─── 右栏（按用户排序） ──────────────
   {
-    // 工作经历
-    if work.len() > 0 {
-      section-title("工作经历")
-      for item in work {
-        grid(
-          columns: (1fr, auto),
-          [*#item.at("company", default: "")* #h(0.3em) #text(size: 9pt)[#item.at("position", default: "")]],
-          date-range(item.at("startDate", default: ""), item.at("endDate", default: "")),
-        )
-        if item.at("description", default: "") != "" {
-          v(0.1em)
-          text(size: 9pt)[#item.description]
+    for sec in section-order {
+      if sec == "work" and work.len() > 0 {
+        section-title("工作经历")
+        for item in work {
+          grid(
+            columns: (1fr, auto),
+            [*#item.at("company", default: "")* #h(0.3em) #text(size: 9pt)[#item.at("position", default: "")]],
+            date-range(item.at("startDate", default: ""), item.at("endDate", default: "")),
+          )
+          if item.at("description", default: "") != "" {
+            v(0.1em)
+            text(size: 9pt)[#item.description]
+          }
+          v(0.25em)
         }
-        v(0.25em)
-      }
-    }
-
-    // 教育经历
-    if education.len() > 0 {
-      section-title("教育经历")
-      for item in education {
-        grid(
-          columns: (1fr, auto),
-          [*#item.at("school", default: "")* #h(0.3em) #text(size: 9pt)[#item.at("degree", default: "") · #item.at("field", default: "")]],
-          date-range(item.at("startDate", default: ""), item.at("endDate", default: "")),
-        )
-        if item.at("description", default: "") != "" {
-          text(size: 9pt)[#item.description]
+      } else if sec == "education" and education.len() > 0 {
+        section-title("教育经历")
+        for item in education {
+          grid(
+            columns: (1fr, auto),
+            [*#item.at("school", default: "")* #h(0.3em) #text(size: 9pt)[#item.at("degree", default: "") · #item.at("field", default: "")]],
+            date-range(item.at("startDate", default: ""), item.at("endDate", default: "")),
+          )
+          if item.at("description", default: "") != "" {
+            text(size: 9pt)[#item.description]
+          }
+          v(0.25em)
         }
-        v(0.25em)
-      }
-    }
-
-    // 项目经验
-    if projects.len() > 0 {
-      section-title("项目经验")
-      for item in projects {
-        grid(
-          columns: (1fr, auto),
-          [*#item.at("name", default: "")* #h(0.3em) #text(size: 9pt)[#item.at("role", default: "")]],
-          date-range(item.at("startDate", default: ""), item.at("endDate", default: "")),
-        )
-        if item.at("description", default: "") != "" {
-          v(0.1em)
-          text(size: 9pt)[#item.description]
+      } else if sec == "projects" and projects.len() > 0 {
+        section-title("项目经验")
+        for item in projects {
+          grid(
+            columns: (1fr, auto),
+            [*#item.at("name", default: "")* #h(0.3em) #text(size: 9pt)[#item.at("role", default: "")]],
+            date-range(item.at("startDate", default: ""), item.at("endDate", default: "")),
+          )
+          if item.at("description", default: "") != "" {
+            v(0.1em)
+            text(size: 9pt)[#item.description]
+          }
+          if item.at("url", default: "") != "" {
+            text(size: 8pt, fill: rgb("#1B4965"))[#item.url]
+          }
+          v(0.25em)
         }
-        if item.at("url", default: "") != "" {
-          text(size: 8pt, fill: rgb("#1B4965"))[#item.url]
-        }
-        v(0.25em)
       }
     }
   },
