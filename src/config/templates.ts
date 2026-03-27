@@ -1,5 +1,6 @@
 // Config 层：模板元数据定义
 // 依赖：Types
+// @req R2.2 — 多模板系统：模板元数据定义
 
 export interface TemplateMeta {
   id: string

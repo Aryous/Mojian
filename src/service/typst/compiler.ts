@@ -1,6 +1,7 @@
 // Service 层：Typst WASM 编译器封装
 // 依赖：Types, @myriaddreamin/typst.ts
 // 渲染路径：compiler(vector) → renderer(SVG string) → dangerouslySetInnerHTML
+// @req R2.1 — 简历渲染：Typst WASM 编译, SVG/PDF 生成
 
 import {
   createTypstCompiler,

@@ -51,9 +51,9 @@ for i in $(seq 0 $((TOTAL - 1))); do
   id="${IDS[$i]}"
   name="${NAMES[$i]}"
 
-  # 搜索 @req <id> 或 [<id>] 模式
-  hits=$(grep -rn --include="*.ts" --include="*.tsx" \
-    -E "@req ${id}([^0-9]|$)|\[${id}\]" \
+  # 搜索 @req <id> 或 @req R<id> 或 [<id>] 模式
+  hits=$(grep -rn --include="*.ts" --include="*.tsx" --include="*.css" \
+    -E "@req R?${id}([^0-9]|$)|\[R?${id}\]" \
     "$SRC_DIR" "$TEST_DIR" 2>/dev/null || true)
 
   if [[ -n "$hits" ]]; then

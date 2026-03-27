@@ -1,5 +1,6 @@
 // Config 层：AI 服务配置
 // 依赖：Types
+// @req R3.1 — AI 优化选项：4 种预设优化策略 (润色/量化/精简/匹配岗位) 及 system prompt
 
 import type { AiOptimizeOption } from '@/types'
 

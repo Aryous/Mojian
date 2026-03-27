@@ -1,5 +1,6 @@
 // Repo 层：简历 CRUD 操作
 // 依赖：Types, db.ts
+// @req R1.2 — 简历持久化：CRUD 操作 (create/get/list/update/delete)
 
 import { db } from './db'
 import type { Resume, ResumeCreateInput, ResumeSummary } from '@/types'

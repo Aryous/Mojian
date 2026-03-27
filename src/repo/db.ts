@@ -1,5 +1,6 @@
 // Repo 层：Dexie 数据库定义
 // 依赖：Types
+// @req R1.2 — 简历持久化：IndexedDB (Dexie) 数据库定义
 
 import Dexie, { type Table } from 'dexie'
 import type { Resume } from '@/types'

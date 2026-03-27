@@ -1,6 +1,7 @@
 // Service/AI 层：AI Provider（OpenAI SDK via OpenRouter）
 // 依赖：Config, Repo
 // 唯一入口：所有 AI API 调用必须经过此文件
+// @req R3.2 — 多 AI 供应商配置：OpenAI SDK 封装, OpenRouter 统一入口
 
 import OpenAI from 'openai'
 import { AI_BASE_URL, AI_DEFAULT_MODEL } from '@/config'

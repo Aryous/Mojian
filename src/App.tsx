@@ -1,3 +1,4 @@
+// @req R5.1 — 降低认知负担：路由结构定义核心用户流 (Landing → Dashboard → TemplateSelect → Editor)
 import { BrowserRouter, Routes, Route } from 'react-router'
 import { LandingPage } from '@/ui/pages/LandingPage'
 import { DashboardPage } from '@/ui/pages/DashboardPage'

@@ -1,6 +1,7 @@
 /* 设计令牌入口 — 全局 CSS 变量定义 */
 /* 权威来源: docs/design-docs/design-spec.md */
 /* 三层体系: L1 基础色 → L2 语义色 → L3 组件色(各组件 .module.css 内定义) */
+/* @req R4.1 — 古风视觉体系：192 CSS custom properties, 中国传统色 */
 
 :root {
   /* ===== L1 基础色（中国传统色） ===== */
@@ -179,6 +180,7 @@
   --obi-progress-mid: #E8B86D;
   --obi-progress-done: #7DC88B;
 
+  /* @req R4.3 — 动画效果：缓动曲线与时长令牌 */
   /* ===== 缓动曲线 ===== */
   --ease-ink-spread: cubic-bezier(0.22, 0.61, 0.36, 1);   /* 进入 — 墨水扩散 */
   --ease-ink-fade: cubic-bezier(0.55, 0, 0.68, 0.19);     /* 退出 — 墨迹褪去 */
@@ -224,6 +226,7 @@ body {
   }
 }
 
+/* @req R5.2 — 响应式设计：桌面端断点定义 (>=1024px) */
 /* ===== 窄屏不支持提示 ===== */
 /* design-spec §7.1: < 1024px 显示提示，隐藏主内容 */
 @media (max-width: 1023px) {

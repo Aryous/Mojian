@@ -1,6 +1,7 @@
 // Runtime 层：预览状态管理
 // 负责 Typst 编译结果的状态，UI 层通过此 store 获取预览数据
 // 渲染路径：compiler(vector) → renderer(SVG[] per page) → UI dangerouslySetInnerHTML
+// @req R2.3 — 简历导出：exportPdf 触发 PDF 编译并下载
 
 import { create } from 'zustand'
 import type { Resume } from '@/types'

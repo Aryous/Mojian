@@ -1,4 +1,5 @@
 // 原子组件统一导出
+// @req R4.2 — 原子化设计组件：组件 barrel export 入口
 export { SealButton } from './SealButton'
 export { PaperCard } from './PaperCard'
 export { InkInput } from './InkInput'

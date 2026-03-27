@@ -1,4 +1,5 @@
 // 简历模块编辑器：根据 SectionType 渲染不同表单
+// @req R1.1 — 简历内容编辑：section CRUD, item add/edit/delete
 import { type ChangeEvent, useCallback } from 'react'
 import type {
   Resume,
