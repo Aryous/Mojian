@@ -1,5 +1,6 @@
 // src/ui/pages/EditorPage/EditorPage.tsx
 // Resume editor page — 42/58 split, AI drawer, template drawer
+// @req R1.1 — 简历内容编辑：section reorder (drag-and-drop)
 import { useEffect, useCallback, useMemo, useState } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router'
 import { Reorder, useDragControls } from 'motion/react'
@@ -12,7 +13,7 @@ import { SectionEditor } from './SectionEditor'
 import { ResumePreview } from './ResumePreview'
 import { AiDrawer } from './AiDrawer'
 import { AiFab } from './AiFab'
-import type { Resume, ResumeSection } from '@/types'
+import type { Resume, ResumeSection, SectionType } from '@/types'
 import styles from './EditorPage.module.css'
 
 // ─── Draggable section card (needs its own component for useDragControls hook) ───
@@ -25,7 +26,7 @@ function DraggableSectionCard({
   section: ResumeSection
   resume: Resume
   onUpdate: (changes: Partial<Resume>) => void
-  onAi: (title: string) => void
+  onAi: (sectionType: SectionType) => void
 }) {
   const controls = useDragControls()
 
@@ -60,7 +61,7 @@ function DraggableSectionCard({
             <button
               type="button"
               className={styles.sectionAiBtn}
-              onClick={() => onAi(section.title)}
+              onClick={() => onAi(section.type)}
               aria-label={`墨灵润色${section.title}`}
             >
               <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -88,8 +89,9 @@ export function EditorPage() {
   const navigate = useNavigate()
   const location = useLocation()
   const { currentResume, loading, openResume, updateCurrentResume, closeResume } = useResumeStore()
-  const { error: aiError, clearResult: clearAiError } = useAiStore()
+  const { error: aiError, clearState: clearAiError } = useAiStore()
   const [aiOpen, setAiOpen] = useState(false)
+  const [aiTargetSection, setAiTargetSection] = useState<SectionType | undefined>(undefined)
   const [tplOpen, setTplOpen] = useState(false)
 
   useEffect(() => {
@@ -131,42 +133,20 @@ export function EditorPage() {
     [handleUpdate],
   )
 
-  // Collect resume text content for AI optimization
-  const resumeTextContent = useMemo(() => {
-    if (!currentResume) return ''
-    const parts: string[] = []
-    const { personal, education, work, skills, projects } = currentResume
-    if (personal.summary) parts.push(personal.summary)
-    for (const edu of education) {
-      if (edu.description) parts.push(edu.description)
-    }
-    for (const w of work) {
-      if (w.description) parts.push(w.description)
-    }
-    for (const s of skills) {
-      parts.push(`${s.name} (${s.level})`)
-    }
-    for (const p of projects) {
-      if (p.description) parts.push(p.description)
-    }
-    return parts.join('\n\n')
-  }, [currentResume])
-
   const handleAiAccept = useCallback(
-    (optimized: string) => {
-      if (!currentResume) return
-      updateCurrentResume({
-        personal: { ...currentResume.personal, summary: optimized },
-      })
+    (changes: Partial<Resume>) => {
+      updateCurrentResume(changes)
     },
-    [currentResume, updateCurrentResume],
+    [updateCurrentResume],
   )
 
   const handleToggleAi = useCallback(() => {
+    setAiTargetSection(undefined) // FAB 按钮打开 = 全文模式
     setAiOpen((prev) => !prev)
   }, [])
 
   const handleCloseAi = useCallback(() => {
+    setAiTargetSection(undefined)
     setAiOpen(false)
   }, [])
 
@@ -188,9 +168,10 @@ export function EditorPage() {
     return TEMPLATES.find((t) => t.id === currentResume.templateId)?.name ?? currentResume.templateId
   }, [currentResume])
 
-  // Section AI button handler
+  // Section "墨灵" button — opens drawer with target section
   const handleSectionAi = useCallback(
-    (_sectionTitle: string) => { // eslint-disable-line @typescript-eslint/no-unused-vars
+    (sectionType: SectionType) => {
+      setAiTargetSection(sectionType)
       setAiOpen(true)
     },
     [],
@@ -287,8 +268,9 @@ export function EditorPage() {
           <AiDrawer
             open={aiOpen}
             onClose={handleCloseAi}
-            content={resumeTextContent}
+            resume={currentResume}
             onAccept={handleAiAccept}
+            targetSection={aiTargetSection}
           />
         </aside>
       </div>
