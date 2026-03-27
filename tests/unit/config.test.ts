@@ -22,8 +22,8 @@ describe('Config 层：模板配置', () => {
 })
 
 describe('Config 层：AI 优化选项', () => {
-  it('AI_OPTIMIZE_OPTIONS 包含 4 个选项', () => {
-    expect(AI_OPTIMIZE_OPTIONS).toHaveLength(4)
+  it('AI_OPTIMIZE_OPTIONS 包含 5 个选项', () => {
+    expect(AI_OPTIMIZE_OPTIONS).toHaveLength(5)
   })
 
   it.each(AI_OPTIMIZE_OPTIONS)('选项 "$id" 包含必需字段', (option) => {
@@ -38,9 +38,9 @@ describe('Config 层：AI 优化选项', () => {
     expect(option.systemPrompt.length).toBeGreaterThan(0)
   })
 
-  it('选项 ID 分别为 polish / quantify / concise / match-job', () => {
+  it('选项 ID 分别为 generate / polish / quantify / concise / match-job', () => {
     const ids = AI_OPTIMIZE_OPTIONS.map((o) => o.id)
-    expect(ids).toEqual(['polish', 'quantify', 'concise', 'match-job'])
+    expect(ids).toEqual(['generate', 'polish', 'quantify', 'concise', 'match-job'])
   })
 })
 

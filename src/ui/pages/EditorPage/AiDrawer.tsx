@@ -28,6 +28,16 @@ const SUGGESTION_CHIPS = [
   { label: '翻译英文', prompt: '将简历翻译为英文' },
 ]
 
+/** 判断简历是否基本为空（冷启动状态） */
+function isResumeEmpty(resume: Resume | null): boolean {
+  if (!resume) return true
+  const hasWork = resume.work.some((w) => w.company || w.description)
+  const hasEdu = resume.education.some((e) => e.school || e.description)
+  const hasProjects = resume.projects.some((p) => p.name || p.description)
+  const hasSummary = !!resume.personal.summary
+  return !hasWork && !hasEdu && !hasProjects && !hasSummary
+}
+
 function DiffEntryRow({ entry }: { entry: AiDiffEntry }) {
   return (
     <div className={styles.diffEntry}>
@@ -93,6 +103,14 @@ export function AiDrawer({ open, onClose, resume, onAccept, targetSection }: AiD
     },
     [optimizing, resume, optimize],
   )
+
+  const resumeEmpty = isResumeEmpty(resume)
+
+  // 冷启动：AI 生成简历
+  const handleGenerate = useCallback(() => {
+    if (!inputValue.trim()) return
+    sendOptimize(inputValue, 'generate')
+  }, [inputValue, sendOptimize])
 
   // Quick action — 不传 section，全文优化
   const handleQuickAction = useCallback(
@@ -201,6 +219,35 @@ export function AiDrawer({ open, onClose, resume, onAccept, targetSection }: AiD
               清除
             </button>
           </div>
+
+          {/* 冷启动引导 — 简历为空时显示 */}
+          {resumeEmpty && !pendingResult && messages.length === 0 && (
+            <div className={styles.generateSection}>
+              <div className={styles.generateHint}>
+                简历还是空的？描述你的职业背景，墨灵帮你生成专业简历。
+              </div>
+              <div className={styles.generateInputRow}>
+                <input
+                  className={styles.input}
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
+                    if (e.key === 'Enter' && !e.nativeEvent.isComposing) handleGenerate()
+                  }}
+                  placeholder="例：我是3年经验的数据分析师，擅长Python和SQL..."
+                  disabled={optimizing}
+                />
+                <button
+                  type="button"
+                  className={styles.sendBtn}
+                  onClick={handleGenerate}
+                  disabled={optimizing || !inputValue.trim()}
+                >
+                  生成
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Quick Actions */}
           <div className={styles.actions}>

@@ -13,8 +13,33 @@ export const AI_DEFAULT_MODEL = 'openai/gpt-4o-mini'
 /** localStorage 中存储 API Key 的键名 */
 export const AI_API_KEY_STORAGE_KEY = 'mojian:openrouter-api-key'
 
-/** AI 优化选项定义 */
+/** AI 优化选项定义（含生成模式） */
 export const AI_OPTIMIZE_OPTIONS: AiOptimizeOption[] = [
+  {
+    id: 'generate',
+    name: '生成简历',
+    description: '描述你的背景，AI 帮你从零生成专业简历',
+    systemPrompt: `你是一位资深简历撰写顾问。用户将描述自己的职业背景，你需要据此生成专业的简历内容。
+
+## 核心原则
+
+根据用户提供的信息，合理组织并扩展为结构完整的简历。不编造具体数据（年份、数字），但可以基于用户描述合理推断职位层级和职责范围。
+
+## 输出策略
+
+- 个人简介（summary）：2-3 句话概括核心优势和职业定位
+- 工作经历：每段经历 2-3 条成就描述，使用强动词开头
+- 教育经历：如用户未提及，保留为空数组
+- 项目经验：从工作经历中提炼 1-2 个有代表性的项目
+- 技能：从描述中提取技术栈和核心能力
+
+## 语言规范
+
+- 中文简历默认使用中文
+- 用户用英文描述时，生成英文简历
+- 遵循黄金句式：[强动词] + [做了什么] + [用什么方法] + [达成什么结果]
+- 可用占位符 [X%]、[N个] 标注需要用户后续补充的数据`,
+  },
   {
     id: 'polish',
     name: '润色表述',

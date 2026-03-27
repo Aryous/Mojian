@@ -101,17 +101,20 @@ function buildSystemMessage(basePrompt: string, targetSection?: SectionType): st
 
 只包含你实际修改了的 section。如果某个 section 不需要修改，不要包含它。
 不要包含 id 字段。不要包含 skills（除非用户明确要求）。
+description 和 summary 字段中如需换行（如列表、分段），使用 \\n 换行符。例如："- 成果一\\n- 成果二"。
 不要输出任何解释文字，不要在 JSON 前后添加额外内容。`
   } else if (targetSection === 'personal') {
     jsonInstruction = `\n\n## 输出格式要求（严格遵守）
 
 你必须且只能输出一个合法的 JSON 对象，包含以下字段：name、title、email、phone、location、website、summary。
+summary 字段中如需换行（如列表、分段），使用 \\n 换行符。
 不要输出任何解释文字，不要在 JSON 前后添加额外内容，不要改变字段名称。`
   } else {
     jsonInstruction = `\n\n## 输出格式要求（严格遵守）
 
 你必须且只能输出一个合法的 JSON 数组，数组每个元素对应一条记录。
 不要包含 id 字段。可以新增或删除条目，但不要改变每条记录的字段结构（字段名必须与输入一致）。
+description 字段中如需换行（如列表、分段），使用 \\n 换行符。例如："- 成果一\\n- 成果二"。
 不要输出任何解释文字，不要在 JSON 前后添加额外内容。`
   }
 

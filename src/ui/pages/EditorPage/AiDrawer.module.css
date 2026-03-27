@@ -68,6 +68,26 @@
   color: var(--obi-text);
 }
 
+/* ===== Cold-start Generate ===== */
+
+.generateSection {
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--obi-border);
+}
+
+.generateHint {
+  font-family: var(--font-family-body);
+  font-size: var(--font-small);
+  color: var(--obi-text-muted);
+  line-height: var(--leading-normal);
+  margin-bottom: var(--space-3);
+}
+
+.generateInputRow {
+  display: flex;
+  gap: var(--space-2);
+}
+
 /* ===== Quick Actions ===== */
 
 .actions {
