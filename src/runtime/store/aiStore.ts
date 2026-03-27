@@ -1,5 +1,6 @@
 // Runtime 层：AI 功能状态管理
 // 依赖：Types, Service
+// @req F10 — 聊天式交互：对话历史管理 + 多轮上下文传递
 
 import { create } from 'zustand'
 import type { Resume, SectionType, AiOptimizeResult, AiDiffEntry, ChatMessage } from '@/types'

@@ -1,6 +1,7 @@
 // Service/AI 层：简历内容优化
 // 依赖：Config, Types, provider.ts, serialize.ts, parse.ts
 // @req R3.3 — AI 上下文工程：编排层 (buildSystemMessage, buildUserMessage, API 调用)
+// @req F12 — AI 自动路由：classifyUserIntent 轻量分类
 
 import { AI_OPTIMIZE_OPTIONS } from '@/config'
 import type { Resume, SectionType } from '@/types'

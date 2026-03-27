@@ -1,4 +1,5 @@
 // @req R1.1 — Markdown 语法支持：markdown → Typst 标记转换
+// @req F04 — Markdown 语法支持：bold/italic/list → Typst markup 转换
 //
 // 简历 description/summary 字段支持基础 markdown 语法：
 //   **bold**, *italic*, ***bold italic***, - 列表, 1. 编号列表

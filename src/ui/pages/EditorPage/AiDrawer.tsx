@@ -1,5 +1,6 @@
 // src/ui/pages/EditorPage/AiDrawer.tsx
 // AI drawer: quick actions + diff view — obi indigo color scheme
+// @req F11 — Chips optionId 修复：suggestion chips 走 AI 自动路由而非硬编码 polish
 import { useState, useCallback, useRef, useEffect, type KeyboardEvent, type ChangeEvent } from 'react'
 import { useAiStore } from '@/runtime/store'
 import type { Resume, SectionType, AiDiffEntry } from '@/types'
