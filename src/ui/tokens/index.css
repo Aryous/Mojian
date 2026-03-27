@@ -4,17 +4,19 @@
 
 :root {
   /* ===== L1 基础色（中国传统色） ===== */
-  --color-ink-deep: #1C1208;       /* 玄色 — 天地未分之色 */
-  --color-ink-medium: #3B2E1A;     /* 黧色 — 浓墨半干 */
+  --color-ink-deep: #1A1A1A;       /* 玄色 — 中性深灰 */
+  --color-ink-medium: #363636;     /* 黧色 — 工具栏深灰 */
   --color-ink-light: #6B5B3E;      /* 淡墨 */
   --color-ink-faint: #9B8E7E;      /* 极淡墨 — 干笔淡扫 */
-  --color-paper-base: #F5EDD6;     /* 缣色 — 宣纸本色 */
-  --color-paper-warm: #F0E6CE;     /* 牙色 — 宣纸暖调 */
-  --color-paper-aged: #D4C4A0;     /* 枯色 — 旧纸 */
+  --color-paper-base: #F7F5F0;     /* 缣色 — 微暖白宣纸 */
+  --color-paper-warm: #F2EEE8;     /* 牙色 — 宣纸暖调 */
+  --color-paper-aged: #ebe8e1;     /* 枯色 — 暖灰白 */
   --color-vermillion: #C23B22;     /* 朱砂 — 印泥之色 */
   --color-celadon: #7BA05B;        /* 青瓷 — 龙泉窑瓷色 */
   --color-gold: #C9A84C;           /* 赤金 — 金箔 */
   --color-glaze: #1B4965;          /* 靛青 — 蓝染深色 */
+  --color-divider-wash: #C8C0B4;   /* 渐隐墨线 — section 间分隔 */
+  --color-divider-subtle: #E0DCD4; /* 细线 — 条目间分隔 */
 
   /* ===== L2 语义色 ===== */
   /* 背景 */
@@ -22,6 +24,7 @@
   --sem-bg-secondary: var(--color-paper-warm);
   --sem-bg-tertiary: var(--color-paper-aged);
   --sem-bg-ink: var(--color-ink-deep);
+  --sem-bg-paper: #FFFFFF;          /* 简历纸面 — 纯白 */
 
   /* 文字 */
   --sem-text-primary: var(--color-ink-deep);
@@ -39,6 +42,8 @@
   /* 边框 */
   --sem-border-default: var(--color-ink-faint);
   --sem-border-strong: var(--color-ink-light);
+  --sem-border-subtle: var(--color-divider-subtle);
+  --sem-border-divider: var(--color-divider-wash);
 
   /* 状态 */
   --sem-status-success: var(--color-celadon);
@@ -93,28 +98,28 @@
   --radius-full: 9999px;
 
   /* ===== 阴影 ===== */
-  --shadow-subtle: 0 1px 2px rgba(28, 18, 8, 0.06);
-  --shadow-medium: 0 2px 8px rgba(28, 18, 8, 0.10);
-  --shadow-strong: 0 4px 16px rgba(28, 18, 8, 0.14);
+  --shadow-subtle: 0 1px 2px rgba(26, 26, 26, 0.06);
+  --shadow-medium: 0 2px 8px rgba(26, 26, 26, 0.10);
+  --shadow-strong: 0 4px 16px rgba(26, 26, 26, 0.14);
 
   /* ===== L3 墨砚面（ink-surface）— 深色背景上的浅色元素 ===== */
   /* 用于 AI 面板、深色抽屉等 ink-deep/ink-medium 背景上的 UI 元素 */
   /* 基于 paper-base 在深色上的不同透明度层级 */
-  --ink-surface-text-body: rgba(245, 237, 214, 0.7);       /* 正文/主要可读文字 */
-  --ink-surface-text-secondary: rgba(245, 237, 214, 0.55); /* 描述/次要文字 */
-  --ink-surface-text-label: rgba(245, 237, 214, 0.5);      /* 标签/分类文字 */
-  --ink-surface-text-muted: rgba(245, 237, 214, 0.4);      /* 极淡提示/空态 */
-  --ink-surface-text-hint: rgba(245, 237, 214, 0.6);       /* 引导说明文字 */
-  --ink-surface-text-placeholder: rgba(245, 237, 214, 0.35);/* 输入占位符 */
-  --ink-surface-border: rgba(245, 237, 214, 0.15);         /* 卡片/区块边框 */
-  --ink-surface-border-subtle: rgba(245, 237, 214, 0.1);   /* 分隔线/状态容器边框 */
-  --ink-surface-border-input: rgba(245, 237, 214, 0.2);    /* 输入框边框 */
-  --ink-surface-border-diff: rgba(245, 237, 214, 0.12);    /* 对比区块边框 */
-  --ink-surface-bg-card: rgba(245, 237, 214, 0.06);        /* 卡片/容器背景 */
-  --ink-surface-bg-faint: rgba(245, 237, 214, 0.04);       /* 最淡卡片背景 */
-  --ink-surface-bg-input: rgba(245, 237, 214, 0.08);       /* 输入框背景 */
-  --ink-surface-accent-bg: rgba(27, 73, 101, 0.2);         /* AI 靛青操作高亮背景 */
-  --ink-surface-error-bg: rgba(194, 59, 34, 0.15);         /* 错误提示背景 */
+  --ink-surface-text-body: rgba(247, 245, 240, 0.7);       /* 正文/主要可读文字 */
+  --ink-surface-text-secondary: rgba(247, 245, 240, 0.55); /* 描述/次要文字 */
+  --ink-surface-text-label: rgba(247, 245, 240, 0.5);      /* 标签/分类文字 */
+  --ink-surface-text-muted: rgba(247, 245, 240, 0.4);      /* 极淡提示/空态 */
+  --ink-surface-text-hint: rgba(247, 245, 240, 0.6);       /* 引导说明文字 */
+  --ink-surface-text-placeholder: rgba(247, 245, 240, 0.35);/* 输入占位符 */
+  --ink-surface-border: rgba(247, 245, 240, 0.15);         /* 卡片/区块边框 */
+  --ink-surface-border-subtle: rgba(247, 245, 240, 0.1);   /* 分隔线/状态容器边框 */
+  --ink-surface-border-input: rgba(247, 245, 240, 0.2);    /* 输入框边框 */
+  --ink-surface-border-diff: rgba(247, 245, 240, 0.12);    /* 对比区块边框 */
+  --ink-surface-bg-card: rgba(247, 245, 240, 0.06);        /* 卡片/容器背景 */
+  --ink-surface-bg-faint: rgba(247, 245, 240, 0.04);       /* 最淡卡片背景 */
+  --ink-surface-bg-input: rgba(247, 245, 240, 0.08);       /* 输入框背景 */
+  --ink-surface-accent-bg: rgba(27, 73, 101, 0.2);         /* AI 靛青操作高亮背景 — unchanged */
+  --ink-surface-error-bg: rgba(194, 59, 34, 0.15);         /* 错误提示背景 — unchanged */
 
   /* ===== L3 Hero 区域 ===== */
   --hero-title-size: clamp(5rem, 10vw, 8rem);
