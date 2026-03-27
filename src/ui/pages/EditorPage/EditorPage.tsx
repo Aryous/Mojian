@@ -61,21 +61,23 @@ function DraggableSectionCard({
               type="button"
               className={styles.sectionAiBtn}
               onClick={() => onAi(section.title)}
-              aria-label={`AI 润色${section.title}`}
+              aria-label={`墨灵润色${section.title}`}
             >
               <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                 <circle cx="8" cy="8" r="3" stroke="currentColor" strokeWidth="1.2" />
                 <path d="M8 1v2M8 13v2M1 8h2M13 8h2" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
               </svg>
-              AI 润色
+              墨灵
             </button>
           )}
         </div>
-        <SectionEditor
-          type={section.type}
-          resume={resume}
-          onUpdate={onUpdate}
-        />
+        <div className={styles.sectionContent}>
+          <SectionEditor
+            type={section.type}
+            resume={resume}
+            onUpdate={onUpdate}
+          />
+        </div>
       </div>
     </Reorder.Item>
   )

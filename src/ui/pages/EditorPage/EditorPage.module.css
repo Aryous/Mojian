@@ -4,8 +4,10 @@
 /* L3 组件令牌 */
 .root {
   --editor-toolbar-height: 48px;
-  --editor-card-bg: #FEFBF2;  /* 暖白，比宣纸底色明显更亮 */
-  --editor-card-border: rgba(212, 196, 160, 0.4);
+  --editor-divider-ink: var(--sem-border-divider);
+  --editor-divider-subtle: var(--sem-border-subtle);
+  --editor-section-accent: 3px;
+  --editor-section-indent: 10px;
   --editor-ai-btn-border: rgba(27, 73, 101, 0.25);
   --editor-ai-btn-bg: rgba(27, 73, 101, 0.03);
   --editor-ai-btn-hover-bg: rgba(27, 73, 101, 0.1);
@@ -63,22 +65,27 @@
 .sectionList {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: 0;
+}
+
+/* 渐隐墨线 — section 间分隔（账簿式） */
+.sectionList > :not(:first-child)::before {
+  content: '';
+  display: block;
+  height: 1px;
+  margin: var(--space-6) 0;
+  background: linear-gradient(90deg,
+    transparent,
+    var(--editor-divider-ink) 15%,
+    var(--editor-divider-ink) 85%,
+    transparent);
 }
 
 /* ===== Section cards ===== */
 
 .sectionCard {
-  background: var(--editor-card-bg);
-  border-radius: 6px;
-  border: 1px solid var(--editor-card-border);
-  box-shadow: var(--shadow-medium);
-  padding: var(--space-4);
-  transition: box-shadow var(--duration-fast) var(--ease-brush-touch);
-}
-
-.sectionCard:hover {
-  box-shadow: var(--shadow-medium);
+  position: relative;
+  padding: 0;
 }
 
 .sectionHeader {
@@ -125,8 +132,9 @@
   line-height: var(--leading-tight);
   color: var(--sem-text-primary);
   margin: 0;
-  padding-left: var(--space-2);
-  border-left: 2px solid var(--sem-action-primary);
+  padding-left: var(--editor-section-indent);
+  border-left: var(--editor-section-accent) solid var(--sem-action-primary);
+  letter-spacing: 0.03em;
 }
 
 .sectionAiBtn {
@@ -154,6 +162,11 @@
 .sectionAiBtn:hover {
   background: var(--editor-ai-btn-hover-bg);
   border-color: var(--editor-ai-btn-hover-border);
+}
+
+/* 内容区域与标题朱砂竖线对齐 */
+.sectionContent {
+  padding-left: calc(var(--editor-section-accent) + var(--editor-section-indent));
 }
 
 /* ===== Loading / Empty states ===== */
