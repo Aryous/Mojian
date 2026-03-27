@@ -55,6 +55,18 @@ model: opus
 
 **输出格式**：走查报告输出为独立文件 `docs/product-specs/walkthrough-YYYY-MM-DD.md`（不写入 requirements.md）。报告包含每条旅程的步骤分析和缺口汇总表。走查发现的可行动项以 Q 问题形式追加到 requirements.md 的"待人类裁决"章节。
 
+**走查发现汇总表格式**（trace.sh 依赖此格式提取 F-ID）：
+
+```markdown
+| F-ID | 严重性 | 旅程 | 关联需求 | 状态 | 描述 |
+|---|---|---|---|---|---|
+| F05 | S0 | 编辑 | R1.1 | 待实现 | 撤销/重做 |
+```
+
+- 每个可行动的走查发现必须有 F-ID 和 S 定级
+- trace.sh 从此表提取 S0/S1 行作为追踪条目
+- S2 不追踪（低优先级，不阻断 commit）
+
 **缺口类型**：
 - **需求缺失**：requirements.md 中没有提到，但用户旅程中必然遇到
 - **需求存在但未实现**：requirements.md 写了，但代码中没有对应实现

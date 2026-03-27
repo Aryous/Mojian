@@ -67,11 +67,9 @@ src/
     └── pages/      ← 页面级视图
 ```
 
-## 执行方式（三层约束）
+## 机械化强制执行
 
-### 硬约束（阶段 3 搭建，自动运行）
-
-以下在每次提交时机械执行，Agent 和人类均无法绕过：
+分层规则通过以下手段机械化执行，Agent 和人类均无法绕过：
 
 - **自定义 ESLint 规则**：检测跨层 import 违规，报错信息包含修复指令
 - **结构测试**：验证 src/ 目录结构与本文档一致
@@ -84,19 +82,3 @@ Lint 报错信息示例（供 Agent 直接消费）：
    由 Runtime 调用 Service，UI 调用 Runtime。
    参考: ARCHITECTURE.md 依赖规则表。
 ```
-
-### 中约束（.claude/rules/，自动注入）
-
-Agent 工作时自动加载到上下文，无需主动读取：
-- `.claude/rules/architecture.md` — 分层规则
-- `.claude/rules/ai-service.md` — AI 调用规范
-- `.claude/rules/ui/design-tokens.md` — 设计令牌约束（仅 src/ui/ 生效）
-
-### 软约束（docs/，按需读取）
-
-Agent 需主动读取，提供上下文和决策依据：
-- `docs/DESIGN.md`、`docs/product-specs/`、`docs/references/`
-
-### 升级原则
-
-当中约束被反复违反时，将其编码为 lint 规则升级为硬约束。

@@ -45,24 +45,29 @@ UI          可引用 Types, Config, Runtime
 
 ## @req 标注约定
 
+代码中只用 **R**（顶层需求）和 **F**（走查发现）标注，不用 Q（Q 是决策记录，不是可追踪需求）。
+
 每个实现文件的模块级别或关键函数处，添加需求 ID 标注：
 
 ```typescript
-// @req 1.1 — 简历内容编辑
+// @req R1.1 — 简历内容编辑
 export function SectionEditor() { ... }
 
-// @req 3.1 — AI 优化选项
-export function optimizeResume() { ... }
+// @req F05 — 撤销/重做
+export function undoLastAction() { ... }
+
+// @req F01 — 冷启动 AI 生成
+export function generateResume() { ... }
 ```
 
 测试文件中使用 `[ID]` 前缀：
 
 ```typescript
-describe('[1.1] Content editing', () => { ... })
-describe('[3.1] AI optimization', () => { ... })
+describe('[R1.1] Content editing', () => { ... })
+describe('[F05] Undo/redo', () => { ... })
 ```
 
-主控运行 `scripts/trace.sh` 机械化验证覆盖率。无标注 = 不可追溯 = 阻塞门 G5 不通过。
+主控运行 `scripts/trace.sh` 机械化验证覆盖率。trace.sh 从 requirements.md 自推导 R + S0/S1 F 条目。无标注 = 不可追溯 = 阻塞门 G5 不通过。
 
 ## 溯源表（必须）
 
@@ -75,6 +80,7 @@ describe('[3.1] AI optimization', () => { ... })
 |---|---|---|---|---|
 | Task 1: 编辑器组件 | R1.1 | src/ui/pages/EditorPage/ | tests/unit/editor.test.ts | ✅ |
 | Task 2: AI 优化 | R3.1, R3.3 | src/service/ai/ | tests/unit/optimize.test.ts | ✅ |
+| Task 3: 撤销/重做 | F05 | src/runtime/store/undoStore.ts | tests/unit/undo.test.ts | ✅ |
 ```
 
 **规则**：

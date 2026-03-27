@@ -1,10 +1,14 @@
 #!/bin/bash
 # 溯源覆盖率报告 — 机械化阻塞门 G5
-# 检查 requirements.md 中的每个需求 ID 是否在 src/ 或 tests/ 中被引用
+# 自推导：从 requirements.md 自动提取追踪条目，不依赖手动清单。
+#   - R 条目：匹配 ### X.Y 格式的标题（顶层需求）
+#   - F 条目：匹配走查表中 S0/S1 行的 F-ID
 #
 # 约定：代码中使用 @req <ID> 标注实现了哪个需求
-#   例：// @req 1.1 — rich text editing
-#   例：describe('[1.1] Content editing', () => {
+#   例：// @req R1.1 — rich text editing
+#   例：// @req F05 — undo/redo
+#
+# Q 不出现在代码标注中（Q 是决策记录，不是可追踪需求）。
 #
 # 用法：bash scripts/trace.sh
 #       bash scripts/trace.sh --strict   (有未覆盖则 exit 1)
@@ -19,16 +23,31 @@ TEST_DIR="$PROJECT_ROOT/tests"
 STRICT=false
 [[ "${1:-}" == "--strict" ]] && STRICT=true
 
-# 1. 从 requirements.md 提取需求 ID 和名称
 IDS=()
 NAMES=()
 
+# ── 提取 R 条目：匹配 ### X.Y 格式标题 ──────────────────────────────
+# 格式：### 1.1 简历内容编辑（P0）
 while IFS= read -r line; do
   if echo "$line" | grep -qE '^### [0-9]+\.[0-9]+ '; then
-    id=$(echo "$line" | sed -E 's/^### ([0-9]+\.[0-9]+) .*/\1/')
-    name=$(echo "$line" | sed -E 's/^### [0-9]+\.[0-9]+ //')
-    IDS+=("$id")
+    # 提取 X.Y 作为 ID
+    num=$(echo "$line" | sed -E 's/^### ([0-9]+\.[0-9]+) .*/\1/')
+    # 提取标题（去掉优先级标记）
+    name=$(echo "$line" | sed -E 's/^### [0-9]+\.[0-9]+ (.*)$/\1/' | sed -E 's/ *\(P[0-9]\) *$//')
+    IDS+=("R${num}")
     NAMES+=("$name")
+  fi
+done < "$REQ_FILE"
+
+# ── 提取 F 条目：匹配走查表中 S0/S1 行 ──────────────────────────────
+# 格式：| F05 | S0 | 编辑 | R1.1 | 待实现 | 撤销/重做 |
+while IFS= read -r line; do
+  if echo "$line" | grep -qE '^\| F[0-9]+ \| S[01] '; then
+    fid=$(echo "$line" | sed -E 's/^\| *(F[0-9]+) *\|.*/\1/')
+    # 描述在最后一个有内容的列
+    desc=$(echo "$line" | awk -F'|' '{print $(NF-1)}' | sed 's/^ *//;s/ *$//')
+    IDS+=("$fid")
+    NAMES+=("$desc")
   fi
 done < "$REQ_FILE"
 
@@ -37,10 +56,13 @@ COVERED=0
 MISSING=0
 
 echo "═══════════════════════════════════════════════"
-echo "  溯源覆盖率报告"
-echo "  需求文档: requirements.md ($TOTAL 条需求)"
-echo "  扫描范围: src/ + tests/"
-echo "  标注约定: @req <ID> 或 [<ID>]"
+echo "  溯源覆盖率报告（自推导）"
+echo "  来源: requirements.md"
+echo "  R 条目: ### X.Y 标题"
+echo "  F 条目: 走查表 S0/S1 行"
+echo "  总计: $TOTAL 条"
+echo "  扫描: src/ + tests/"
+echo "  约定: @req <ID>"
 echo "═══════════════════════════════════════════════"
 echo ""
 
@@ -51,9 +73,9 @@ for i in $(seq 0 $((TOTAL - 1))); do
   id="${IDS[$i]}"
   name="${NAMES[$i]}"
 
-  # 搜索 @req <id> 或 @req R<id> 或 [<id>] 模式
+  # 搜索 @req <id> 模式（精确匹配，避免 R1.1 匹配到 R1.10）
   hits=$(grep -rn --include="*.ts" --include="*.tsx" --include="*.css" \
-    -E "@req R?${id}([^0-9]|$)|\[R?${id}\]" \
+    -E "@req ${id}([^0-9A-Za-z]|$)" \
     "$SRC_DIR" "$TEST_DIR" 2>/dev/null || true)
 
   if [[ -n "$hits" ]]; then
@@ -85,7 +107,7 @@ echo "  缺失: ${MISSING}/${TOTAL}"
 
 if [[ $MISSING -gt 0 ]]; then
   echo ""
-  echo "  未覆盖需求:"
+  echo "  未覆盖:"
   IFS='|'
   for entry in $MISSING_NAMES; do
     [[ -n "$entry" ]] && echo "    - $entry"

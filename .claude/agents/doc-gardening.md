@@ -33,6 +33,11 @@ model: haiku
 - [ ] 每个 src/service/ 模块是否有对应的 docs/references/ 条目
 - [ ] 每个 exec-plans/completed/ 计划是否有关闭说明
 
+**ID 分类法合规**
+- [ ] 代码中 `@req` 标注只使用 R 和 F，不使用 Q
+- [ ] 走查发现表中每个 S0/S1 条目有 F-ID
+- [ ] 已裁决的 Q 如果产生代码需求，有对应的 F 条目
+
 ## 输出
 
 每个问题创建一个修复，完成后更新 `docs/QUALITY_SCORE.md`。
