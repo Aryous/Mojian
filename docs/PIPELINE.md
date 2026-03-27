@@ -13,13 +13,13 @@
 | 阶段 | 状态 | 产出 | 阻塞门 | 日期 |
 |---|---|---|---|---|
 | 0 意图 | ✅ | intent.md (approved) | — | 03-26 |
-| 1 需求 | ⚠️ Q13-Q17 已裁决，待审批 | requirements.md (review → 待 approved) | G1 ✅ | 03-27 |
+| 1 需求 | ✅ | requirements.md (approved) | G1 ✅ | 03-27 |
 | 2 技术选型 | ✅ | tech-decisions.md (approved) | G2 ✅ | 03-26 |
 | 3 环境搭建 | ✅ | lint/build/test 就绪 | — | 03-26 |
 | 4a 设计规范 | ✅ | design-spec.md (approved) | G3 ✅ | 03-26 |
 | 4b 功能实现 | 🔄 | src/ | G5: `trace.sh` 13/13 (100%) | 03-27 |
 
-**当前瓶颈**：requirements.md Q13-Q17 已裁决并回注，等待人类审批 (review → approved)。
+**当前瓶颈**：无。requirements.md 已 approved，可推进实现。
 
 ---
 
@@ -27,7 +27,6 @@
 
 | 阻塞 | 等待 | 影响 |
 |---|---|---|
-| requirements.md 审批 | 人类将 status 改为 approved | 下游 agent 可正式消费 |
 | ai-interaction-spec 需更新 | 基于 Q15(聊天式)/Q17(自动路由) 裁决 | AI 交互重设计 |
 
 ---

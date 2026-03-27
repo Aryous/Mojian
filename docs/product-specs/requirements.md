@@ -1,5 +1,5 @@
 ---
-status: review
+status: approved
 author: req-review
 date: 2026-03-27
 blocks: [tech-selection]
