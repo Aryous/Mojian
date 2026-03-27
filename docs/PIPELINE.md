@@ -13,13 +13,13 @@
 | 阶段 | 状态 | 产出 | 阻塞门 | 日期 |
 |---|---|---|---|---|
 | 0 意图 | ✅ | intent.md (approved) | — | 03-26 |
-| 1 需求 | ⚠️ 重审中 | requirements.md (review) | G1 ✅ → 走查后需重审批 | 03-27 |
+| 1 需求 | ⚠️ Q13-Q17 已裁决，待审批 | requirements.md (review → 待 approved) | G1 ✅ | 03-27 |
 | 2 技术选型 | ✅ | tech-decisions.md (approved) | G2 ✅ | 03-26 |
 | 3 环境搭建 | ✅ | lint/build/test 就绪 | — | 03-26 |
 | 4a 设计规范 | ✅ | design-spec.md (approved) | G3 ✅ | 03-26 |
-| 4b 功能实现 | 🔄 | src/ | G5: `trace.sh` 报告 0/13 | 03-27 |
+| 4b 功能实现 | 🔄 | src/ | G5: `trace.sh` 13/13 (100%) | 03-27 |
 
-**当前瓶颈**：requirements.md 处于 review（Q13-Q17 待裁决），下游工作受限。
+**当前瓶颈**：requirements.md Q13-Q17 已裁决并回注，等待人类审批 (review → approved)。
 
 ---
 
@@ -27,9 +27,8 @@
 
 | 阻塞 | 等待 | 影响 |
 |---|---|---|
-| Q13-Q17 待裁决 | 人类裁决 | requirements.md 无法重审批 |
-| ai-interaction-spec 需更新 | 基于 Q15/Q17 裁决 | AI 交互重设计 |
-| 现有代码无 @req 标注 | feature agent 补标 | trace.sh 覆盖率 0% |
+| requirements.md 审批 | 人类将 status 改为 approved | 下游 agent 可正式消费 |
+| ai-interaction-spec 需更新 | 基于 Q15(聊天式)/Q17(自动路由) 裁决 | AI 交互重设计 |
 
 ---
 
@@ -47,17 +46,20 @@
 ## 计划任务
 
 ### 紧急（阻塞后续）
-- [ ] 裁决 Q13-Q17
-- [ ] 更新 ai-interaction-spec.md
-- [ ] 为现有代码补 @req 标注（使 trace.sh 反映真实覆盖率）
+- [x] 裁决 Q13-Q17（2026-03-27 已完成）
+- [x] 为现有代码补 @req 标注（trace.sh 13/13 100%）
+- [ ] 更新 ai-interaction-spec.md（基于 Q15 聊天式 + Q17 自动路由）
 
-### 下一步
-- [ ] AI 交互重实现
-- [ ] 冷启动机制（Q13）
-- [ ] 富文本/markdown（Q14）
+### 下一步（按优先级）
+- [ ] AI 聊天式交互（Q15）— 对话历史管理 + 多轮上下文
+- [ ] AI 从零生成模式（Q13）— 冷启动 system prompt + UI 入口
+- [ ] AI 自动路由（Q17）— 轻量 AI 调用选择 prompt
+- [ ] Markdown 支持（Q14）— textarea markdown + Typst 解析
+- [ ] F05 撤销/重做（S0）
+- [ ] F11 chips optionId 修复（S1 bug）
+- [ ] F13 quick actions targetSection 修复（S1 bug）
 
 ### 技术债
 - [ ] F06 技能等级下拉
 - [ ] F09 删除确认
 - [ ] F19 API Key 安全
-- [ ] tests/unit/optimize.test.ts 引用旧函数名
