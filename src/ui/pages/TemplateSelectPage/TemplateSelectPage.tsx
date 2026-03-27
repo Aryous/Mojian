@@ -188,7 +188,8 @@ function SvgPreview({ svg }: { svg: string }) {
 export function TemplateSelectPage() {
   const navigate = useNavigate()
   const { createResume } = useResumeStore()
-  const { svg, error, compiling, compile, clear } = usePreviewStore()
+  const { svgs, error, compiling, compile, clear } = usePreviewStore()
+  const svg = svgs[0] ?? null
   const [selectedId, setSelectedId] = useState<string>(TEMPLATES[0]?.id ?? 'classic')
   const [creating, setCreating] = useState(false)
   const compileTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)

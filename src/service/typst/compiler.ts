@@ -136,6 +136,58 @@ export async function compileToSvg(resume: Resume): Promise<string> {
   return svg
 }
 
+/** 编译简历为多页 SVG 数组（用于分页预览，每页一个 SVG） */
+export async function compileToSvgs(resume: Resume): Promise<string[]> {
+  // 先渲染完整多页 SVG，再按页面拆分
+  // Typst SVG 格式：每页是 <g class="typst-page" transform="translate(0,yOffset)"
+  //   data-page-width="W" data-page-height="H">
+  const fullSvg = await compileToSvg(resume)
+  return splitSvgByPages(fullSvg)
+}
+
+/** 从 transform="translate(x, y)" 中提取 y 偏移量 */
+function parseTranslateY(transform: string): number {
+  const m = transform.match(/translate\(\s*([-\d.e]+)[\s,]+([-\d.e]+)\s*\)/)
+  return m ? parseFloat(m[2]!) : 0
+}
+
+/**
+ * 将 Typst 输出的多页 SVG 按页面拆分为数组
+ * 用 viewBox 裁剪每页区域，保留完整 defs/style 保证字体和样式可用
+ */
+function splitSvgByPages(fullSvg: string): string[] {
+  const parser = new DOMParser()
+  const doc = parser.parseFromString(fullSvg, 'image/svg+xml')
+  const root = doc.documentElement
+
+  const pageGroups = Array.from(root.querySelectorAll('g.typst-page'))
+  if (pageGroups.length <= 1) return [fullSvg]
+
+  const defs = root.querySelector('defs')
+  const styles = Array.from(root.querySelectorAll('style'))
+  const xmlns = 'http://www.w3.org/2000/svg'
+
+  return pageGroups.map((group) => {
+    const w = group.getAttribute('data-page-width') ?? '595.28'
+    const h = group.getAttribute('data-page-height') ?? '841.89'
+    const yOff = parseTranslateY(group.getAttribute('transform') ?? '')
+
+    // 创建独立 SVG，用 viewBox 裁剪到此页
+    const svg = document.createElementNS(xmlns, 'svg')
+    svg.setAttribute('xmlns', xmlns)
+    svg.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink')
+    svg.setAttribute('width', w)
+    svg.setAttribute('height', h)
+    svg.setAttribute('viewBox', `0 ${yOff} ${w} ${h}`)
+
+    if (defs) svg.appendChild(defs.cloneNode(true))
+    styles.forEach((s) => svg.appendChild(s.cloneNode(true)))
+    svg.appendChild(group.cloneNode(true))
+
+    return new XMLSerializer().serializeToString(svg)
+  })
+}
+
 /** 编译简历为 PDF（用于导出） */
 export async function compileToPdf(resume: Resume): Promise<Uint8Array> {
   const c = await ensureCompiler()

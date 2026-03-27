@@ -83,3 +83,51 @@
   overflow: auto;
   max-height: 200px;
 }
+
+/* ===== 分页导航 ===== */
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  background: var(--sem-bg-primary);
+  border-top: 1px solid var(--sem-border-default);
+  flex-shrink: 0;
+}
+
+.pageBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-7);
+  height: var(--space-7);
+  border: 1px solid var(--sem-border-default);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--sem-text-secondary);
+  font-size: var(--font-body);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-brush-touch),
+              color var(--duration-fast) var(--ease-brush-touch);
+}
+
+.pageBtn:hover:not(:disabled) {
+  background: var(--sem-bg-secondary);
+  color: var(--sem-text-primary);
+}
+
+.pageBtn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.pageIndicator {
+  font-family: var(--font-family-body);
+  font-size: var(--font-caption);
+  color: var(--sem-text-tertiary);
+  user-select: none;
+  min-width: 100px;
+  text-align: center;
+}

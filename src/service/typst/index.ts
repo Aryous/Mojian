@@ -1,1 +1,1 @@
-export { compileToVector, compileToSvg, compileToPdf, getTemplateIds } from './compiler'
+export { compileToVector, compileToSvg, compileToSvgs, compileToPdf, getTemplateIds } from './compiler'
