@@ -1,11 +1,12 @@
 ---
 status: approved
 author: tech-selection
-date: 2026-03-26
+date: 2026-03-27
 blocks: [design, feature]
-open_questions: 0
-approved_by: Lucas
-approved_date: 2026-03-26
+open_questions: 1
+note: 决策 1-10 已于 2026-03-26 approved，决策 11-14 为 3.3 AI 上下文工程新增，待审批
+prev_approved_by: Lucas
+prev_approved_date: 2026-03-26
 ---
 
 # 技术选型决策记录
@@ -408,6 +409,220 @@ vite                            ^6.0.0
 typescript                      ^5.5.0
 eslint                          ^9.0.0
 ```
+
+---
+
+## 决策 11：AI 上下文序列化策略（Resume -> AI JSON）
+
+**日期**：2026-03-27
+
+**背景**：requirements.md 3.3.1 要求将 Resume 数据模型序列化为 AI 可理解的 JSON 结构，发送到 AI prompt 的 user message 中。序列化需要：包含所有结构化字段（section 类型、item 的全部字段、技能 level、section 排序/可见性），同时排除系统字段（id、createdAt、updatedAt、templateId）和 item 级别 id。当前 `optimizeContent` 接收纯文本 `content: string`，需要重构为接收结构化 Resume 数据。
+
+**候选方案**：
+
+| 维度 | A: 手写序列化函数 | B: 通用序列化库 (class-transformer / superjson) | C: 直接 JSON.stringify + replacer 过滤 |
+|---|---|---|---|
+| 精确控制 | 完全可控：逐字段映射，精确排除系统字段和 item id，可自定义输出结构 | 通过装饰器/规则配置排除字段，灵活度中等 | replacer 函数可按 key 过滤，但无法区分"Resume.id"和"EducationItem.id"等同名不同层级的 key |
+| 架构合规 | 函数定义在 Service 层（`src/service/ai/`），引用 Types 层的 Resume 接口，符合分层规则 | 需在 Types 层添加装饰器或 schema 定义，污染纯类型层 | 同 A，函数可定义在 Service 层 |
+| 维护成本 | Resume 类型变更时需同步修改序列化函数，但变更可由 TypeScript 编译器检测到（字段缺失/多余） | 库本身需维护，装饰器与类型定义耦合 | 最低初始成本，但 replacer 无法处理嵌套层级同名字段的差异化过滤，后续维护困难 |
+| Agent 可读性 | 最高。函数逻辑直白，任何 Agent 都能阅读和修改 | 中。需理解库的装饰器/配置 API | 高。JSON.stringify 是基础 API，但 replacer 逻辑复杂时可读性下降 |
+| 新依赖 | 零 | +1 依赖 | 零 |
+
+**决策**：A — 手写序列化函数
+
+**理由**：
+1. **序列化需求是领域特定的**：需求不是"通用地序列化一个对象"，而是"按 AI 理解的结构重组 Resume 数据"——排除系统字段、排除 item id、保留 section 排序/可见性、保留技能 level。这种精确控制只有手写函数能提供
+2. **零新依赖**：项目已有的 TypeScript 类型系统提供了所有需要的工具。Resume 接口已完整定义（`src/types/resume.ts`），手写函数直接操作这些类型
+3. **TypeScript 编译器作为安全网**：当 Resume 类型新增或删除字段时，序列化函数的类型签名会产生编译错误，确保两者保持同步。这比运行时检查更可靠
+4. **函数体积极小**：Resume 数据结构已知且有限（personal + 5 种 section 类型），序列化函数预计 40-60 行代码，不值得引入外部库
+
+**未选原因**：
+- **B: 通用序列化库 (class-transformer / superjson)**：这些库解决的是"将类实例序列化/反序列化为 JSON"的通用问题，但墨简的 Resume 是纯 TypeScript interface（不是 class），且序列化目标不是"忠实还原原始结构"而是"重组为 AI 友好结构"。class-transformer 需要将 interface 改为 class 并添加装饰器，这会污染 Types 层的纯净性。superjson 侧重于处理 Date/Map/Set 等 JSON 不支持的类型，与本场景无关
+- **C: JSON.stringify + replacer 过滤**：表面上最简单，但 replacer 函数无法区分嵌套层级中的同名 key。例如 `Resume.id`（要排除）和假设未来某个嵌套对象的 `id`（可能需要保留）会被同一个 replacer 规则命中。更重要的是，JSON.stringify 输出的是 Resume 的原始结构，而 3.3.1 要求的输出可能需要结构重组（如将 `sections` 元数据与对应的 item 数组关联输出），replacer 无法做到结构变换
+
+**约束条件**：
+1. 序列化函数定义在 `src/service/ai/serialize.ts`，输入类型为 `Resume`（来自 Types 层），输出类型为新定义的 `ResumeAiContext`（也定义在 Types 层）
+2. 序列化函数为纯函数，无副作用，便于单元测试
+3. 当 `src/types/resume.ts` 变更时，TypeScript 编译器将强制序列化函数同步更新
+
+---
+
+## 决策 12：AI 返回 JSON 解析与校验
+
+**日期**：2026-03-27
+
+**背景**：requirements.md 3.3.3 要求对 AI 返回的内容执行两步处理：(1) JSON 语法解析——AI 可能将 JSON 包裹在 markdown 代码块中（`` ```json ... ``` ``），或在 JSON 前后附加解释性文字；(2) 结构校验——解析出的 JSON 是否符合 Resume 数据模型的子集结构。校验失败时需给用户有意义的错误提示，原始简历数据不受影响（AC5）。
+
+**候选方案**：
+
+### 12a：JSON 提取（从 AI 返回的原始文本中提取 JSON）
+
+此步骤是固定的——需要正则提取 markdown 代码块中的 JSON 或尝试直接 `JSON.parse`。无候选方案可选，所有方案都需要此步骤。实现方式：先尝试 `JSON.parse(raw)`；失败则用正则 `/```(?:json)?\s*([\s\S]*?)```/` 提取代码块内容再 `JSON.parse`；仍失败则报错。
+
+### 12b：结构校验
+
+| 维度 | A: Zod (v4 / Zod Mini) | B: 手写 TypeScript 类型守卫 | C: Ajv (JSON Schema) |
+|---|---|---|---|
+| Agent 可读性 | 极高。Zod 在 AI 训练集中覆盖度极大，`z.object({ company: z.string(), ... })` 模式清晰 | 高。标准 TypeScript 代码 | 中。JSON Schema 语法冗长，Agent 容易出错 |
+| 错误信息质量 | 开箱即用的结构化错误路径（`issues[0].path` = `["work", 0, "company"]`），可直接转化为用户提示 | 需手动构建每个字段的错误信息 | 错误信息格式化需额外处理 |
+| 与 Types 层的关系 | Zod schema 可自动推导 TypeScript 类型（`z.infer<typeof schema>`），但也意味着 schema 和 interface 存在两套定义 | 直接复用已有 Types 层的 interface | JSON Schema 独立于 TypeScript 类型，三套定义 |
+| 部分校验（子集） | `z.object({...}).partial()` / `z.pick({...})` 可灵活定义 Resume 的子集 schema | 需为每种子集手写独立守卫函数 | JSON Schema 的 `$ref` + `additionalProperties` 可以但语法繁琐 |
+| 运行时体积 | Zod Mini ~1.9KB gzipped（Zod 4 的 tree-shakable 分包） | 0（纯 TypeScript） | ~35KB gzipped |
+| 维护成本 | 新增字段时需同步更新 Zod schema，但 `z.infer` 可保持与实际类型一致 | 每个新 section 类型需新增守卫代码，guard 函数容易与 Types 层漂移 | JSON Schema 与 TypeScript 类型完全独立，漂移风险最高 |
+
+**决策**：A — Zod Mini (Zod 4 的 tree-shakable 子包)
+
+**理由**：
+1. **错误路径是核心需求**：AC5 要求"向用户展示有意义的错误提示"。当 AI 返回的 JSON 中 `work[2].company` 字段缺失时，Zod 的 `issue.path` 直接给出 `["work", 2, "company"]`，可以转化为"工作经历第 3 条缺少公司名称"。手写类型守卫要达到同等错误定位精度，需要在每个字段检查处手动拼接路径，代码量和出错率都很高
+2. **Resume 子集校验的便利性**：AI 仅返回目标 section（如只返回 work 数组），校验 schema 是 Resume 完整 schema 的子集。Zod 的 `.pick()` / `.partial()` API 可以从完整 schema 派生子集 schema，而不是重新定义
+3. **Zod Mini 体积可接受**：~1.9KB gzipped，与手写守卫（0KB）的差距在可接受范围内，远小于 Ajv（~35KB）
+4. **Agent 可读性最高**：Zod 是当前 TypeScript 生态中使用最广泛的校验库（npm 周下载量 > 25M），AI Agent 训练集覆盖度极高，生成 Zod schema 代码的准确率远超 Ajv 或手写复杂守卫
+
+**未选原因**：
+- **B: 手写 TypeScript 类型守卫**：对于简单的"是否为 string"检查够用，但 Resume 的校验需求是嵌套的（`work` 是 `WorkItem[]`，每个 `WorkItem` 有 6 个字段，每个字段有类型约束）。手写完整的嵌套守卫函数估计 150-200 行代码，且最大的问题是错误信息——类型守卫只能返回 `true/false`，无法告诉用户"哪个字段出了什么问题"。要实现 Zod 级别的错误路径追踪，手写代码量将膨胀到 300+ 行，本质上是在重新发明 Zod
+- **C: Ajv (JSON Schema)**：体积过大（~35KB gzipped，是 Zod Mini 的 18 倍），且 JSON Schema 的 DSL 与 TypeScript 类型系统完全独立——这意味着 `src/types/resume.ts` 的 interface 和 JSON Schema 定义之间无编译时检查，漂移风险最高。JSON Schema 语法冗长（`{ "type": "object", "properties": { "company": { "type": "string" } }, "required": ["company"] }` vs Zod 的 `z.object({ company: z.string() })`），Agent 可读性和维护效率均不如 Zod
+
+**约束条件**：
+1. Zod schema 定义在 `src/service/ai/schema.ts`（Service 层），因为校验是 AI 返回数据处理的一部分，不属于通用 Types 层
+2. Zod schema 与 `src/types/resume.ts` 的 interface 之间需通过单元测试保证一致性（如：用 `expectTypeOf<z.infer<typeof workItemSchema>>().toEqualTypeOf<Omit<WorkItem, 'id'>>()` 断言）
+3. JSON 提取 + Zod 校验封装为 `parseAiResponse(raw: string, targetSection: SectionType): ParseResult<T>` 函数，返回 `{ success: true, data } | { success: false, error: string }`
+4. 新增依赖：`zod`（^3.24 / ^4.0，使用 `zod/mini` 入口）— 这是本轮选型唯一的新增运行时依赖
+
+---
+
+## 决策 13：数组合并策略与新增 item 的 id 生成
+
+**日期**：2026-03-27
+
+**背景**：requirements.md 3.3.3 要求 AI 返回的目标 section 数组整段替换原 section 数组。Q10 裁决 AI 可以增删 item（如添加一条工作经历），新增 item 需系统自动生成 id。此外，保留的 item 需保持原 id（AC7：系统字段不可变）。由于序列化时排除了 item id（3.3.1），AI 返回的数组中所有 item 都没有 id，系统需要一种策略来区分"已有 item"和"新增 item"，并为后者生成 id。
+
+**子问题 13a：已有 item 识别与 id 回填**
+
+由于 AI 看不到 item id，写回时需要通过内容匹配来识别哪些是已有 item。策略：对 AI 返回的每个 item，用关键字段（如 WorkItem 的 `company` + `position`）在原数组中查找匹配项。匹配成功则复用原 id，匹配失败则判定为新增 item 并生成新 id。
+
+候选方案仅涉及实现细节，不涉及方案对比，因为 requirements.md 已明确"按 section 类型 + 数组整段替换"且"保留的 item 保持原 id"。
+
+**子问题 13b：id 生成方案**
+
+| 维度 | A: crypto.randomUUID() | B: nanoid | C: 自增 (counter++) |
+|---|---|---|---|
+| 唯一性保证 | UUID v4，128 bit 随机，碰撞概率 ~2^-122 | 默认 21 字符，126 bit 随机，碰撞概率接近 UUID | 仅在单次会话内唯一，跨浏览器/设备必碰撞 |
+| 已有使用 | 项目已在 `src/repo/resume.ts` 和 `src/ui/pages/EditorPage/SectionEditor.tsx` 中使用 | 未使用，需新增依赖 | 未使用 |
+| 新依赖 | 零（Web Crypto API 是浏览器原生 API） | +1 依赖 (~130 bytes gzipped) | 零 |
+| id 格式 | 36 字符（`xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx`） | 21 字符，URL 友好 | 数字字符串，极短 |
+| Agent 可读性 | 极高。标准 Web API | 高。但需记住导入路径 | 极高。但语义上不是"标识符" |
+
+**决策**：A — `crypto.randomUUID()`
+
+**理由**：
+1. **项目一致性**：`crypto.randomUUID()` 已经是项目中 id 生成的标准方式，在 `src/repo/resume.ts` 和 `SectionEditor.tsx` 中均有使用。引入不同的 id 生成方案会造成不一致
+2. **零新依赖**：Web Crypto API 是浏览器原生 API，项目已裁决仅桌面端（≥1024px），所有目标浏览器均支持 `crypto.randomUUID()`
+3. **唯一性无忧**：UUID v4 的碰撞概率在简历编辑器的规模下可忽略不计
+
+**未选原因**：
+- **B: nanoid**：虽然 id 更短（21 vs 36 字符），体积极小（~130 bytes），但在项目已统一使用 `crypto.randomUUID()` 的前提下，引入 nanoid 只为获得更短的 id 格式，收益不足以抵消引入新依赖和两种 id 格式共存的维护成本
+- **C: 自增 (counter++)**：不适合持久化场景。简历数据存储在 IndexedDB 中，多份简历之间的 item id 必须全局唯一。自增计数器在页面刷新后重置，不同简历的 item 可能产生相同 id，导致数据冲突
+
+**合并策略完整流程**：
+1. AI 返回目标 section 的 item 数组（无 id）
+2. 对每个返回的 item，用关键字段匹配原数组中的 item：
+   - personal 类型：直接覆盖（只有一份，无需匹配）
+   - education：匹配 `school` + `degree`
+   - work：匹配 `company` + `position`
+   - skills：匹配 `name`
+   - projects：匹配 `name`
+   - custom：匹配 `title`
+3. 匹配成功：复用原 item 的 `id`
+4. 匹配失败：调用 `crypto.randomUUID()` 生成新 `id`
+5. 用带有 id 的新数组整段替换原 section 数组
+
+**约束条件**：
+1. id 生成逻辑应统一提取到 `src/repo/` 层的工具函数中（目前 `generateId()` 分散在两个文件中，这是一个既有技术债，应在本次重构中修复）
+2. 合并逻辑定义在 `src/service/ai/merge.ts`，输入为原 Resume 数据 + AI 返回的 section 数据 + 目标 section 标识，输出为合并后的完整 Resume
+3. 合并函数必须是纯函数，方便单元测试
+
+---
+
+## 决策 14：前后对比视图技术方案
+
+**日期**：2026-03-27
+
+**背景**：requirements.md 3.3.3 和 Q12 裁决要求在 AI 返回结果写回前展示前后对比视图，用户一次性接受或拒绝全部修改。对比的对象是结构化 JSON 数据（Resume 的某个 section），不是纯文本。用户需要看到：哪些字段被修改了、哪些 item 是新增的、哪些被删除了。
+
+**候选方案**：
+
+| 维度 | A: 自行实现结构化字段对比 | B: jsondiffpatch 库 | C: json-diff-ts 库 |
+|---|---|---|---|
+| 适配度 | 完全针对 Resume 数据结构设计，对比粒度和展示逻辑可精确控制 | 通用 JSON diff，支持对象/数组/文本 diff，但展示需自定义 | 通用 JSON diff，TypeScript 原生支持 |
+| 展示友好性 | 可产出"张三的公司名从 X 改为 Y"这种语义化对比 | 产出通用 delta 对象，需自行转化为用户可读的展示 | 产出 changeset 数组，需自行转化为用户可读的展示 |
+| 数组 item 匹配 | 使用决策 13 中已定义的关键字段匹配逻辑，复用现成代码 | 内置 `objectHash` 配置，但与决策 13 的匹配逻辑独立，可能产生不一致 | 支持自定义 key 匹配 |
+| 新依赖 | 零 | +1 依赖 (~15KB gzipped) | +1 依赖 (~5KB gzipped) |
+| Agent 可读性 | 高。领域代码，逻辑直白 | 中。delta 格式有学习成本 | 中。changeset 格式需学习 |
+
+**决策**：A — 自行实现结构化字段对比
+
+**理由**：
+1. **对比对象是已知的有限结构**：Resume section 只有 6 种类型（personal/education/work/skills/projects/custom），每种的字段数量和类型都是固定的。这不是"对比任意 JSON"的通用问题，而是"对比已知结构的两个版本"的领域问题
+2. **展示需求是语义化的**：用户期望看到的不是 `{ "op": "replace", "path": "/work/0/company", "value": "新公司" }` 这种技术性 diff，而是一个可视化的前后对比面板——左边原文、右边新文、变更字段高亮。这种展示逻辑与 Resume 数据结构深度绑定，通用 diff 库的输出仍需大量转化工作
+3. **复用决策 13 的匹配逻辑**：数组 item 的匹配（判断"修改"还是"新增/删除"）在决策 13 中已定义了关键字段匹配策略。自行实现对比可以直接复用这套逻辑，而引入 jsondiffpatch 意味着维护两套独立的匹配逻辑（jsondiffpatch 的 `objectHash` 和 merge.ts 的关键字段匹配），一致性难以保证
+4. **零新依赖**：实现量有限（预计 80-120 行），不值得引入额外库
+
+**未选原因**：
+- **B: jsondiffpatch**：功能强大（支持文本 diff、数组移动检测等），但对墨简的场景而言过度设计。jsondiffpatch 的 delta 格式（`{ "_t": "a", "0": [newItem, 0, 0], "_0": [oldItem, 0, 0] }`）需要专门的解析逻辑才能转化为用户可读的对比视图，开发成本并不比自行实现低。且其数组 diff 使用 LCS 算法基于 `objectHash` 匹配，与决策 13 的关键字段匹配是两套独立逻辑，存在一致性风险。~15KB 的体积对"对比已知结构"的简单需求而言也不划算
+- **C: json-diff-ts**：比 jsondiffpatch 更轻量（~5KB），TypeScript 支持更好，但核心问题相同——它输出的是通用 changeset 格式，仍需大量转化才能产出语义化的用户可读对比。Resume 的结构已知且有限，直接针对结构编写对比逻辑反而更直接、更可维护
+
+**约束条件**：
+1. 对比逻辑定义在 `src/service/ai/diff.ts`（Service 层），输入为原 section 数据 + AI 返回的 section 数据，输出为结构化的 `SectionDiff` 类型（定义在 Types 层）
+2. `SectionDiff` 类型需包含：变更类型（added/removed/modified/unchanged）、字段级变更详情、足够 UI 渲染对比视图的信息
+3. 对比视图的 UI 渲染由 design agent 在阶段 4 设计，本决策仅确定数据层方案
+4. UI 层通过 Runtime 层获取 diff 数据，禁止直接调用 Service 层的 diff 函数
+
+---
+
+## 技术栈增量（3.3 AI 上下文工程新增）
+
+| 领域 | 选型 | 所属架构层 | 新增/复用 |
+|---|---|---|---|
+| AI 上下文序列化 | 手写纯函数 | Service (`src/service/ai/serialize.ts`) | 新增代码 |
+| AI 返回 JSON 校验 | Zod Mini (Zod 4) | Service (`src/service/ai/schema.ts`) | **新增依赖** |
+| 新增 item id 生成 | crypto.randomUUID() | Repo (`src/repo/`) | 复用已有 |
+| Section 合并 | 手写纯函数 + 关键字段匹配 | Service (`src/service/ai/merge.ts`) | 新增代码 |
+| 前后对比 | 自行实现结构化字段对比 | Service (`src/service/ai/diff.ts`) | 新增代码 |
+| JSON 提取 | 正则 + JSON.parse | Service (`src/service/ai/parse.ts`) | 新增代码 |
+
+### 新增依赖
+
+```
+zod                             ^3.24.0 (使用 zod/mini 入口) 或 ^4.0.0 (待 Zod 4 稳定版发布)
+```
+
+### 新增文件预览
+
+```
+src/types/ai.ts                 ← 新增 ResumeAiContext, SectionDiff 等类型
+src/service/ai/serialize.ts     ← Resume -> AI JSON 序列化
+src/service/ai/schema.ts        ← Zod schema 定义 + 校验函数
+src/service/ai/parse.ts         ← AI 返回文本 -> JSON 提取 + 校验
+src/service/ai/merge.ts         ← AI 返回 section 合并回 Resume
+src/service/ai/diff.ts          ← section 前后对比
+src/service/ai/optimize.ts      ← 重构：接受结构化输入，调用上述模块
+```
+
+---
+
+## 待人类裁决
+
+### Q2: Zod 版本选择 — Zod 3 (稳定) vs Zod 4 (新发布)
+
+**背景**：Zod 4 于 2025 年中发布，引入 Zod Mini（~1.9KB gzipped，tree-shakable），性能提升 2.3x。但作为大版本发布，生态兼容性（特别是与 TypeScript 5.x strict mode 的配合）需要评估。Zod 3 则完全稳定，npm 周下载量 25M+。
+
+**选项**：
+- A: 使用 Zod 3（`^3.24.0`），`import { z } from 'zod'`。最稳定，但无 tree-shaking，gzipped ~12KB
+- B: 使用 Zod 4（`^4.0.0`），`import { z } from 'zod/mini'`。最小体积（~1.9KB），最新特性，但生态较新
+
+**影响**：体积差 ~10KB gzipped。功能上对墨简的使用场景（object/array/string/number 校验）两个版本均完全覆盖。
+
+**阻塞**：不阻塞架构设计。schema 代码在两个版本间的迁移成本极低（API 基本兼容）。可在阶段 3（环境搭建）时最终确定。
 
 ---
 
