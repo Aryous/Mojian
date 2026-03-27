@@ -1,0 +1,21 @@
+#!/bin/bash
+# 主控监督 — 提交前自动执行溯源验证
+# 仅在 src/ 或 tests/ 有变更时触发（文档提交不阻断）
+
+SCRIPTS_DIR="$(git rev-parse --show-toplevel)/scripts"
+
+# 检查暂存区是否包含 src/ 或 tests/ 文件
+if git diff --cached --name-only | grep -qE '^(src|tests)/'; then
+  if [[ -f "$SCRIPTS_DIR/trace.sh" ]]; then
+    echo "🔍 Running traceability check (src/ files staged)..."
+    if ! bash "$SCRIPTS_DIR/trace.sh" --strict; then
+      echo ""
+      echo "❌ Commit blocked: requirements not fully traced to code."
+      echo "   Add @req annotations or implement missing features."
+      echo "   Run: bash scripts/trace.sh (without --strict) to see details."
+      exit 1
+    fi
+  fi
+else
+  echo "📄 Docs-only commit, skipping traceability check."
+fi
