@@ -19,4 +19,7 @@ export type {
 export type {
   AiOptimizeOption,
   AiOptimizeResult,
+  AiOptimizeRequest,
+  AiSectionResult,
+  AiDiffEntry,
 } from './ai'

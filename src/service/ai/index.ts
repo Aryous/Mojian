@@ -2,4 +2,9 @@
 // 依赖：Repo, Config, Types
 
 export { getAiClient, defaultModel } from './provider'
-export { optimizeContent } from './optimize'
+export { optimizeResume } from './optimize'
+export type { OptimizeParams, OptimizeResult } from './optimize'
+export { serializeResumeForAi, extractSectionData } from './serialize'
+export { extractJsonFromText, validateSectionData, validatePartialResume } from './parse'
+export { mergeAiResult, mergeAllSections } from './merge'
+export { generateDiff, generateDiffForSections } from './diff'

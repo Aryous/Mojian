@@ -138,7 +138,9 @@ describe('Runtime 层：aiStore 状态流转', () => {
     useAiStore.setState({
       apiKeySet: false,
       optimizing: false,
-      result: null,
+      pendingResult: null,
+      diffEntries: [],
+      pendingChanges: null,
       error: null,
     })
   })
@@ -148,7 +150,9 @@ describe('Runtime 层：aiStore 状态流转', () => {
     const state = useAiStore.getState()
     expect(state.apiKeySet).toBe(false)
     expect(state.optimizing).toBe(false)
-    expect(state.result).toBeNull()
+    expect(state.pendingResult).toBeNull()
+    expect(state.diffEntries).toEqual([])
+    expect(state.pendingChanges).toBeNull()
     expect(state.error).toBeNull()
   })
 
@@ -175,15 +179,77 @@ describe('Runtime 层：aiStore 状态流转', () => {
     expect(useAiStore.getState().apiKeySet).toBe(true)
   })
 
-  it('removeApiKey 后 apiKeySet 为 false', async () => {
+  it('removeApiKey 后 apiKeySet 为 false，所有 pending 状态清除', async () => {
     const { useAiStore } = await import('@/runtime/store/aiStore')
     useAiStore.getState().setApiKey('sk-test-key')
     useAiStore.getState().removeApiKey()
 
     const state = useAiStore.getState()
     expect(state.apiKeySet).toBe(false)
-    expect(state.result).toBeNull()
+    expect(state.pendingResult).toBeNull()
+    expect(state.pendingChanges).toBeNull()
+    expect(state.diffEntries).toEqual([])
     expect(state.error).toBeNull()
+  })
+
+  it('acceptResult 返回 pendingChanges 并清除所有 pending 状态', async () => {
+    const { useAiStore } = await import('@/runtime/store/aiStore')
+    const mockChanges = { personal: { name: 'Test', title: '', email: '', phone: '', location: '', website: '', summary: '' } }
+    useAiStore.setState({
+      pendingChanges: mockChanges,
+      pendingResult: { original: {}, optimized: {}, targetSection: 'personal', optionId: 'polish' },
+      diffEntries: [{ path: 'personal.name', type: 'modified', oldValue: 'Old', newValue: 'Test' }],
+    })
+
+    const result = useAiStore.getState().acceptResult()
+
+    expect(result).toEqual(mockChanges)
+    const state = useAiStore.getState()
+    expect(state.pendingResult).toBeNull()
+    expect(state.pendingChanges).toBeNull()
+    expect(state.diffEntries).toEqual([])
+  })
+
+  it('acceptResult 在无 pending 时返回 null', async () => {
+    const { useAiStore } = await import('@/runtime/store/aiStore')
+    const result = useAiStore.getState().acceptResult()
+    expect(result).toBeNull()
+  })
+
+  it('rejectResult 清除所有 pending 状态', async () => {
+    const { useAiStore } = await import('@/runtime/store/aiStore')
+    useAiStore.setState({
+      pendingChanges: { personal: { name: 'Test', title: '', email: '', phone: '', location: '', website: '', summary: '' } },
+      pendingResult: { original: {}, optimized: {}, targetSection: 'personal', optionId: 'polish' },
+      diffEntries: [{ path: 'personal.name', type: 'modified', oldValue: 'Old', newValue: 'Test' }],
+    })
+
+    useAiStore.getState().rejectResult()
+
+    const state = useAiStore.getState()
+    expect(state.pendingResult).toBeNull()
+    expect(state.pendingChanges).toBeNull()
+    expect(state.diffEntries).toEqual([])
+  })
+
+  it('clearState 重置所有可变状态', async () => {
+    const { useAiStore } = await import('@/runtime/store/aiStore')
+    useAiStore.setState({
+      optimizing: true,
+      error: '某个错误',
+      pendingChanges: { personal: { name: 'X', title: '', email: '', phone: '', location: '', website: '', summary: '' } },
+      pendingResult: { original: {}, optimized: {}, targetSection: 'personal', optionId: 'polish' },
+      diffEntries: [{ path: 'personal.name', type: 'modified', oldValue: 'Old', newValue: 'X' }],
+    })
+
+    useAiStore.getState().clearState()
+
+    const state = useAiStore.getState()
+    expect(state.optimizing).toBe(false)
+    expect(state.error).toBeNull()
+    expect(state.pendingResult).toBeNull()
+    expect(state.pendingChanges).toBeNull()
+    expect(state.diffEntries).toEqual([])
   })
 })
 

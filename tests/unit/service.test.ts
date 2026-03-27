@@ -58,17 +58,10 @@ describe('Service 层：Typst 模板', () => {
   })
 })
 
-describe('Service 层：AI 优化', () => {
+describe('Service 层：AI 客户端', () => {
   beforeEach(() => {
     localStorageMock.clear()
     vi.clearAllMocks()
-  })
-
-  it('optimizeContent 对未知 optionId 抛错', async () => {
-    const { optimizeContent } = await import('@/service/ai/optimize')
-    await expect(
-      optimizeContent('测试内容', 'nonexistent-option'),
-    ).rejects.toThrow('未知的优化选项')
   })
 
   it('getAiClient 在 API Key 未配置时抛错', async () => {
