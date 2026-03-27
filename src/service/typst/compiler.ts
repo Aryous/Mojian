@@ -11,6 +11,7 @@ import {
   preloadRemoteFonts,
 } from '@myriaddreamin/typst.ts'
 import type { Resume } from '@/types'
+import { markdownToTypst } from './markdown'
 
 let compiler: TypstCompiler | null = null
 let initPromise: Promise<void> | null = null
@@ -75,7 +76,10 @@ async function ensureRenderer(): Promise<TypstRenderer> {
   return renderer!
 }
 
-/** 将简历数据序列化为模板可消费的 JSON */
+/** 将简历数据序列化为模板可消费的 JSON
+ *  description/summary 字段经过 markdown → Typst 标记转换，
+ *  模板中使用 eval(text, mode: "markup") 渲染。
+ */
 function serializeResumeData(resume: Resume): string {
   // Visible sections in sort order (excluding personal, always first)
   const sectionOrder = resume.sections
@@ -83,12 +87,14 @@ function serializeResumeData(resume: Resume): string {
     .sort((a, b) => a.sortOrder - b.sortOrder)
     .map((s) => s.type)
 
+  const md = markdownToTypst
+
   return JSON.stringify({
-    personal: resume.personal,
-    education: resume.education,
-    work: resume.work,
+    personal: { ...resume.personal, summary: md(resume.personal.summary) },
+    education: resume.education.map((item) => ({ ...item, description: md(item.description) })),
+    work: resume.work.map((item) => ({ ...item, description: md(item.description) })),
     skills: resume.skills,
-    projects: resume.projects,
+    projects: resume.projects.map((item) => ({ ...item, description: md(item.description) })),
     sectionOrder,
   })
 }

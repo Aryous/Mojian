@@ -18,6 +18,10 @@
 #set par(leading: 0.9em, justify: true)
 
 // ─── 辅助函数 ───────────────────────────
+#let render-md(s) = {
+  if s != "" { eval(s, mode: "markup") }
+}
+
 #let section-title(title) = {
   v(0.8em)
   text(size: 12pt, weight: "bold", tracking: 0.08em)[
@@ -65,7 +69,10 @@
 // ─── 个人简介 ───────────────────────────
 #if personal.at("summary", default: "") != "" {
   v(0.6em)
-  text(size: 10pt, style: "italic")[#personal.at("summary", default: "")]
+  {
+    set text(size: 10pt, style: "italic")
+    render-md(personal.at("summary", default: ""))
+  }
 }
 
 // ─── 按用户排序渲染各模块 ────────────────
@@ -80,7 +87,10 @@
       )
       if item.at("description", default: "") != "" {
         v(0.1em)
-        text(size: 9.5pt)[#item.description]
+        {
+          set text(size: 9.5pt)
+          render-md(item.at("description", default: ""))
+        }
       }
       v(0.4em)
     }
@@ -94,7 +104,10 @@
       )
       if item.at("description", default: "") != "" {
         v(0.1em)
-        text(size: 9.5pt)[#item.description]
+        {
+          set text(size: 9.5pt)
+          render-md(item.at("description", default: ""))
+        }
       }
       if item.at("url", default: "") != "" {
         text(size: 8.5pt, fill: rgb("#1B4965"))[#item.url]
@@ -111,7 +124,10 @@
       )
       if item.at("description", default: "") != "" {
         v(0.1em)
-        text(size: 9.5pt)[#item.description]
+        {
+          set text(size: 9.5pt)
+          render-md(item.at("description", default: ""))
+        }
       }
       v(0.4em)
     }

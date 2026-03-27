@@ -31,6 +31,10 @@
 #let section-order = data.at("sectionOrder", default: ("education", "work", "projects", "skills"))
 
 // ─── 辅助 ───────────────────────────
+#let render-md(s) = {
+  if s != "" { eval(s, mode: "markup") }
+}
+
 #let section-heading(label) = {
   v(0.8em)
   text(size: 11pt, weight: "bold", fill: luma(30))[#label]
@@ -135,7 +139,10 @@
     // 个人简介
     #if personal.at("summary", default: "") != "" {
       section-heading("个人简介")
-      text(size: 9.5pt, fill: luma(60))[#personal.at("summary", default: "")]
+      {
+        set text(size: 9.5pt, fill: luma(60))
+        render-md(personal.at("summary", default: ""))
+      }
     }
 
     // 按用户排序渲染主区域模块
@@ -151,7 +158,10 @@
           text(size: 9pt, fill: accent)[#item.at("position", default: "")]
           if item.at("description", default: "") != "" {
             v(0.2em)
-            text(size: 9pt, fill: luma(60))[#item.description]
+            {
+              set text(size: 9pt, fill: luma(60))
+              render-md(item.at("description", default: ""))
+            }
           }
           v(0.7em)
         }
@@ -168,7 +178,10 @@
           }
           if item.at("description", default: "") != "" {
             v(0.2em)
-            text(size: 9pt, fill: luma(60))[#item.description]
+            {
+              set text(size: 9pt, fill: luma(60))
+              render-md(item.at("description", default: ""))
+            }
           }
           v(0.7em)
         }

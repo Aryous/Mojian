@@ -19,6 +19,10 @@
 #set par(leading: 0.75em)
 
 // ─── 辅助 ───────────────────────────
+#let render-md(s) = {
+  if s != "" { eval(s, mode: "markup") }
+}
+
 #let section-label(label) = {
   v(1.2em)
   text(size: 7.5pt, weight: "bold", fill: luma(160), tracking: 0.12em)[
@@ -62,7 +66,10 @@
 
 #if personal.at("summary", default: "") != "" {
   v(1em)
-  text(size: 9.5pt, fill: luma(70))[#personal.at("summary", default: "")]
+  {
+    set text(size: 9.5pt, fill: luma(70))
+    render-md(personal.at("summary", default: ""))
+  }
 }
 
 // ─── 按用户排序渲染各模块 ────────────────
@@ -78,7 +85,10 @@
       text(size: 9pt, fill: luma(100))[#item.at("position", default: "")]
       if item.at("description", default: "") != "" {
         v(0.2em)
-        text(size: 9pt, fill: luma(70))[#item.description]
+        {
+          set text(size: 9pt, fill: luma(70))
+          render-md(item.at("description", default: ""))
+        }
       }
       v(0.7em)
     }
@@ -93,7 +103,10 @@
       text(size: 9pt, fill: luma(100))[#item.at("degree", default: "") · #item.at("field", default: "")]
       if item.at("description", default: "") != "" {
         v(0.2em)
-        text(size: 9pt, fill: luma(70))[#item.description]
+        {
+          set text(size: 9pt, fill: luma(70))
+          render-md(item.at("description", default: ""))
+        }
       }
       v(0.7em)
     }
@@ -110,7 +123,10 @@
       }
       if item.at("description", default: "") != "" {
         v(0.2em)
-        text(size: 9pt, fill: luma(70))[#item.description]
+        {
+          set text(size: 9pt, fill: luma(70))
+          render-md(item.at("description", default: ""))
+        }
       }
       v(0.7em)
     }

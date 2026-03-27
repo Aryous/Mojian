@@ -17,6 +17,10 @@
 #set par(leading: 0.8em)
 
 // ─── 辅助函数 ───────────────────────────
+#let render-md(s) = {
+  if s != "" { eval(s, mode: "markup") }
+}
+
 #let section-title(title) = {
   v(0.6em)
   text(size: 13pt, weight: "bold")[#title]
@@ -51,7 +55,8 @@
 
 #if personal.at("summary", default: "") != "" {
   v(0.5em)
-  text(size: 10pt)[#personal.at("summary", default: "")]
+  set text(size: 10pt)
+  render-md(personal.at("summary", default: ""))
 }
 
 // ─── 数据提取 ───────────────────────────
@@ -72,7 +77,8 @@
         date-range(item.at("startDate", default: ""), item.at("endDate", default: "")),
       )
       if item.at("description", default: "") != "" {
-        text(size: 9.5pt)[#item.description]
+        set text(size: 9.5pt)
+        render-md(item.description)
       }
       v(0.3em)
     }
@@ -86,7 +92,8 @@
       )
       if item.at("description", default: "") != "" {
         v(0.15em)
-        text(size: 9.5pt)[#item.description]
+        set text(size: 9.5pt)
+        render-md(item.description)
       }
       v(0.3em)
     }
@@ -100,7 +107,8 @@
       )
       if item.at("description", default: "") != "" {
         v(0.15em)
-        text(size: 9.5pt)[#item.description]
+        set text(size: 9.5pt)
+        render-md(item.description)
       }
       if item.at("url", default: "") != "" {
         text(size: 8.5pt, fill: rgb("#1B4965"))[#item.url]

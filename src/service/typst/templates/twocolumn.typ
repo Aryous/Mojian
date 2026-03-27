@@ -18,6 +18,10 @@
 #set par(leading: 0.7em)
 
 // ─── 辅助函数 ───────────────────────────
+#let render-md(s) = {
+  if s != "" { eval(s, mode: "markup") }
+}
+
 #let section-title(title) = {
   v(0.5em)
   text(size: 11.5pt, weight: "bold")[#title]
@@ -75,7 +79,10 @@
     // 个人简介
     if personal.at("summary", default: "") != "" {
       section-title("简介")
-      text(size: 9pt)[#personal.summary]
+      {
+        set text(size: 9pt)
+        render-md(personal.at("summary", default: ""))
+      }
     }
 
     // 技能
@@ -102,7 +109,10 @@
           )
           if item.at("description", default: "") != "" {
             v(0.1em)
-            text(size: 9pt)[#item.description]
+            {
+              set text(size: 9pt)
+              render-md(item.at("description", default: ""))
+            }
           }
           v(0.25em)
         }
@@ -115,7 +125,10 @@
             date-range(item.at("startDate", default: ""), item.at("endDate", default: "")),
           )
           if item.at("description", default: "") != "" {
-            text(size: 9pt)[#item.description]
+            {
+              set text(size: 9pt)
+              render-md(item.at("description", default: ""))
+            }
           }
           v(0.25em)
         }
@@ -129,7 +142,10 @@
           )
           if item.at("description", default: "") != "" {
             v(0.1em)
-            text(size: 9pt)[#item.description]
+            {
+              set text(size: 9pt)
+              render-md(item.at("description", default: ""))
+            }
           }
           if item.at("url", default: "") != "" {
             text(size: 8pt, fill: rgb("#1B4965"))[#item.url]
