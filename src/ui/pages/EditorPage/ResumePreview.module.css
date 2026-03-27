@@ -27,7 +27,7 @@
 
 .svgPreview {
   max-width: 100%;
-  background-color: #ffffff;
+  background-color: var(--sem-bg-paper);
   box-shadow: var(--shadow-medium);
 }
 
