@@ -110,9 +110,9 @@ export function AiDrawer({ open, onClose, content, onAccept }: AiDrawerProps) {
   }, [handleSaveKey])
 
   return (
-    <div className={`${styles.drawer} ${open ? styles.drawerOpen : ''}`} role="region" aria-label="AI 智能优化">
+    <div className={`${styles.drawer} ${open ? styles.drawerOpen : ''}`} role="region" aria-label="墨灵">
       <div className={styles.header}>
-        <span className={styles.headerTitle}>AI 智能优化</span>
+        <span className={styles.headerTitle}>墨灵</span>
         <button type="button" className={styles.headerClose} onClick={onClose} aria-label="关闭 AI 面板">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
             <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />

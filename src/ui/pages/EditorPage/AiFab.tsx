@@ -13,18 +13,16 @@ export function AiFab({ visible, onClick }: AiFabProps) {
       type="button"
       className={`${styles.fab} ${visible ? '' : styles.fabHidden}`}
       onClick={onClick}
-      aria-label="AI 智能优化"
+      aria-label="墨灵"
     >
+      {/* 毛笔图标：笔杆 + 铁箍 + 渐细笔毫 */}
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <circle cx="12" cy="12" r="4.5" stroke="currentColor" strokeWidth="1.5" />
-        <path
-          d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3M4.58 4.58l2.12 2.12M17.3 17.3l2.12 2.12M4.58 19.42l2.12-2.12M17.3 6.7l2.12-2.12"
-          stroke="currentColor"
-          strokeWidth="1.3"
-          strokeLinecap="round"
-        />
+        <circle cx="19.5" cy="3" r="1.5" fill="currentColor" />
+        <path d="M18.5 4.5 L12.5 10.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+        <path d="M12 10.5 L11 11.5" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+        <path d="M11 12 C9.5 14.5 7.5 17.5 5 21 C7.5 19 10.5 16 13 13 Z" fill="currentColor" />
       </svg>
-      <span className={styles.tooltip}>AI 智能优化</span>
+      <span className={styles.tooltip}>墨灵</span>
     </button>
   )
 }
