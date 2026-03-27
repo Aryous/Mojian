@@ -3,7 +3,7 @@
 
 import { create } from 'zustand'
 import type { Resume, SectionType, AiOptimizeResult, AiDiffEntry, ChatMessage } from '@/types'
-import { optimizeResume } from '@/service/ai/optimize'
+import { optimizeResume, classifyUserIntent } from '@/service/ai/optimize'
 import { mergeAllSections } from '@/service/ai/merge'
 import { generateDiffForSections } from '@/service/ai/diff'
 import { extractSectionData } from '@/service/ai/serialize'
@@ -86,8 +86,13 @@ export const useAiStore = create<AiState>((set, get) => ({
         .filter((m) => m.id !== userMsg.id) // 排除刚添加的当前消息（会作为 userMessage 单独传）
         .map((m) => ({ role: m.role, content: m.content }))
 
-      // 1. 调用 AI — 一次调用，返回所有修改的 section
-      const result = await optimizeResume({ resume, optionId, userPrompt, targetSection, history })
+      // 1. 自动路由：optionId 为 'auto' 时先分类用户意图
+      const resolvedOptionId = optionId === 'auto'
+        ? await classifyUserIntent(userPrompt)
+        : optionId
+
+      // 2. 调用 AI — 一次调用，返回所有修改的 section
+      const result = await optimizeResume({ resume, optionId: resolvedOptionId, userPrompt, targetSection, history })
 
       // 2. 快照原始数据（只快照 AI 实际返回的 section）
       const originalSections: Record<string, unknown> = {}

@@ -120,18 +120,18 @@ export function AiDrawer({ open, onClose, resume, onAccept, targetSection }: AiD
     [sendOptimize],
   )
 
-  // Suggestion chip — 也不硬编码 section
+  // Suggestion chip — AI 自动路由
   const handleChipClick = useCallback(
     (chip: typeof SUGGESTION_CHIPS[number]) => {
-      sendOptimize(chip.prompt, 'polish')
+      sendOptimize(chip.prompt, 'auto')
     },
     [sendOptimize],
   )
 
-  // 自由文本输入 — 如果有 targetSection prop（从 section "墨灵"按钮触发），传入 section
+  // 自由文本输入 — AI 自动路由选择最佳策略
   const handleSend = useCallback(() => {
     if (!inputValue.trim()) return
-    sendOptimize(inputValue, 'polish', targetSection)
+    sendOptimize(inputValue, 'auto', targetSection)
   }, [inputValue, sendOptimize, targetSection])
 
   const handleInputKeyDown = useCallback(

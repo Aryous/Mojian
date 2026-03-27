@@ -9,6 +9,44 @@ import { serializeResumeForAi } from './serialize'
 import { extractJsonFromText, validateSectionData, validatePartialResume } from './parse'
 import type { ValidatedPartialResume } from './parse'
 
+/** 可用于自动路由的优化策略 ID（排除 generate，冷启动不参与路由） */
+const ROUTABLE_IDS = ['polish', 'quantify', 'concise', 'match-job'] as const
+
+/**
+ * 轻量 AI 调用：根据用户自由文本自动选择最合适的优化策略。
+ * 返回 optionId（polish / quantify / concise / match-job），默认 polish。
+ */
+export async function classifyUserIntent(userPrompt: string): Promise<string> {
+  const client = getAiClient()
+  const response = await client.chat.completions.create({
+    model: defaultModel,
+    messages: [
+      {
+        role: 'system',
+        content: `你是一个意图分类器。根据用户对简历的优化指令，返回最匹配的策略 ID。
+
+可选策略：
+- polish — 润色表述、改善措辞、替换弱动词、修正语病、翻译、改写
+- quantify — 量化成果、添加数据指标、用数字说话
+- concise — 精简内容、删除冗余、缩短篇幅
+- match-job — 匹配岗位、JD 对齐、突出相关经验、ATS 优化
+
+规则：
+- 只返回一个策略 ID，不要输出任何其他内容
+- 如果无法明确判断，返回 polish`,
+      },
+      { role: 'user', content: userPrompt },
+    ],
+    temperature: 0,
+    max_tokens: 20,
+  })
+
+  const raw = response.choices[0]?.message?.content?.trim().toLowerCase() ?? ''
+  // 校验返回值是否合法，不合法则 fallback
+  if ((ROUTABLE_IDS as readonly string[]).includes(raw)) return raw
+  return 'polish'
+}
+
 export interface OptimizeParams {
   resume: Resume
   optionId: string
