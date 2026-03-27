@@ -3,6 +3,14 @@
 
 import type { SectionType, Resume } from './resume'
 
+/** 对话消息 */
+export interface ChatMessage {
+  id: string
+  role: 'user' | 'assistant'
+  content: string
+  timestamp: number
+}
+
 /** AI 优化选项 */
 export interface AiOptimizeOption {
   id: string

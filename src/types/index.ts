@@ -17,6 +17,7 @@ export type {
 } from './resume'
 
 export type {
+  ChatMessage,
   AiOptimizeOption,
   AiOptimizeResult,
   AiOptimizeRequest,

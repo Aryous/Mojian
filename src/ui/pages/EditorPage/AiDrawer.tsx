@@ -5,12 +5,6 @@ import { useAiStore } from '@/runtime/store'
 import type { Resume, SectionType, AiDiffEntry } from '@/types'
 import styles from './AiDrawer.module.css'
 
-interface ChatMessage {
-  id: string
-  role: 'user' | 'ai'
-  text: string
-}
-
 interface AiDrawerProps {
   open: boolean
   onClose: () => void
@@ -67,6 +61,7 @@ export function AiDrawer({ open, onClose, resume, onAccept, targetSection }: AiD
     optimizing,
     pendingResult,
     diffEntries,
+    messages,
     loadApiKey,
     setApiKey,
     removeApiKey,
@@ -75,7 +70,6 @@ export function AiDrawer({ open, onClose, resume, onAccept, targetSection }: AiD
     rejectResult,
   } = useAiStore()
 
-  const [messages, setMessages] = useState<ChatMessage[]>([])
   const [inputValue, setInputValue] = useState('')
   const [keyInput, setKeyInput] = useState('')
   const chatRef = useRef<HTMLDivElement>(null)
@@ -90,26 +84,11 @@ export function AiDrawer({ open, onClose, resume, onAccept, targetSection }: AiD
     }
   }, [messages])
 
-  useEffect(() => {
-    if (pendingResult) {
-      setMessages((prev) => [
-        ...prev,
-        { id: crypto.randomUUID(), role: 'ai', text: '优化完成，请查看下方对比结果。' },
-      ])
-    }
-  }, [pendingResult])
-
   // 发送优化请求 — targetSection 可选
   const sendOptimize = useCallback(
     (userPrompt: string, optionId: string, section?: SectionType) => {
       if (!userPrompt.trim() || optimizing || !resume) return
-
-      setMessages((prev) => [
-        ...prev,
-        { id: crypto.randomUUID(), role: 'user', text: userPrompt },
-      ])
       setInputValue('')
-
       void optimize(resume, optionId, userPrompt, section)
     },
     [optimizing, resume, optimize],
@@ -269,7 +248,7 @@ export function AiDrawer({ open, onClose, resume, onAccept, targetSection }: AiD
                 ) : (
                   messages.map((msg) => (
                     <div key={msg.id} className={`${styles.msg} ${msg.role === 'user' ? styles.msgUser : styles.msgAi}`}>
-                      {msg.text}
+                      {msg.content}
                     </div>
                   ))
                 )}

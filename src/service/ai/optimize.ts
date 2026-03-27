@@ -15,6 +15,8 @@ export interface OptimizeParams {
   userPrompt: string
   /** 目标 section — 有值时 AI 聚焦该 section 并返回单 section；省略时 AI 优化全文并返回多 section 对象 */
   targetSection?: SectionType
+  /** 对话历史（多轮上下文），最近 N 轮的 user/assistant 消息 */
+  history?: Array<{ role: 'user' | 'assistant'; content: string }>
 }
 
 export interface OptimizeResult {
@@ -31,7 +33,7 @@ export interface OptimizeResult {
  * 一次 API 调用，一次返回。
  */
 export async function optimizeResume(params: OptimizeParams): Promise<OptimizeResult> {
-  const { resume, optionId, userPrompt, targetSection } = params
+  const { resume, optionId, userPrompt, targetSection, history } = params
 
   const option = AI_OPTIMIZE_OPTIONS.find((o) => o.id === optionId)
   if (!option) throw new Error(`未知的优化选项: ${optionId}`)
@@ -42,12 +44,24 @@ export async function optimizeResume(params: OptimizeParams): Promise<OptimizeRe
   const systemMessage = buildSystemMessage(option.systemPrompt, targetSection)
   const userMessage = buildUserMessage(serialized, targetSection, userPrompt)
 
+  // 构建消息列表：system + 历史对话 + 当前用户消息
+  const messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [
+    { role: 'system', content: systemMessage },
+  ]
+
+  // 注入最近对话历史（限制 10 条 = 5 轮，控制 token）
+  if (history && history.length > 0) {
+    const recentHistory = history.slice(-10)
+    for (const msg of recentHistory) {
+      messages.push({ role: msg.role, content: msg.content })
+    }
+  }
+
+  messages.push({ role: 'user', content: userMessage })
+
   const response = await client.chat.completions.create({
     model: defaultModel,
-    messages: [
-      { role: 'system', content: systemMessage },
-      { role: 'user', content: userMessage },
-    ],
+    messages,
     temperature: 0.7,
     max_tokens: 4096,
   })
