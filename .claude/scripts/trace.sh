@@ -1,8 +1,8 @@
 #!/bin/bash
 # 溯源覆盖率报告 — 机械化阻塞门 G5
-# 自推导：从 requirements.md 自动提取追踪条目，不依赖手动清单。
-#   - R 条目：匹配 ### X.Y 格式的标题（顶层需求）
-#   - F 条目：匹配走查表中 S0/S1 行的 F-ID
+# 数据源：requirements.trace.yaml（sidecar）
+#   - trackable 列表：需要追踪的 R/F ID
+#   - requirements / findings 段：ID → name 映射
 #
 # 约定：代码中使用 @req <ID> 标注实现了哪个需求
 #   例：// @req R1.1 — rich text editing
@@ -16,47 +16,53 @@
 set -euo pipefail
 
 PROJECT_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-REQ_FILE="$PROJECT_ROOT/docs/product-specs/requirements.md"
+TRACE_FILE="$PROJECT_ROOT/docs/product-specs/requirements.trace.yaml"
 SRC_DIR="$PROJECT_ROOT/src"
 TEST_DIR="$PROJECT_ROOT/tests"
 
 STRICT=false
 [[ "${1:-}" == "--strict" ]] && STRICT=true
 
+if [[ ! -f "$TRACE_FILE" ]]; then
+  echo "ERROR: $TRACE_FILE not found."
+  echo "Run req-review agent to generate the sidecar."
+  exit 1
+fi
+
+# ── 从 sidecar 提取 trackable IDs + names ────────────────────────────
+# python3 读 YAML，输出 TSV：id<TAB>name
+TRACE_DATA=$(python3 -c "
+import yaml, sys
+
+with open(sys.argv[1]) as f:
+    data = yaml.safe_load(f)
+
+# build name lookup
+names = {}
+for r in data.get('requirements', []):
+    names[r['id']] = r.get('name', '')
+for f in data.get('findings', []):
+    names[f['id']] = f.get('name', '')
+
+for tid in data.get('trackable', []):
+    print(f\"{tid}\t{names.get(tid, '')}\")
+" "$TRACE_FILE")
+
 IDS=()
 NAMES=()
 
-# ── 提取 R 条目：匹配 ### X.Y 格式标题 ──────────────────────────────
-# 格式：### 1.1 简历内容编辑（P0）
-while IFS= read -r line; do
-  if echo "$line" | grep -qE '^### [0-9]+\.[0-9]+ '; then
-    num=$(echo "$line" | sed -E 's/^### ([0-9]+\.[0-9]+) .*/\1/')
-    name=$(echo "$line" | sed -E 's/^### [0-9]+\.[0-9]+ (.*)$/\1/' | sed -E 's/ *\(P[0-9]\) *$//')
-    IDS+=("R${num}")
-    NAMES+=("$name")
-  fi
-done < "$REQ_FILE"
-
-# ── 提取 F 条目：匹配走查表中 S0/S1 行 ──────────────────────────────
-# 格式：| F05 | S0 | 编辑 | R1.1 | 待实现 | 撤销/重做 |
-while IFS= read -r line; do
-  if echo "$line" | grep -qE '^\| F[0-9]+ \| S[01] '; then
-    fid=$(echo "$line" | sed -E 's/^\| *(F[0-9]+) *\|.*/\1/')
-    desc=$(echo "$line" | awk -F'|' '{print $(NF-1)}' | sed 's/^ *//;s/ *$//')
-    IDS+=("$fid")
-    NAMES+=("$desc")
-  fi
-done < "$REQ_FILE"
+while IFS=$'\t' read -r id name; do
+  IDS+=("$id")
+  NAMES+=("$name")
+done <<< "$TRACE_DATA"
 
 TOTAL=${#IDS[@]}
 COVERED=0
 MISSING=0
 
 echo "═══════════════════════════════════════════════"
-echo "  溯源覆盖率报告（自推导）"
-echo "  来源: requirements.md"
-echo "  R 条目: ### X.Y 标题"
-echo "  F 条目: 走查表 S0/S1 行"
+echo "  溯源覆盖率报告"
+echo "  来源: requirements.trace.yaml (sidecar)"
 echo "  总计: $TOTAL 条"
 echo "  扫描: src/ + tests/"
 echo "  约定: @req <ID>"

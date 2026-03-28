@@ -102,7 +102,7 @@ on_commit_request:
 | `harness-doctor.sh` | 会话健康检查 | 校验主控文件、上游真相源 frontmatter 状态与未决 Q、active exec-plan、git hook 配置、worktree 脏状态、trace 覆盖率；内部调用 `sync-state.sh` 刷新 STATE.yaml；输出 blockers/warnings 汇总 | 每次会话启动 |
 | `sync-state.sh` | 生成 STATE.yaml 状态快照 | 扫描所有上游文档的 exists/status/ready/open_questions、active exec-plan 列表、trace 覆盖率、worktree 状态；推导 signals/warnings/blockers 和 `recommended_next` | doctor 内部调用，或手动刷新 |
 | `closeout.sh` | 提交前收口检查 | 对 staged 或指定文档跑 doc-lint；跑 trace --strict（有 approved 豁免则降级为警告）；跑 lint + typecheck + tests；刷新 STATE；任一 blocker 则 exit 1 | commit 前必跑 |
-| `trace.sh` | 代码 @req 溯源覆盖率 | 从 requirements.md 自推导追踪条目（R: `### X.Y` 标题，F: 走查表 S0/S1 行），在 src/ + tests/ 中 grep `@req <ID>`；输出逐条 ✅/❌ 和覆盖率；`--strict` 有未覆盖则 exit 1 | 验证阶段、closeout 内部调用 |
+| `trace.sh` | 代码 @req 溯源覆盖率 | 从 `requirements.trace.yaml` sidecar 读取 trackable 列表，在 src/ + tests/ 中 grep `@req <ID>`；输出逐条 ✅/❌ 和覆盖率；`--strict` 有未覆盖则 exit 1 | 验证阶段、closeout 内部调用 |
 | `doc-lint.sh` | 文档交接结构校验 | 检查 frontmatter 完整性（status/author/date/blocks/open_questions）、approved 文档审批字段与未决 Q 一致性、溯源表章节存在性、豁免文档 scope/mode/expires/covers 合法性；按路径自动识别校验规则 | 文档交接时、closeout 内部调用 |
 | `create-exemption.sh` | 生成豁免草稿 | 根据 --scope/--mode/--slug/--reason/--cover 参数生成 `docs/exemptions/` 下的豁免文档（status=review），含完整 frontmatter 和四个必需章节模板；当前仅支持 scope=trace | 历史债阻塞 closeout 时 |
 | `harness-commit.sh` | 统一提交入口 | 先跑 closeout（支持 --doc/--trace-exemption 透传），再执行 git commit；硬拒绝 --no-verify | 代替裸 git commit |
