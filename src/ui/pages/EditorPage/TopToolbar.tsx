@@ -1,4 +1,4 @@
-// src/ui/pages/EditorPage/TopToolbar.tsx
+// @req F02 — 简历命名：可编辑标题（inline edit + blur/enter 提交）
 // Slim toolbar: back + brand + editable title | template trigger + export PDF
 import { useCallback, useState, type ChangeEvent, type KeyboardEvent } from 'react'
 import { useNavigate } from 'react-router'
