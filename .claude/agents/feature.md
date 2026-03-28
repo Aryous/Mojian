@@ -51,7 +51,7 @@ implement:
 
 
 verify:
-    bash .claude/scripts/trace.sh
+    bash .claude/scripts/trace.sh --sync   # 有覆盖的 open → resolved
     npm run lint
     npx tsc -b --noEmit
     npm test

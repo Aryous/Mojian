@@ -112,7 +112,7 @@ findings:
     severity: S1
     journey: AI
     related: [R3.1, R3.3]
-    disposition: open
+    disposition: resolved
   - id: F13
     name: quick actions 忽略 targetSection
     severity: S1
@@ -124,13 +124,13 @@ findings:
     severity: S1
     journey: AI
     related: [R3.1]
-    disposition: open
+    disposition: resolved
   - id: F19
     name: API Key 存储安全
     severity: S1
     journey: 跨旅程
     related: [R3.2]
-    disposition: open
+    disposition: resolved
   - id: F23
     name: modern 模板内容溢出不分页
     severity: S1

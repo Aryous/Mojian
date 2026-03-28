@@ -12,6 +12,8 @@
 #
 # 用法：bash .claude/scripts/trace.sh
 #       bash .claude/scripts/trace.sh --strict   (有未覆盖则 exit 1)
+#       bash .claude/scripts/trace.sh --sync     (有代码覆盖的 open → resolved)
+#       bash .claude/scripts/trace.sh --strict --sync
 
 set -euo pipefail
 
@@ -21,7 +23,13 @@ SRC_DIR="$PROJECT_ROOT/src"
 TEST_DIR="$PROJECT_ROOT/tests"
 
 STRICT=false
-[[ "${1:-}" == "--strict" ]] && STRICT=true
+SYNC=false
+for arg in "$@"; do
+  case "$arg" in
+    --strict) STRICT=true ;;
+    --sync)   SYNC=true ;;
+  esac
+done
 
 if [[ ! -f "$TRACE_FILE" ]]; then
   echo "ERROR: $TRACE_FILE not found."
@@ -71,6 +79,7 @@ echo ""
 
 MISSING_IDS=""
 MISSING_NAMES=""
+COVERED_IDS=()
 
 for i in $(seq 0 $((TOTAL - 1))); do
   id="${IDS[$i]}"
@@ -82,6 +91,7 @@ for i in $(seq 0 $((TOTAL - 1))); do
 
   if [[ -n "$hits" ]]; then
     COVERED=$((COVERED + 1))
+    COVERED_IDS+=("$id")
     file_count=$(echo "$hits" | wc -l | tr -d ' ')
     echo "  ✅ ${id} ${name}"
     echo "$hits" | head -3 | while IFS= read -r h; do
@@ -118,6 +128,54 @@ if [[ $MISSING -gt 0 ]]; then
 fi
 
 echo "═══════════════════════════════════════════════"
+
+# ── --sync：回写 disposition open → resolved ──────────────────────────
+if $SYNC && [[ ${#COVERED_IDS[@]} -gt 0 ]]; then
+  SYNC_RESULT=$(python3 -c "
+import re, sys, yaml
+
+trace_file = sys.argv[1]
+covered_ids = set(sys.argv[2:])
+
+with open(trace_file) as f:
+    content = f.read()
+    data = yaml.safe_load(content)
+
+# 确定哪些 findings 需要 open → resolved
+ids_to_update = set()
+for finding in data.get('findings', []):
+    if finding['id'] in covered_ids and finding.get('disposition') == 'open':
+        ids_to_update.add(finding['id'])
+
+if not ids_to_update:
+    print('0')
+    sys.exit(0)
+
+# 逐行定向替换，保留注释和格式
+lines = content.split('\n')
+current_id = None
+updated = 0
+for i, line in enumerate(lines):
+    m = re.match(r'^  - id: (\S+)', line)
+    if m:
+        current_id = m.group(1)
+    if current_id in ids_to_update and re.match(r'^    disposition: open', line):
+        lines[i] = '    disposition: resolved'
+        ids_to_update.discard(current_id)
+        updated += 1
+        current_id = None
+
+with open(trace_file, 'w') as f:
+    f.write('\n'.join(lines))
+
+print(updated)
+" "$TRACE_FILE" "${COVERED_IDS[@]}")
+
+  if [[ "$SYNC_RESULT" -gt 0 ]]; then
+    echo ""
+    echo "  🔄 Sync: ${SYNC_RESULT} entries updated (open → resolved)"
+  fi
+fi
 
 if $STRICT && [[ $MISSING -gt 0 ]]; then
   echo ""
