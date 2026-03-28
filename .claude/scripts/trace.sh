@@ -10,12 +10,12 @@
 #
 # Q 不出现在代码标注中（Q 是决策记录，不是可追踪需求）。
 #
-# 用法：bash scripts/trace.sh
-#       bash scripts/trace.sh --strict   (有未覆盖则 exit 1)
+# 用法：bash .claude/scripts/trace.sh
+#       bash .claude/scripts/trace.sh --strict   (有未覆盖则 exit 1)
 
 set -euo pipefail
 
-PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+PROJECT_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 REQ_FILE="$PROJECT_ROOT/docs/product-specs/requirements.md"
 SRC_DIR="$PROJECT_ROOT/src"
 TEST_DIR="$PROJECT_ROOT/tests"
@@ -30,9 +30,7 @@ NAMES=()
 # 格式：### 1.1 简历内容编辑（P0）
 while IFS= read -r line; do
   if echo "$line" | grep -qE '^### [0-9]+\.[0-9]+ '; then
-    # 提取 X.Y 作为 ID
     num=$(echo "$line" | sed -E 's/^### ([0-9]+\.[0-9]+) .*/\1/')
-    # 提取标题（去掉优先级标记）
     name=$(echo "$line" | sed -E 's/^### [0-9]+\.[0-9]+ (.*)$/\1/' | sed -E 's/ *\(P[0-9]\) *$//')
     IDS+=("R${num}")
     NAMES+=("$name")
@@ -44,7 +42,6 @@ done < "$REQ_FILE"
 while IFS= read -r line; do
   if echo "$line" | grep -qE '^\| F[0-9]+ \| S[01] '; then
     fid=$(echo "$line" | sed -E 's/^\| *(F[0-9]+) *\|.*/\1/')
-    # 描述在最后一个有内容的列
     desc=$(echo "$line" | awk -F'|' '{print $(NF-1)}' | sed 's/^ *//;s/ *$//')
     IDS+=("$fid")
     NAMES+=("$desc")
@@ -73,7 +70,6 @@ for i in $(seq 0 $((TOTAL - 1))); do
   id="${IDS[$i]}"
   name="${NAMES[$i]}"
 
-  # 搜索 @req <id> 模式（精确匹配，避免 R1.1 匹配到 R1.10）
   hits=$(grep -rn --include="*.ts" --include="*.tsx" --include="*.css" \
     -E "@req ${id}([^0-9A-Za-z]|$)" \
     "$SRC_DIR" "$TEST_DIR" 2>/dev/null || true)
@@ -117,7 +113,6 @@ fi
 
 echo "═══════════════════════════════════════════════"
 
-# strict 模式：有缺失则失败
 if $STRICT && [[ $MISSING -gt 0 ]]; then
   echo ""
   echo "FAIL: ${MISSING} requirements not traced to code."

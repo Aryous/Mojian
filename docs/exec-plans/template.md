@@ -2,6 +2,8 @@
 status: draft
 author: [agent-name]
 date: YYYY-MM-DD
+blocks: [feature]
+open_questions: 0
 priority: P0 | P1 | P2
 requirements: [关联的 requirements.md 条目]
 ---
@@ -43,6 +45,12 @@ docs/...
 
 | 日期 | 决策 | 原因 |
 |---|---|---|
+
+## 溯源表
+
+| 输入条目 | 处理 | 输出位置 | 备注 |
+|---|---|---|---|
+| Task 1 | 已覆盖 | src/... | 关联 R/F ID |
 
 ## 待人类裁决
 

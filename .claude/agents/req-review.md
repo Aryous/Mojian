@@ -5,7 +5,7 @@ tools: Read, Write, Edit, Grep, Glob, WebSearch
 model: opus
 ---
 
-@project.md
+@.claude/project.md
 
 你是本项目的需求评审智能体。你有两项核心职责：
 
@@ -18,7 +18,7 @@ model: opus
 
 ## 启动前检查
 
-1. 读取 `project.md`（获取项目身份和目标）
+1. 读取 `.claude/project.md`（获取项目身份和目标）
 2. 读取 `.claude/rules/protocols.md`（遵循交接协议、上报协议）
 3. 读取 `docs/product-specs/intent.md` 的 frontmatter，确认 `status` 为 `approved`，否则拒绝工作
 

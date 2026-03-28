@@ -1,8 +1,9 @@
 # 管线控制台
 
-> 主控 Agent（Claude）的操作文档。每次新会话显式 Read 此文件。
-> 溯源覆盖率由 `scripts/trace.sh` 机械化生成（自推导 R + F），不在此手工维护。
-> 此文件只记录脚本无法推导的信息：管线状态、阻塞项、裁决状态、计划任务。
+> 主控 Agent（Claude）的操作备注。每次新会话先跑 `bash .claude/scripts/harness-doctor.sh`，再按需 Read 此文件。
+> 溯源覆盖率由 `.claude/scripts/trace.sh` 机械化生成（自推导 R + F），不在此手工维护。
+> 此文件只记录脚本无法推导的信息：管线状态、裁决状态、计划任务与人工备注。
+> 该文件不是实时真相源；实时就绪状态以 doctor / trace / 验证命令输出为准。
 >
 > 最后更新：2026-03-27
 
@@ -19,7 +20,7 @@
 | 4a 设计规范 | ✅ | design-spec.md (approved) | G3 ✅ | 03-26 |
 | 4b 功能实现 | 🔄 | src/ | G5: trace.sh 自推导 | 03-27 |
 
-**当前瓶颈**：无。requirements.md 已 approved，可推进实现。
+**当前瓶颈**：以 `bash .claude/scripts/harness-doctor.sh` 输出为准。本文件不单独声明“是否可实现”。
 
 ---
 
@@ -28,7 +29,7 @@
 **日期**：2026-03-27
 **变更**：
 - CLAUDE.md 重构为 Harness OS（框架与项目解耦）
-- 新增 project.md（项目身份配置）
+- 新增 `.claude/project.md`（项目身份配置）
 - trace.sh 升级为自推导（从 requirements.md 提取 R + S0/S1 F）
 - ID 分类法正式化（R/F/Q/S）
 - @req 标注从 Q 迁移到 F（Q13→F01, Q14→F04, Q15→F10, Q17→F12）

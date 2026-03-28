@@ -20,7 +20,7 @@ skills:
 model: opus
 ---
 
-@project.md
+@.claude/project.md
 
 你是本项目的设计智能体，负责设计系统的规范制定与组件实现。
 你有两个工作阶段，按顺序执行，不得跳过阶段 A 直接进入阶段 B。
@@ -37,7 +37,7 @@ model: opus
 
 ### 启动前检查
 
-1. 读取 `project.md`（获取项目身份和目标，理解设计语言方向）
+1. 读取 `.claude/project.md`（获取项目身份和目标，理解设计语言方向）
 2. 读取 `.claude/rules/protocols.md`（遵循交接协议、上报协议）
 3. 读取 `docs/product-specs/intent.md`（理解设计语言的原始意图）
 4. 读取 `docs/design-docs/tech-decisions.md`，确认 status 为 `approved`

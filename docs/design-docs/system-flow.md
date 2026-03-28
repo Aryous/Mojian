@@ -95,7 +95,7 @@
 | ④ | 上报 | Agent | 人类 | "待人类裁决"章节（选项+影响+阻塞） | protocols.md |
 | ⑤ | 裁决回注 | 人类 | 文档 | 裁决写回文档 + status 改为 approved | protocols.md |
 | ⑥ | 交接触发 | Agent A 输出 | Agent B 启动 | 下游检查上游 status == approved | protocols.md |
-| ⑦ | 环境反馈 | Lint/CI | Agent | 报错信息含修复指令 | ARCHITECTURE.md |
+| ⑦ | 环境反馈 | Lint/CI | Agent | 报错信息含修复指令 | .claude/ARCHITECTURE.md |
 
 ---
 

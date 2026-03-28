@@ -22,7 +22,7 @@ Harness v1 在墨简项目中暴露了以下系统性缺陷：
 - **约束优先于能力** — 告诉 agent 不能做什么比告诉它能做什么更重要
 - **机械化优于注意力** — 能用脚本检查的不靠 agent 记住
 - **自推导优于手动维护** — trace.sh 从文档结构推导追踪项，不维护单独的清单
-- **框架与项目解耦** — CLAUDE.md 是操作系统，project.md 是应用配置
+- **框架与项目解耦** — CLAUDE.md 是操作系统，`.claude/project.md` 是应用配置
 - **注意力感知排序** — LLM 注意力首尾高中间低，最关键的内容放最前面
 
 ---
@@ -85,7 +85,7 @@ CLAUDE.md
 │     文件路径索引
 │
 └─ § 6. 外部引用
-      @project.md
+      @.claude/project.md
       @ARCHITECTURE.md
       protocols.md → .claude/rules/protocols.md
       Agent 定义 → .claude/agents/
@@ -127,18 +127,18 @@ CLAUDE.md
 ### Step 1: 检测项目状态
 
 检查以下文件是否存在：
-- project.md
-- docs/PIPELINE.md
+- .claude/project.md
+- .claude/PIPELINE.md
 - docs/product-specs/requirements.md
 - src/（任意代码文件）
 
 ### Step 2: 根据状态进入起点
 
-| project.md | PIPELINE.md | 起点 |
+| .claude/project.md | .claude/PIPELINE.md | 起点 |
 |---|---|---|
-| ❌ | — | 引导用户创建 project.md（项目名称、目标、技术方向） |
-| ✅ | ❌ | 初始化 PIPELINE.md，从阶段 0 开始（收集 intent） |
-| ✅ | ✅ | 读 PIPELINE.md → 跑 trace.sh → 向用户报告状态和建议 |
+| ❌ | — | 引导用户创建 `.claude/project.md`（项目名称、目标、技术方向） |
+| ✅ | ❌ | 初始化 `.claude/PIPELINE.md`，从阶段 0 开始（收集 intent） |
+| ✅ | ✅ | 读 `.claude/PIPELINE.md` → 跑 trace.sh → 向用户报告状态和建议 |
 
 ### Step 3: 等待用户确认方向
 
@@ -159,7 +159,7 @@ CLAUDE.md
 
 ---
 
-## 3. project.md（新增）
+## 3. .claude/project.md（新增）
 
 项目特定配置文件，与 CLAUDE.md 解耦。只包含项目身份——知识地图、Agent 角色、管线协议等全是 Harness 框架的一部分，留在 CLAUDE.md 中。
 
@@ -279,8 +279,8 @@ trace.sh 提取逻辑：
 | 操作 | 文件 | 说明 |
 |---|---|---|
 | 重写 | `CLAUDE.md` | 按 § 2 结构重组 |
-| 新建 | `project.md` | 从 CLAUDE.md 提取项目特定内容 |
-| 升级 | `scripts/trace.sh` | 自推导 R + F，干掉手动溯源清单 |
+| 新建 | `.claude/project.md` | 从 CLAUDE.md 提取项目特定内容 |
+| 升级 | `.claude/scripts/trace.sh` | 自推导 R + F，干掉手动溯源清单 |
 | 更新 | `docs/product-specs/requirements.md` | 顶部加分类法简述；走查表加状态列；删除手动溯源清单 |
 | 更新 | `.claude/rules/protocols.md` | 补充 § 5.1 和 § 5.2 |
 | 更新 | `.claude/agents/feature.md` | @req 标注约定 R + F |
@@ -288,7 +288,7 @@ trace.sh 提取逻辑：
 | 更新 | `.claude/agents/design.md` | 溯源表格式 |
 | 更新 | `.claude/agents/tech-selection.md` | 溯源表格式 |
 | 更新 | `.claude/agents/doc-gardening.md` | 分类法感知 |
-| 更新 | `docs/PIPELINE.md` | 溯源矩阵适配 R + F |
+| 更新 | `.claude/PIPELINE.md` | 溯源矩阵适配 R + F |
 | 迁移 | `src/` @req 标注 | Q13→F01, Q14→F04, Q15→F10, Q17→F12 |
 
 ### 7.2 @req 标注迁移映射
@@ -303,7 +303,7 @@ trace.sh 提取逻辑：
 
 ### 7.3 执行顺序
 
-1. 写 project.md（从 CLAUDE.md 提取）
+1. 写 `.claude/project.md`（从 CLAUDE.md 提取）
 2. 重写 CLAUDE.md（框架化）
 3. 升级 trace.sh（自推导）
 4. 更新 requirements.md（走查表格式 + 删除手动溯源清单）
@@ -322,7 +322,7 @@ trace.sh 提取逻辑：
 - [ ] trace.sh 对已实现的 R/F 显示 ✅，未实现的 S0/S1 F 显示 ❌
 - [ ] pre-commit hook 在 S0/S1 F 未覆盖时阻断 commit
 - [ ] CLAUDE.md 不包含任何项目特定内容
-- [ ] project.md 包含所有项目特定配置
+- [ ] `.claude/project.md` 包含所有项目特定配置
 - [ ] 代码中无 `@req Q` 标注
 - [ ] 所有 agent 定义引用 R + F 标注约定
-- [ ] 空项目 + CLAUDE.md 能自举（检测无 project.md → 引导创建）
+- [ ] 空项目 + CLAUDE.md 能自举（检测无 `.claude/project.md` → 引导创建）

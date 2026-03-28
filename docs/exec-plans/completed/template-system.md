@@ -15,7 +15,7 @@ open_questions: 0
 ## 技术依赖
 
 - `docs/design-docs/tech-decisions.md` 决策 4：Typst WASM 渲染
-- `ARCHITECTURE.md`：Config 层存放模板元数据，Service 层存放 Typst 模板源码
+- `.claude/ARCHITECTURE.md`：Config 层存放模板元数据，Service 层存放 Typst 模板源码
 
 ## 实现范围
 
