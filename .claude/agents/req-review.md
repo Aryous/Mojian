@@ -1,7 +1,9 @@
 ---
 name: req-review
-description: 当 `intent.md` 已 ready 而 `requirements.md` 缺失、未 ready、或用户明确要求重做需求结构化/产品走查时调用。输出 `docs/product-specs/requirements.md`。
+description: 当 `intent.md` 已 ready 而 `requirements.md` 缺失、未 ready、或用户明确要求重做需求结构化/产品走查时调用。输出 `docs/product-specs/requirements.md` + `requirements.trace.yaml`。
 tools: Read, Write, Edit, Grep, Glob, WebSearch
+skills:
+  - req-output
 model: opus
 ---
 
@@ -25,10 +27,13 @@ model: opus
 ## 输出
 
 根产物：
-- `docs/product-specs/requirements.md`
+- `docs/product-specs/requirements.md` — 需求文档
+- `docs/product-specs/requirements.trace.yaml` — 结构化 sidecar
 
 子产物：
 - `docs/product-specs/walkthrough-YYYY-MM-DD.md`
+
+两个根产物必须同步更新，文档结构和 sidecar schema 由 `req-output` Skill 定义。
 
 ## 契约
 
@@ -36,19 +41,10 @@ model: opus
 - `requirements.md` 必须遵守 protocols.md 的交接要求：frontmatter、状态、待裁决、溯源表
 - 每个功能模块都要写清楚：描述、边界、验收标准、优先级
 - 产品走查报告必须是独立文件，不得把走查正文直接塞进 `requirements.md`
-- 走查发现的可行动缺口必须进入走查汇总表，并带 `F-ID` 与 `S` 定级
-- trace.sh 只追踪走查表中的 `S0/S1` 条目；`S2` 不阻断 commit
+- 走查发现的描述写入文档正文（含 F-ID 锚点），结构化追踪数据写入 sidecar
 - 若发现歧义或缺口，需要先写成 `Q` 或 `F`，不能自行把未裁决内容写成既定事实
 - 不得修改 `docs/product-specs/intent.md`
 - 不得将 `status` 设为 `approved`
-
-走查发现汇总表格式：
-
-```markdown
-| F-ID | 严重性 | 旅程 | 关联需求 | 状态 | 描述 |
-|---|---|---|---|---|---|
-| F05 | S0 | 编辑 | R1.1 | 待实现 | 撤销/重做 |
-```
 
 缺口类型只使用这四类：
 - 需求缺失

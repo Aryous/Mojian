@@ -1,0 +1,229 @@
+document: docs/product-specs/requirements.md
+role: source
+generated_by: req-review
+
+requirements:
+  - id: R1.1
+    name: 简历内容编辑
+    priority: P0
+  - id: R1.2
+    name: 简历持久化
+    priority: P0
+  - id: R2.1
+    name: 简历渲染
+    priority: P0
+  - id: R2.2
+    name: 多模板系统
+    priority: P0
+  - id: R2.3
+    name: 简历导出
+    priority: P1
+  - id: R3.1
+    name: AI 优化选项
+    priority: P0
+  - id: R3.2
+    name: 多 AI 供应商配置
+    priority: P1
+  - id: R3.3
+    name: AI 上下文工程
+    priority: P0
+  - id: R4.1
+    name: 古风视觉体系
+    priority: P0
+  - id: R4.2
+    name: 原子化设计组件
+    priority: P0
+  - id: R4.3
+    name: 动画效果
+    priority: P1
+  - id: R5.1
+    name: 降低认知负担
+    priority: P0
+  - id: R5.2
+    name: 响应式设计
+    priority: P1
+
+findings:
+  # S0
+  - id: F01
+    name: 冷启动/生成场景未定义
+    severity: S0
+    journey: 冷启动
+    related: [R3.1, R5.1]
+    disposition: resolved
+  - id: F04
+    name: 富文本编辑
+    severity: S0
+    journey: 编辑
+    related: [R1.1]
+    disposition: resolved
+  - id: F05
+    name: 撤销/重做
+    severity: S0
+    journey: 编辑
+    related: [R1.1]
+    disposition: resolved
+  - id: F10
+    name: AI 交互形态未定义
+    severity: S0
+    journey: AI
+    related: [R3.1]
+    disposition: resolved
+
+  # S1 — open
+  - id: F02
+    name: 简历命名
+    severity: S1
+    journey: 冷启动
+    related: [R1.1]
+    disposition: resolved
+  - id: F06
+    name: 技能等级控件
+    severity: S1
+    journey: 编辑
+    related: [R1.1]
+    disposition: open
+  - id: F07
+    name: 自定义模块
+    severity: S1
+    journey: 编辑
+    related: [R1.1]
+    disposition: open
+  - id: F08
+    name: Section 可见性控制
+    severity: S1
+    journey: 编辑
+    related: [R1.1]
+    disposition: open
+  - id: F09
+    name: 删除确认
+    severity: S1
+    journey: 编辑
+    related: [R5.1]
+    disposition: open
+  - id: F11
+    name: chips 硬编码 optionId
+    severity: S1
+    journey: AI
+    related: [R3.1]
+    disposition: resolved
+  - id: F12
+    name: 自由输入场景的 system prompt
+    severity: S1
+    journey: AI
+    related: [R3.1, R3.3]
+    disposition: open
+  - id: F13
+    name: quick actions 忽略 targetSection
+    severity: S1
+    journey: AI
+    related: [R3.3]
+    disposition: open
+  - id: F14
+    name: skills section 缺少墨灵润色入口
+    severity: S1
+    journey: AI
+    related: [R3.1]
+    disposition: open
+  - id: F19
+    name: API Key 存储安全
+    severity: S1
+    journey: 跨旅程
+    related: [R3.2]
+    disposition: open
+  - id: F23
+    name: modern 模板内容溢出不分页
+    severity: S1
+    journey: 模板
+    related: [R2.1, R2.2]
+    disposition: resolved
+
+  # S1 — discarded
+  - id: F17
+    name: 导出进度反馈
+    severity: S1
+    journey: 导出
+    related: [R2.3]
+    disposition: discarded
+    reason: v1 不做
+    decided_by: Lucas
+    decided_date: 2026-03-27
+  - id: F20
+    name: API Key 入口可达性
+    severity: S1
+    journey: 跨旅程
+    related: [R3.2]
+    disposition: discarded
+    reason: v1 不做
+    decided_by: Lucas
+    decided_date: 2026-03-27
+
+  # S2
+  - id: F03
+    name: 模板数量确认
+    severity: S2
+    journey: 冷启动
+    related: [R2.2]
+    disposition: resolved
+  - id: F15
+    name: AI 操作历史是否持久化
+    severity: S2
+    journey: AI
+    related: []
+    disposition: open
+  - id: F16
+    name: 模板切换过渡
+    severity: S2
+    journey: 模板
+    related: [R2.2]
+    disposition: open
+  - id: F18
+    name: 导出文件命名规则
+    severity: S2
+    journey: 导出
+    related: [R2.3]
+    disposition: open
+  - id: F21
+    name: 数据导入/导出
+    severity: S2
+    journey: 跨旅程
+    related: [R1.2]
+    disposition: open
+  - id: F22
+    name: 进度计算规则
+    severity: S2
+    journey: 跨旅程
+    related: []
+    disposition: open
+
+trackable:
+  # R — all
+  - R1.1
+  - R1.2
+  - R2.1
+  - R2.2
+  - R2.3
+  - R3.1
+  - R3.2
+  - R3.3
+  - R4.1
+  - R4.2
+  - R4.3
+  - R5.1
+  - R5.2
+  # F — S0/S1, disposition open or resolved
+  - F01
+  - F02
+  - F04
+  - F05
+  - F06
+  - F07
+  - F08
+  - F09
+  - F10
+  - F11
+  - F12
+  - F13
+  - F14
+  - F19
+  - F23
