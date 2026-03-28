@@ -1,0 +1,34 @@
+document: .claude/ARCHITECTURE.md
+role: consumer
+trace_from: docs/product-specs/requirements.trace.yaml
+generated_by: architecture-bootstrap
+
+entries:
+  - input: R1.1
+    disposition: covered
+    output: §域分层模型, §目录结构映射
+    note: 编辑器走 UI → Runtime → Service / Repo
+  - input: R1.2
+    disposition: covered
+    output: §域分层模型, §目录结构映射
+    note: 持久化边界收敛到 Repo
+  - input: R2.1
+    disposition: covered
+    output: §横切关注点, §目录结构映射
+    note: Typst 渲染收敛到 Service
+  - input: R2.2
+    disposition: covered
+    output: §目录结构映射
+    note: 模板元数据与模板源码分层存放
+  - input: R3.2
+    disposition: covered
+    output: §横切关注点
+    note: AI Provider 通过唯一入口进入
+  - input: R3.3
+    disposition: covered
+    output: §横切关注点, §目录结构映射
+    note: AI 调用统一从 src/service/ai/ 进入
+  - input: R4.1
+    disposition: covered
+    output: §横切关注点, §目录结构映射
+    note: Design Tokens 是 UI 层唯一来源
