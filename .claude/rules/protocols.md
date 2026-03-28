@@ -73,7 +73,7 @@ open_questions: 0
 | G1a | requirements.md → `.claude/ARCHITECTURE.md` | 每个有代码组织含义的需求有对应的层次 / 边界 / 唯一入口约束 |
 | G2 | requirements.md → tech-decisions.md | 每个有技术含义的需求有决策记录 |
 | G3 | requirements.md → design-spec.md | 每个用户可见需求有设计覆盖 |
-| G4 | requirements.md → exec-plan | 每个需求 ID 映射到至少一个计划任务 |
+| G4 | requirements.md → exec-plan (plan agent) | 每个 trackable ID 映射到至少一个计划任务 |
 | G5 | exec-plan → code | `bash .claude/scripts/trace.sh --strict` + lint + typecheck + tests 全部通过；exec-plan 溯源表完整 |
 
 ### 交接链路
@@ -85,7 +85,7 @@ intent.md (approved)
   → [G2] tech-selection → tech-decisions.md (approved)
   → 环境搭建
   → [G3] design agent 阶段A → design-spec.md (approved)
-  → [G4] plan → exec-plan
+  → [G4] plan agent → exec-plan (approved)
   → [G5] feature agent → code
 ```
 

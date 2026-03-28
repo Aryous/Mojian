@@ -57,7 +57,7 @@ pipeline:
       → [G1a] arch-bootstrap agent    → ARCHITECTURE.md
       → [G2]  tech-selection agent    → tech-decisions.md
       → [G3]  design agent (阶段A)    → design-spec.md
-      → [G4]  plan                    → exec-plan
+      → [G4]  plan agent              → exec-plan
       → [G5]  feature agent           → code
       → verify
 
@@ -116,6 +116,7 @@ on_commit_request:
 | architecture-bootstrap | 需求 → 分层架构 | `.claude/agents/architecture-bootstrap.md` |
 | tech-selection | 需求 → 技术决策 | `.claude/agents/tech-selection.md` |
 | design | 需求 → 设计规范 / 实现 | `.claude/agents/design.md` |
+| plan | 上游文档 → 执行计划 | `.claude/agents/plan.md` |
 | feature | exec-plan → 代码实现 | `.claude/agents/feature.md` |
 | doc-fix | 按需文档修复 | `.claude/agents/doc-fix.md` |
 
