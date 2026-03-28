@@ -222,7 +222,7 @@ open_questions: 0
 
 **日期**：2026-03-26
 
-**背景**：墨简的古风设计系统需要高度自定义的视觉表达——宣纸纹理、墨线分割、印章按钮、窗棂导航等元素远超常规 UI 组件库的覆盖范围。DESIGN.md 定义了完整的设计令牌体系（L1 基础色、L2 语义色）。需要支持：设计令牌的集中管理、组件级样式隔离、伪类/伪元素（墨线不均匀感等 SVG 效果）、动画 keyframes。
+**背景**：墨简的古风设计系统需要高度自定义的视觉表达——宣纸纹理、墨线分割、印章按钮、窗棂导航等元素远超常规 UI 组件库的覆盖范围。`docs/design-docs/design-spec.md` 定义了完整的设计令牌体系（L1 基础色、L2 语义色）。需要支持：设计令牌的集中管理、组件级样式隔离、伪类/伪元素（墨线不均匀感等 SVG 效果）、动画 keyframes。
 
 **候选方案**：
 
@@ -238,7 +238,7 @@ open_questions: 0
 
 **理由**：
 1. **古风设计系统的需求本质是"写大量自定义 CSS"**：宣纸纹理背景、墨线 SVG 分割线、印章径向渐变、窗棂边框图案——这些效果需要直接操作 CSS 的全部能力（`background-image`、`filter`、`mask`、`clip-path` 等）。CSS Modules 不限制 CSS 表达力，是最直接的方案
-2. **设计令牌 = CSS 变量**：DESIGN.md 的令牌体系（`color.ink.deep` → `--color-ink-deep`）天然映射为 CSS 自定义属性，定义在 `src/ui/tokens/` 下的 `.css` 文件中，所有组件通过 `var(--color-ink-deep)` 引用。改令牌值即全局生效
+2. **设计令牌 = CSS 变量**：`docs/design-docs/design-spec.md` 的令牌体系（`color.ink.deep` → `--color-ink-deep`）天然映射为 CSS 自定义属性，定义在 `src/ui/tokens/` 下的 `.css` 文件中，所有组件通过 `var(--color-ink-deep)` 引用。改令牌值即全局生效
 3. **零配置**：Vite 原生支持 CSS Modules（`.module.css` 后缀即可），无需额外插件或编译步骤
 4. **样式隔离**：构建时生成唯一类名，原子组件之间零样式冲突
 
@@ -258,7 +258,7 @@ open_questions: 0
 
 **日期**：2026-03-26
 
-**背景**：DESIGN.md 定义了"水墨物理学"动画哲学——元素进入模拟墨水扩散（ease-out, 300-500ms）、元素消失模拟墨迹褪去（ease-in, 150-250ms）、悬停模拟毛笔触纸（scale(0.98)）、加载状态墨水晕染。需要支持：组件进入/退出动画、布局动画（模板切换）、手势交互、`prefers-reduced-motion` 无障碍。
+**背景**：`docs/design-docs/design-spec.md` 定义了"水墨物理学"动画哲学——元素进入模拟墨水扩散（ease-out, 300-500ms）、元素消失模拟墨迹褪去（ease-in, 150-250ms）、悬停模拟毛笔触纸（scale(0.98)）、加载状态墨水晕染。需要支持：组件进入/退出动画、布局动画（模板切换）、手势交互、`prefers-reduced-motion` 无障碍。
 
 **候选方案**：
 
@@ -276,7 +276,7 @@ open_questions: 0
 **理由**：
 1. **退出动画是杀手级需求**：水墨物理学要求"元素消失模拟墨迹褪去"——在 React 中，组件卸载后 DOM 节点立即移除，纯 CSS 无法实现退出动画。Motion 的 `AnimatePresence` 是解决此问题的标准方案，GSAP 需要手动延迟 DOM 移除，极易出错
 2. **布局动画**：模板切换时简历内容需要平滑过渡到新布局。Motion 的 `layout` prop 自动处理 FLIP 动画（First-Last-Invert-Play），无需手动计算元素位置
-3. **声明式 API 与水墨物理学的映射**：`<motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.4, ease: "easeOut" }} />` 直接对应 DESIGN.md 的动画规范，Agent 可读性极高
+3. **声明式 API 与水墨物理学的映射**：`<motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.4, ease: "easeOut" }} />` 直接对应 `docs/design-docs/design-spec.md` 的动画规范，Agent 可读性极高
 4. **`prefers-reduced-motion` 内置支持**：requirements 要求无障碍减少动画选项
 
 **未选原因**：

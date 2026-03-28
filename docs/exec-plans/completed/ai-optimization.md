@@ -15,7 +15,7 @@ open_questions: 0
 
 ## 技术依赖
 
-- `docs/design-docs/tech-decisions.md` 决策 6：OpenAI SDK via OpenRouter
+- `docs/tech/tech-decisions.md` 决策 6：OpenAI SDK via OpenRouter
 - `.claude/ARCHITECTURE.md`：AI 调用唯一入口 `src/service/ai/provider.ts`
 
 ## 实现范围

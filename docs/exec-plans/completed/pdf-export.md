@@ -14,7 +14,7 @@ open_questions: 0
 
 ## 技术依赖
 
-- `docs/design-docs/tech-decisions.md` 决策 4：Typst WASM 渲染
+- `docs/tech/tech-decisions.md` 决策 4：Typst WASM 渲染
 - 切片 2（Typst 渲染）已完成，`compileToPdf` 函数可用
 
 ## 实现范围

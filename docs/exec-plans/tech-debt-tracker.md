@@ -1,6 +1,6 @@
 # 技术债追踪
 
-> doc-gardening agent 维护。每次发现新债务立即记录，还清后标注日期。
+> 由主控维护。doctor / doc-lint / closeout 暴露出重复性问题时立即记录，还清后标注日期。
 
 ## 格式
 

@@ -34,16 +34,24 @@
 bash .claude/scripts/harness-doctor.sh
 ```
 
-按 doctor 输出决定起点：
-- 缺 `.claude/project.md`：先初始化项目身份
-- 缺 `.claude/PIPELINE.md`：先初始化管线控制台
-- 缺 `.claude/ARCHITECTURE.md` 且 `requirements.md` 已 `approved`：运行 `architecture-bootstrap` 生成架构契约
-- 缺 `.claude/ARCHITECTURE.md` 且 `requirements.md` 还未 `approved`：先完成 `req-review`
-- 上游文档未 `approved`：停止下游实现，报告阻塞
-- 活跃计划存在且无阻塞：与用户确认优先级，再推进
+然后**优先读取**：
 
-`.claude/PIPELINE.md` 是**操作备注**，不是实时真相源。
-实时就绪状态以 `harness-doctor.sh`、`trace.sh` 和验证命令输出为准。
+```text
+.claude/STATE.yaml
+```
+
+`STATE.yaml` 是实时控制面；主控的第一职责不是“记住流程”，而是“读取状态并按状态路由”。
+
+按 `STATE.yaml -> recommended_next` 决定起点：
+- `req-review`：`intent.md` 已 ready，但 `requirements.md` 缺失
+- `architecture-bootstrap`：`requirements.md` 已 ready，但 `.claude/ARCHITECTURE.md` 缺失
+- `tech-selection`：上游已 ready，但 `tech-decisions.md` 缺失
+- `design`：上游已 ready，但 `design-spec.md` 缺失
+- `feature`：存在 `approved` 且无未决 Q 的 active exec-plan
+- `review`：存在待审批/待裁决文档，先停在人工节点
+- `plan`：上游已 ready，但当前没有可执行的 active exec-plan
+
+`.claude/PIPELINE.md` 只是**操作备注与时间线**，不再承担实时状态语义。
 
 在问“要不要 commit”之前，必须先跑：
 
@@ -155,17 +163,21 @@ npm test
 按需读取，不要整本背诵：
 
 - `.claude/project.md`：项目身份
+- `.claude/STATE.yaml`：实时状态快照、阻塞项、推荐下一步
 - `.claude/docs/`：Harness 设计历史与控制面文档
+- `.claude/docs/core-beliefs.md`：Harness 运行原则
+- `.claude/docs/system-flow.md`：系统信息流与反馈循环
 - `.claude/ARCHITECTURE.md`：分层与依赖不变量
-- `.claude/PIPELINE.md`：操作备注、人工维护时间线、阶段性计划
+- `.claude/PIPELINE.md`：操作备注、人工维护时间线
 - `docs/product-specs/requirements.md`：产品真相源
-- `docs/design-docs/tech-decisions.md`：技术决策真相源
+- `docs/tech/tech-decisions.md`：技术决策真相源
 - `docs/design-docs/design-spec.md`：设计规范真相源
 - `docs/exec-plans/active/`：当前执行计划
 - `.claude/rules/protocols.md`：交接、裁决、提交协议
 - `.claude/rules/bug-workflow.md`：Bug 分诊与修复流程
 - `.claude/rules/exemptions.md`：正式豁免协议
 - `.claude/agents/architecture-bootstrap.md`：架构引导阶段定义
+- `.claude/agents/doc-fix.md`：按需文档修复，不是持续监控进程
 - `docs/exemptions/`：受控例外工件
 
 入口文件只负责导航。细节放在各自的真相源里。

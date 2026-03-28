@@ -78,8 +78,8 @@
            │ │    └─────────────────┘
            │ │
            │ │    ┌─────────────────┐
-           │ └───→│  doc-gardening  │  持续运行
-           └─────→│     agent       │──→ 扫描漂移 → 修复文档
+           │ └───→│   Controller    │
+           └─────→│ + .claude/STATE │──→ 诊断状态 → 按需调用 doc-fix
                   └─────────────────┘
 ```
 
@@ -109,7 +109,7 @@
 | 3 环境 | tech-decisions.md (approved) | 基础设施搭建 | eslint.config.js, CI, tests | 所有后续 Agent |
 | 4a 设计规范 | requirements.md + tech-decisions.md + 网络调研 | design agent 阶段A | design-spec.md (review) | 人类审批 → 阶段 4b |
 | 4b 开发 | design-spec.md (approved) + exec-plan + 约束环境 | design(B) / feature agent | src/ + 文档 | Lint/CI → 用户 |
-| 持续 | 全库 | doc-gardening agent | 文档修复 + 质量评分 | 所有 Agent + 人类 |
+| 持续 | 全库 | 主控 + doc-fix（按需） | 状态刷新 + 文档修复 + 质量评分 | 所有 Agent + 人类 |
 
 ---
 
@@ -150,16 +150,16 @@
 │                                                                 │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
-│   Loop 2: 文档鲜度循环（定期，半自动）                            │
+│   Loop 2: 文档鲜度循环（事件触发，按需）                          │
 │                                                                 │
-│   代码变化累积 ──→ 触发条件满足 ──→ doc-gardening 扫描           │
+│   doctor / doc-lint / closeout ──→ 暴露漂移信号                  │
 │        ↑                                  │                     │
 │        │                          ┌───────┴────────┐            │
 │        │                          ↓                ↓            │
-│        │                     无漂移            发现漂移          │
-│        │                       │                   │            │
-│        │                       ↓                   ↓            │
-│        │              更新 QUALITY_SCORE     修复文档            │
+│        │                       无漂移          发现漂移          │
+│        │                         │                 │            │
+│        │                         ↓                 ↓            │
+│        │                刷新 STATE.yaml      调用 doc-fix       │
 │        └─────────────────────────────── + 更新 QUALITY_SCORE    │
 │                                                                 │
 ├─────────────────────────────────────────────────────────────────┤
@@ -190,7 +190,7 @@
 │                     │                                           │
 │            ┌────────┴────────┐                                  │
 │            ↓                 ↓                                  │
-│       doc-gardening      人类审查                               │
+│     主控 / doc-fix      人类审查                                │
 │            │                 │                                  │
 │            └────────┬────────┘                                  │
 │                     ↓                                           │
@@ -264,17 +264,17 @@
 | 编号 | 名称 | 触发条件 | 响应者 | 闭合条件 | 当前状态 |
 |---|---|---|---|---|---|
 | Loop 1 | 代码质量 | 每次 git push | Lint/CI（自动）→ Agent | 构建通过 | 待阶段 3 搭建 |
-| Loop 2 | 文档鲜度 | 见触发条件表 | doc-gardening agent | QUALITY_SCORE 更新 | 已定义 |
+| Loop 2 | 文档鲜度 | 见触发条件表 | 主控 / doc-fix | QUALITY_SCORE 更新 | 已定义 |
 | Loop 3 | 质量阈值 | QUALITY_SCORE < 60 | 人类 | 评分恢复 ≥ 60 | 已定义 |
-| Loop 4 | 约束升级 | 同类违规 ≥ 3 次 | doc-gardening / 人类 | 升级为更高层约束 | 已定义 |
+| Loop 4 | 约束升级 | 同类违规 ≥ 3 次 | 主控 / doc-fix / 人类 | 升级为更高层约束 | 已定义 |
 | Loop 5 | 环境进化 | Agent 失败/卡住 | 人类诊断 → 补建 | Agent 重试成功 | 已定义 |
 | Loop 6 | 用户反馈 | 用户报告 | 人类分类 → Agent 执行 | 修复上线 | 待产品上线 |
 
-### doc-gardening 触发条件
+### doc-fix 触发条件
 
 | 条件 | 说明 |
 |---|---|
-| 每合并 5 个 PR | 定期扫描 |
-| QUALITY_SCORE 任意维度 < 15 | 单维度告警 |
-| 阶段转换后 | 如阶段 2→3，确认文档完整性 |
+| doctor / doc-lint 失败 | 控制文档结构或状态不一致 |
+| closeout 暴露文档缺口 | 交接文档不完整 |
+| STATE.yaml 出现文档相关 blocker / warning | 主控已有明确漂移信号 |
 | 人类主动触发 | 发现疑似漂移时 |

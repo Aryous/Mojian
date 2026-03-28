@@ -4,7 +4,7 @@ author: coordinator
 date: 2026-03-27
 depends_on:
   - docs/product-specs/requirements.md (approved)
-  - docs/design-docs/tech-decisions.md (approved)
+  - docs/tech/tech-decisions.md (approved)
   - docs/design-docs/design-spec.md (approved)
 ---
 

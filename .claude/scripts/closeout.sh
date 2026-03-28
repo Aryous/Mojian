@@ -8,6 +8,7 @@ shopt -s nullglob
 PROJECT_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 DOC_LINT="$PROJECT_ROOT/.claude/scripts/doc-lint.sh"
 TRACE_SCRIPT="$PROJECT_ROOT/.claude/scripts/trace.sh"
+STATE_SCRIPT="$PROJECT_ROOT/.claude/scripts/sync-state.sh"
 TRACE_EXEMPTION=""
 BLOCKERS=0
 WARNINGS=0
@@ -63,7 +64,7 @@ find_trace_exemption() {
 collect_staged_docs() {
   git -C "$PROJECT_ROOT" diff --cached --name-only 2>/dev/null | while read -r path; do
     case "$path" in
-      .claude/ARCHITECTURE.md|docs/design-docs/tech-decisions.md|docs/exec-plans/active/*.md|docs/exec-plans/completed/*.md|docs/exemptions/*.md)
+      .claude/ARCHITECTURE.md|docs/tech/tech-decisions.md|docs/exec-plans/active/*.md|docs/exec-plans/completed/*.md|docs/exemptions/*.md)
         [[ "$path" == "docs/exemptions/template.md" ]] && continue
         echo "$PROJECT_ROOT/$path"
         ;;
@@ -162,6 +163,14 @@ fi
 run_cmd "npm run lint" npm run lint
 run_cmd "npx tsc -b --noEmit" npx tsc -b --noEmit
 run_cmd "npm test" npm test
+
+if [[ -f "$STATE_SCRIPT" ]]; then
+  if bash "$STATE_SCRIPT" >/dev/null; then
+    ok "STATE 已刷新"
+  else
+    warn "STATE 刷新失败"
+  fi
+fi
 
 echo ""
 echo "───────────────────────────────────────────────"

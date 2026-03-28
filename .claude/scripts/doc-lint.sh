@@ -174,7 +174,7 @@ validate_file() {
       return
       ;;
     "$PROJECT_ROOT/.claude/ARCHITECTURE.md"|\
-    "$PROJECT_ROOT/docs/design-docs/tech-decisions.md"|\
+    "$PROJECT_ROOT/docs/tech/tech-decisions.md"|\
     "$PROJECT_ROOT/docs/design-docs/design-spec.md"|\
     "$PROJECT_ROOT/docs/product-specs/requirements.md"|\
     "$PROJECT_ROOT"/docs/exec-plans/active/*.md|\
@@ -197,7 +197,7 @@ validate_file() {
       require_section "$file" '^## 目录结构映射$' "${file#$PROJECT_ROOT/} 目录结构映射章节"
       validate_trace_table_doc "$file"
       ;;
-    "$PROJECT_ROOT/docs/design-docs/tech-decisions.md")
+    "$PROJECT_ROOT/docs/tech/tech-decisions.md")
       require_section "$file" '^## 已裁决问题$' "${file#$PROJECT_ROOT/} 已裁决问题章节"
       validate_trace_table_doc "$file"
       ;;
@@ -211,7 +211,7 @@ validate_file() {
 collect_changed_targets() {
   git -C "$PROJECT_ROOT" status --short 2>/dev/null | awk '{print $2}' | while read -r path; do
     case "$path" in
-      .claude/ARCHITECTURE.md|docs/design-docs/tech-decisions.md|docs/exec-plans/active/*.md|docs/exec-plans/completed/*.md|docs/exemptions/*.md)
+      .claude/ARCHITECTURE.md|docs/tech/tech-decisions.md|docs/exec-plans/active/*.md|docs/exec-plans/completed/*.md|docs/exemptions/*.md)
         echo "$PROJECT_ROOT/$path"
         ;;
     esac

@@ -46,7 +46,7 @@ Bug 必须先被复现为下列一种：
 4. 失败测试或复现证据
 5. 修复代码
 6. 验证修复
-7. 更新 `.claude/PIPELINE.md`、exec-plan、必要规则
+7. 刷新 `.claude/STATE.yaml`，并更新 exec-plan、必要规则；如需补人工备注，再写 `.claude/PIPELINE.md`
 
 ## 6. 验证要求
 

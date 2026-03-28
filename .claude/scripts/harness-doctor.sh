@@ -6,6 +6,8 @@ set -euo pipefail
 shopt -s nullglob
 
 PROJECT_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+STATE_SCRIPT="$PROJECT_ROOT/.claude/scripts/sync-state.sh"
+STATE_FILE="$PROJECT_ROOT/.claude/STATE.yaml"
 STRICT=false
 [[ "${1:-}" == "--strict" ]] && STRICT=true
 
@@ -139,13 +141,18 @@ echo ""
 echo "项目与主控文件"
 check_required_file "$PROJECT_ROOT/CLAUDE.md" "CLAUDE.md"
 check_required_file "$PROJECT_ROOT/.claude/project.md" ".claude/project.md"
-check_required_file "$PROJECT_ROOT/.claude/PIPELINE.md" ".claude/PIPELINE.md"
+check_required_file "$STATE_SCRIPT" ".claude/scripts/sync-state.sh"
+if [[ -f "$PROJECT_ROOT/.claude/PIPELINE.md" ]]; then
+  ok ".claude/PIPELINE.md 存在（人工备注）"
+else
+  warn ".claude/PIPELINE.md 缺失（仅影响人工备注，不影响实时状态）"
+fi
 echo ""
 
 echo "上游真相源"
 check_status_doc "$PROJECT_ROOT/docs/product-specs/requirements.md" "requirements.md" "true"
 check_architecture_doc
-check_status_doc "$PROJECT_ROOT/docs/design-docs/tech-decisions.md" "tech-decisions.md" "true"
+check_status_doc "$PROJECT_ROOT/docs/tech/tech-decisions.md" "tech-decisions.md" "true"
 check_status_doc "$PROJECT_ROOT/docs/design-docs/design-spec.md" "design-spec.md" "true"
 echo ""
 
@@ -222,6 +229,26 @@ if [[ -f "$PROJECT_ROOT/.claude/scripts/trace.sh" ]]; then
   fi
 else
   block "缺少 .claude/scripts/trace.sh"
+fi
+echo ""
+
+echo "状态文件"
+if [[ -f "$STATE_SCRIPT" ]]; then
+  if bash "$STATE_SCRIPT" >/dev/null; then
+    ok "STATE 已刷新：${STATE_FILE#$PROJECT_ROOT/}"
+    if [[ -f "$STATE_FILE" ]]; then
+      state_kind="$(awk '/^recommended_next:/{flag=1; next} flag && /^  kind:/{sub(/^  kind: /, "", $0); gsub(/"/, "", $0); print; exit}' "$STATE_FILE")"
+      state_target="$(awk '/^recommended_next:/{flag=1; next} flag && /^  target:/{sub(/^  target: /, "", $0); gsub(/"/, "", $0); print; exit}' "$STATE_FILE")"
+      state_reason="$(awk '/^recommended_next:/{flag=1; next} flag && /^  reason:/{sub(/^  reason: /, "", $0); gsub(/"/, "", $0); print; exit}' "$STATE_FILE")"
+      if [[ -n "$state_target" ]]; then
+        ok "推荐下一步：${state_kind:-unknown} / ${state_target} — ${state_reason:-无}"
+      fi
+    fi
+  else
+    block "STATE 刷新失败"
+  fi
+else
+  block "缺少 .claude/scripts/sync-state.sh"
 fi
 echo ""
 

@@ -1,9 +1,9 @@
-# 管线控制台
+# 管线备注
 
-> 主控 Agent（Claude）的操作备注。每次新会话先跑 `bash .claude/scripts/harness-doctor.sh`，再按需 Read 此文件。
+> 主控 Agent（Claude）的操作备注。每次新会话先跑 `bash .claude/scripts/harness-doctor.sh`，优先读取 `.claude/STATE.yaml`，再按需 Read 此文件。
 > 溯源覆盖率由 `.claude/scripts/trace.sh` 机械化生成（自推导 R + F），不在此手工维护。
-> 此文件只记录脚本无法推导的信息：管线状态、裁决状态、计划任务与人工备注。
-> 该文件不是实时真相源；实时就绪状态以 doctor / trace / 验证命令输出为准。
+> 此文件只记录脚本无法推导的信息：人工备注、阶段时间线、阶段性计划。
+> 该文件不是实时真相源；实时就绪状态以 `.claude/STATE.yaml`、doctor / trace / 验证命令输出为准。
 >
 > 最后更新：2026-03-27
 
