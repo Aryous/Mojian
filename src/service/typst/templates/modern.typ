@@ -1,6 +1,7 @@
 // 现代模板
 // 左侧深色边栏 + 右侧主内容，强调色点缀
 // 数据通过 sys.inputs 传入 JSON 格式
+// @req F23
 
 #let data = json.decode(sys.inputs.at("resume-data"))
 
@@ -9,9 +10,22 @@
 #let light-text = rgb("#F1F5F9")
 #let muted-text = rgb("#94A3B8")
 
+// 社区验证方案（Typst 论坛）：
+// - background 用 context { } 包裹，使 100% 高度在页面上下文中正确解析
+// - place(left, rect(...)) 将深色矩形固定在页面左侧，height: 100% 覆盖整页
+// - 不使用 page fill hack，主内容区域保持默认白色背景
 #set page(
   paper: "a4",
-  margin: (top: 0cm, bottom: 0cm, left: 0cm, right: 0cm),
+  margin: (top: 2cm, bottom: 2cm, left: 7.8cm, right: 1.8cm),
+  background: context {
+    place(left,
+      rect(
+        width: 6.4cm,
+        height: 100%,
+        fill: dark-bg,
+      )
+    )
+  },
 )
 
 #set text(
@@ -55,16 +69,11 @@
   }
 }
 
-// ─── 布局 ───────────────────────────
-#grid(
-  columns: (6.4cm, 1fr),
-  // === 左侧边栏 ===
-  rect(
-    width: 100%,
-    height: 100%,
-    fill: dark-bg,
-    inset: (top: 2cm, bottom: 2cm, left: 1.4cm, right: 1.2cm),
-  )[
+// ─── 首页左侧边栏内容（绝对定位，仅出现一次）───────────────────────────
+// 边栏宽度 6.4cm，left inset 1.4cm，top 2cm，right inset 1.2cm
+// 可用宽度 = 6.4cm - 1.4cm - 1.2cm = 3.8cm
+#place(left + top, dx: -6.4cm, dy: 0cm,
+  block(width: 3.8cm)[
     // 姓名
     #text(size: 22pt, weight: "bold", fill: light-text)[
       #personal.at("name", default: "")
@@ -128,64 +137,58 @@
         v(0.5em)
       }
     }
-  ],
-
-  // === 右侧主内容 ===
-  rect(
-    width: 100%,
-    height: 100%,
-    inset: (top: 2cm, bottom: 2cm, left: 1.5cm, right: 1.8cm),
-  )[
-    // 个人简介
-    #if personal.at("summary", default: "") != "" {
-      section-heading("个人简介")
-      {
-        set text(size: 9.5pt, fill: luma(60))
-        render-md(personal.at("summary", default: ""))
-      }
-    }
-
-    // 按用户排序渲染主区域模块
-    #for sec in section-order {
-      if sec == "work" and work.len() > 0 {
-        section-heading("工作经历")
-        for item in work {
-          grid(
-            columns: (1fr, auto),
-            text(size: 10.5pt, weight: "bold", fill: luma(20))[#item.at("company", default: "")],
-            date-range(item.at("startDate", default: ""), item.at("endDate", default: "")),
-          )
-          text(size: 9pt, fill: accent)[#item.at("position", default: "")]
-          if item.at("description", default: "") != "" {
-            v(0.2em)
-            {
-              set text(size: 9pt, fill: luma(60))
-              render-md(item.at("description", default: ""))
-            }
-          }
-          v(0.7em)
-        }
-      } else if sec == "projects" and projects.len() > 0 {
-        section-heading("项目经验")
-        for item in projects {
-          grid(
-            columns: (1fr, auto),
-            text(size: 10.5pt, weight: "bold", fill: luma(20))[#item.at("name", default: "")],
-            date-range(item.at("startDate", default: ""), item.at("endDate", default: "")),
-          )
-          if item.at("role", default: "") != "" {
-            text(size: 9pt, fill: accent)[#item.at("role", default: "")]
-          }
-          if item.at("description", default: "") != "" {
-            v(0.2em)
-            {
-              set text(size: 9pt, fill: luma(60))
-              render-md(item.at("description", default: ""))
-            }
-          }
-          v(0.7em)
-        }
-      }
-    }
-  ],
+  ]
 )
+
+// ─── 主内容（流式排版，Typst 自动分页）───────────────────────────
+// 个人简介
+#if personal.at("summary", default: "") != "" {
+  section-heading("个人简介")
+  {
+    set text(size: 9.5pt, fill: luma(60))
+    render-md(personal.at("summary", default: ""))
+  }
+}
+
+// 按用户排序渲染主区域模块
+#for sec in section-order {
+  if sec == "work" and work.len() > 0 {
+    section-heading("工作经历")
+    for item in work {
+      grid(
+        columns: (1fr, auto),
+        text(size: 10.5pt, weight: "bold", fill: luma(20))[#item.at("company", default: "")],
+        date-range(item.at("startDate", default: ""), item.at("endDate", default: "")),
+      )
+      text(size: 9pt, fill: accent)[#item.at("position", default: "")]
+      if item.at("description", default: "") != "" {
+        v(0.2em)
+        {
+          set text(size: 9pt, fill: luma(60))
+          render-md(item.at("description", default: ""))
+        }
+      }
+      v(0.7em)
+    }
+  } else if sec == "projects" and projects.len() > 0 {
+    section-heading("项目经验")
+    for item in projects {
+      grid(
+        columns: (1fr, auto),
+        text(size: 10.5pt, weight: "bold", fill: luma(20))[#item.at("name", default: "")],
+        date-range(item.at("startDate", default: ""), item.at("endDate", default: "")),
+      )
+      if item.at("role", default: "") != "" {
+        text(size: 9pt, fill: accent)[#item.at("role", default: "")]
+      }
+      if item.at("description", default: "") != "" {
+        v(0.2em)
+        {
+          set text(size: 9pt, fill: luma(60))
+          render-md(item.at("description", default: ""))
+        }
+      }
+      v(0.7em)
+    }
+  }
+}

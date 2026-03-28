@@ -29,12 +29,14 @@
   max-width: 100%;
   background-color: var(--sem-bg-paper);
   box-shadow: var(--shadow-medium);
+  overflow: hidden;
 }
 
 .svgPreview > svg {
   display: block;
   width: 100%;
   height: auto;
+  overflow: hidden;
 }
 
 .compilingBadge {
