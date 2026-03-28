@@ -1,0 +1,52 @@
+document: docs/design-docs/design-spec.md
+role: consumer
+trace_from: docs/product-specs/requirements.trace.yaml
+generated_by: design
+
+entries:
+  - input: R1.1
+    disposition: covered
+    output: §组件规范
+    note: 编辑器布局与交互规范
+  - input: R1.2
+    disposition: excluded
+    reason: 纯技术实现（持久化），无 UI 表面
+  - input: R2.1
+    disposition: covered
+    output: §页面规范 — 预览区
+    note: 渲染预览的视觉规范
+  - input: R2.2
+    disposition: covered
+    output: §页面规范 — 模板选择
+    note: 模板切换交互规范
+  - input: R2.3
+    disposition: covered
+    output: §页面规范 — 导出
+    note: 导出操作的 UI 规范
+  - input: R3.1
+    disposition: covered
+    output: §组件规范 — AI 面板
+    note: AI 优化选项的交互规范
+  - input: R3.2
+    disposition: excluded
+    reason: 纯技术实现（供应商配置），无 UI 表面
+  - input: R4.1
+    disposition: covered
+    output: §设计原则, §色彩体系
+    note: 古风视觉体系是设计规范的核心
+  - input: R4.2
+    disposition: covered
+    output: §组件规范
+    note: 原子化设计组件规范
+  - input: R4.3
+    disposition: covered
+    output: §动画规范
+    note: 水墨物理学动画体系
+  - input: R5.1
+    disposition: covered
+    output: §设计原则, §页面规范
+    note: 降低认知负担的 UX 设计
+  - input: R5.2
+    disposition: covered
+    output: §布局规范
+    note: 响应式断点设计
