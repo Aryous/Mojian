@@ -34,6 +34,16 @@ on_user_message(msg):
             execute
         return
 
+    elif is_new_feature_request(msg):
+        # 主控自己写 intent，不派 agent
+        if intent.md not exists or user wants new feature:
+            collect user requirements via conversation
+            write docs/product-specs/intent.md   # 自由格式，不需要结构化
+            set intent.status = review
+            wait human approval → approved
+        follow_pipeline(state.recommended_next)
+        return
+
     else:
         # 默认走管线
         follow_pipeline(state.recommended_next)
@@ -42,7 +52,7 @@ on_user_message(msg):
 pipeline:
     # 每个阶段的门禁协议详见 @.claude/rules/protocols.md
 
-    intent(approved)
+    intent(approved)  # 由主控撰写，人类审批
       → [G1]  req-review agent        → requirements.md
       → [G1a] arch-bootstrap agent    → ARCHITECTURE.md
       → [G2]  tech-selection agent    → tech-decisions.md

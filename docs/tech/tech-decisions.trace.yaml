@@ -1,0 +1,37 @@
+document: docs/tech/tech-decisions.md
+role: consumer
+trace_from: docs/product-specs/requirements.trace.yaml
+generated_by: tech-selection
+
+entries:
+  - input: R1.2
+    disposition: covered
+    output: 决策 3
+    note: IndexedDB / Dexie 方案
+  - input: R2.1
+    disposition: covered
+    output: 决策 4
+    note: Typst WASM 渲染
+  - input: R2.3
+    disposition: covered
+    output: 决策 5
+    note: PDF 导出链路
+  - input: R3.1
+    disposition: covered
+    output: 决策 6, 决策 15
+    note: AI 调用层与 JSON 输出可靠性
+  - input: R3.2
+    disposition: covered
+    output: 决策 6, 决策 15
+    note: OpenRouter + OpenAI SDK + json_object 兼容性
+  - input: R3.3
+    disposition: covered
+    output: 决策 12, 决策 13, 决策 14, 决策 15
+    note: schema / id / diff / JSON 可靠性
+  - input: F19
+    disposition: covered
+    output: 决策 16
+    note: sessionStorage 方案 + CSP 待办
+  - input: R4.1
+    disposition: excluded
+    reason: 视觉规范由 design-spec.md 覆盖
