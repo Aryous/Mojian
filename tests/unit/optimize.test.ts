@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { Resume } from '@/types'
 
-// Mock localStorage
-const localStorageMock = (() => {
+// Mock sessionStorage（settings.ts 已迁移至 sessionStorage，@req F19）
+const sessionStorageMock = (() => {
   let store: Record<string, string> = {}
   return {
     getItem: vi.fn((key: string) => store[key] ?? null),
@@ -22,7 +22,7 @@ const localStorageMock = (() => {
   }
 })()
 
-vi.stubGlobal('localStorage', localStorageMock)
+vi.stubGlobal('sessionStorage', sessionStorageMock)
 
 // Mock OpenAI SDK
 vi.mock('openai', () => {
@@ -101,13 +101,13 @@ const mockResume: Resume = {
 
 describe('optimizeResume — 基础校验', () => {
   beforeEach(() => {
-    localStorageMock.clear()
+    sessionStorageMock.clear()
     vi.clearAllMocks()
   })
 
   it('未知 optionId 应抛出包含"未知的优化选项"的错误', async () => {
     // 设置 API Key，使 getAiClient 不抛 API Key 错误
-    localStorageMock.setItem('mojian:openrouter-api-key', 'sk-test-key')
+    sessionStorageMock.setItem('mojian:openrouter-api-key', 'sk-test-key')
 
     const { optimizeResume } = await import('@/service/ai/optimize')
     await expect(
@@ -121,7 +121,7 @@ describe('optimizeResume — 基础校验', () => {
   })
 
   it('AI 返回空内容时应抛出"AI 未返回有效内容"错误', async () => {
-    localStorageMock.setItem('mojian:openrouter-api-key', 'sk-test-key')
+    sessionStorageMock.setItem('mojian:openrouter-api-key', 'sk-test-key')
 
     // 动态获取 OpenAI mock 实例，设置 create 返回空内容
     const OpenAI = (await import('openai')).default
@@ -149,9 +149,9 @@ describe('optimizeResume — 基础校验', () => {
 
 describe('optimizeResume — happy path（mock AI 返回）', () => {
   beforeEach(() => {
-    localStorageMock.clear()
+    sessionStorageMock.clear()
     vi.clearAllMocks()
-    localStorageMock.setItem('mojian:openrouter-api-key', 'sk-test-key')
+    sessionStorageMock.setItem('mojian:openrouter-api-key', 'sk-test-key')
   })
 
   it('AI 返回合法 work JSON 数组，经 Zod 校验后返回数据', async () => {

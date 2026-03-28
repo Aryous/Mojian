@@ -11,7 +11,7 @@ export const AI_BASE_URL = 'https://openrouter.ai/api/v1'
 /** 默认模型 */
 export const AI_DEFAULT_MODEL = 'openai/gpt-4o-mini'
 
-/** localStorage 中存储 API Key 的键名 */
+/** sessionStorage 中存储 API Key 的键名（关闭标签页即清除，@req F19） */
 export const AI_API_KEY_STORAGE_KEY = 'mojian:openrouter-api-key'
 
 /** AI 优化选项定义（含生成模式） */

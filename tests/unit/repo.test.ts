@@ -93,10 +93,10 @@ describe('Repo 层：简历 CRUD', () => {
   })
 })
 
-// --- Settings 测试（localStorage） ---
+// --- Settings 测试（sessionStorage，@req F19）---
 
-// Mock localStorage
-const localStorageMock = (() => {
+// Mock sessionStorage（settings.ts 已迁移至 sessionStorage）
+const sessionStorageMock = (() => {
   let store: Record<string, string> = {}
   return {
     getItem: vi.fn((key: string) => store[key] ?? null),
@@ -116,16 +116,16 @@ const localStorageMock = (() => {
   }
 })()
 
-vi.stubGlobal('localStorage', localStorageMock)
+vi.stubGlobal('sessionStorage', sessionStorageMock)
 
-// 在 mock localStorage 之后再导入 settings
+// 在 mock sessionStorage 之后再导入 settings
 // 使用动态 import 确保 mock 先生效
 describe('Repo 层：Settings (API Key)', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let settings: any
 
   beforeEach(async () => {
-    localStorageMock.clear()
+    sessionStorageMock.clear()
     vi.clearAllMocks()
     // 动态导入确保每次使用最新的 mock 状态
     settings = await import('@/repo/settings')
