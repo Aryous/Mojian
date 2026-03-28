@@ -193,11 +193,21 @@ docs/（软约束）→ .claude/rules/（中约束）→ lint 规则（硬约束
 
 必须：
 1. 创建 `docs/exemptions/*.md`
-2. 说明背景、允许跳过的 scope、约束、退出条件
+2. 说明背景、允许跳过的 scope、mode、约束、退出条件
 3. 由人类审批，写入 `approved_by` / `approved_date` / `expires`
 4. 仅在对应 scope 内生效
+5. 提交成功后由脚本自动推进豁免状态，不依赖 Agent 手工回写
 
 当前允许的 scope：
 - `trace`
+
+生命周期：
+- `draft` / `review`：不可生效
+- `approved`：可生效
+- `consumed` / `expired` / `revoked`：不可再次生效
+
+模式：
+- `one_shot`：只允许放行一次提交，成功后自动改成 `consumed`
+- `until_resolved`：允许在 `covers` 声明的历史缺口范围内重复使用，并记录 `last_used_commit`
 
 没有豁免文档，就没有例外。

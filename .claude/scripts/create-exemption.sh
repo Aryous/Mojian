@@ -6,25 +6,32 @@ set -euo pipefail
 
 PROJECT_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 SCOPE=""
+MODE="one_shot"
 SLUG=""
 REASON=""
 TITLE=""
 PATHS=()
+COVERS=()
 
 usage() {
   cat <<'EOF'
 用法:
   bash .claude/scripts/create-exemption.sh \
     --scope trace \
+    --mode until_resolved \
     --slug f05-ai-zod \
     --reason "历史 trace 债阻塞当前修复提交" \
+    --cover F06 \
+    --cover F07 \
     --path docs/exec-plans/completed/bugfix-ai-zod-validation.md
 
 参数:
   --scope   豁免 scope（当前仅支持 trace）
+  --mode    one_shot | until_resolved（默认 one_shot）
   --slug    文件名后缀，建议使用短横线 slug
   --reason  一句话说明豁免原因
   --title   可选，自定义标题
+  --cover   可重复，记录 until_resolved 覆盖的历史缺口 ID
   --path    可重复，记录本次受影响的计划/文档路径
 EOF
 }
@@ -35,6 +42,11 @@ while (( $# > 0 )); do
       shift
       [[ $# -gt 0 ]] || { echo "缺少 --scope 参数"; exit 1; }
       SCOPE="$1"
+      ;;
+    --mode)
+      shift
+      [[ $# -gt 0 ]] || { echo "缺少 --mode 参数"; exit 1; }
+      MODE="$1"
       ;;
     --slug)
       shift
@@ -56,6 +68,11 @@ while (( $# > 0 )); do
       [[ $# -gt 0 ]] || { echo "缺少 --path 参数"; exit 1; }
       PATHS+=("$1")
       ;;
+    --cover)
+      shift
+      [[ $# -gt 0 ]] || { echo "缺少 --cover 参数"; exit 1; }
+      COVERS+=("$1")
+      ;;
     --help|-h)
       usage
       exit 0
@@ -75,6 +92,16 @@ done
 
 if [[ "$SCOPE" != "trace" ]]; then
   echo "当前仅支持 trace scope。"
+  exit 1
+fi
+
+if [[ "$MODE" != "one_shot" && "$MODE" != "until_resolved" ]]; then
+  echo "mode 只能是 one_shot 或 until_resolved。"
+  exit 1
+fi
+
+if [[ "$MODE" == "until_resolved" && ${#COVERS[@]} -eq 0 ]]; then
+  echo "until_resolved 模式必须至少提供一个 --cover。"
   exit 1
 fi
 
@@ -101,14 +128,30 @@ else
   paths_yaml="[请填写本次受影响的计划或文档路径]"
 fi
 
+covers_yaml=""
+if (( ${#COVERS[@]} > 0 )); then
+  for cover in "${COVERS[@]}"; do
+    covers_yaml+="${cover}, "
+  done
+  covers_yaml="${covers_yaml%, }"
+else
+  covers_yaml=""
+fi
+
 cat > "$FILE" <<EOF
 ---
 status: review
 scope: $SCOPE
+mode: $MODE
 reason: $REASON
 approved_by:
 approved_date:
 expires: YYYY-MM-DD
+covers: [$covers_yaml]
+consumed_by_commit:
+consumed_date:
+last_used_commit:
+last_used_date:
 paths: [$paths_yaml]
 ---
 

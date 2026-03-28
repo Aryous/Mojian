@@ -1,0 +1,35 @@
+#!/bin/bash
+# 提交成功后的豁免状态推进
+# 不依赖 Agent 记忆；只要 pre-commit 选中过豁免，提交成功后就自动回写状态。
+
+PROJECT_ROOT="$(git rev-parse --show-toplevel)"
+SCRIPTS_DIR="$PROJECT_ROOT/.claude/scripts"
+EXEMPTION_LIB="$SCRIPTS_DIR/exemption-lib.sh"
+PENDING_TRACE_EXEMPTION_FILE="$PROJECT_ROOT/.git/.harness-trace-exemption.pending"
+
+[[ -f "$EXEMPTION_LIB" ]] || exit 0
+[[ -f "$PENDING_TRACE_EXEMPTION_FILE" ]] || exit 0
+
+source "$EXEMPTION_LIB"
+
+TRACE_EXEMPTION="$(cat "$PENDING_TRACE_EXEMPTION_FILE")"
+rm -f "$PENDING_TRACE_EXEMPTION_FILE"
+
+[[ -n "$TRACE_EXEMPTION" ]] || exit 0
+[[ -f "$TRACE_EXEMPTION" ]] || exit 0
+[[ "$(frontmatter_value "$TRACE_EXEMPTION" "status")" == "approved" ]] || exit 0
+
+MODE="$(frontmatter_value "$TRACE_EXEMPTION" "mode")"
+COMMIT_SHA="$(git -C "$PROJECT_ROOT" rev-parse HEAD)"
+TODAY="$(date +%F)"
+
+case "$MODE" in
+  one_shot)
+    mark_exemption_consumed "$TRACE_EXEMPTION" "$COMMIT_SHA" "$TODAY"
+    echo "🧾 Exemption consumed: ${TRACE_EXEMPTION#$PROJECT_ROOT/}"
+    ;;
+  until_resolved)
+    record_exemption_usage "$TRACE_EXEMPTION" "$COMMIT_SHA" "$TODAY"
+    echo "🧾 Exemption usage recorded: ${TRACE_EXEMPTION#$PROJECT_ROOT/}"
+    ;;
+esac

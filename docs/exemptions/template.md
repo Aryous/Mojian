@@ -1,10 +1,16 @@
 ---
 status: review
 scope: trace
+mode: one_shot
 reason: [一句话说明为什么需要豁免]
 approved_by:
 approved_date:
 expires: YYYY-MM-DD
+covers: []
+consumed_by_commit:
+consumed_date:
+last_used_commit:
+last_used_date:
 paths: [docs/exec-plans/completed/example.md]
 ---
 

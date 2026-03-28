@@ -9,9 +9,12 @@ PROJECT_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 DOC_LINT="$PROJECT_ROOT/.claude/scripts/doc-lint.sh"
 TRACE_SCRIPT="$PROJECT_ROOT/.claude/scripts/trace.sh"
 STATE_SCRIPT="$PROJECT_ROOT/.claude/scripts/sync-state.sh"
+EXEMPTION_LIB="$PROJECT_ROOT/.claude/scripts/exemption-lib.sh"
 TRACE_EXEMPTION=""
 BLOCKERS=0
 WARNINGS=0
+
+source "$EXEMPTION_LIB"
 
 ok() {
   echo "  ✅ $1"
@@ -25,40 +28,6 @@ warn() {
 block() {
   BLOCKERS=$((BLOCKERS + 1))
   echo "  ❌ $1"
-}
-
-frontmatter_value() {
-  local file="$1"
-  local key="$2"
-
-  awk -v key="$key" '
-    NR == 1 && $0 == "---" { in_fm = 1; next }
-    in_fm && $0 == "---" { exit }
-    in_fm && $0 ~ ("^" key ":") {
-      sub("^[^:]+:[[:space:]]*", "", $0)
-      print $0
-      exit
-    }
-  ' "$file"
-}
-
-find_trace_exemption() {
-  local today exemption status scope expires
-  today="$(date +%F)"
-
-  for exemption in "$PROJECT_ROOT"/docs/exemptions/*.md; do
-    [[ -f "$exemption" ]] || continue
-    status="$(frontmatter_value "$exemption" "status")"
-    scope="$(frontmatter_value "$exemption" "scope")"
-    expires="$(frontmatter_value "$exemption" "expires")"
-
-    if [[ "$status" == "approved" && "$scope" == "trace" && -n "$expires" && ( "$expires" > "$today" || "$expires" == "$today" ) ]]; then
-      echo "$exemption"
-      return 0
-    fi
-  done
-
-  return 1
 }
 
 collect_staged_docs() {
@@ -122,8 +91,17 @@ if (( ${#DOCS[@]} == 0 )); then
   done < <(collect_staged_docs)
 fi
 
-if [[ -z "$TRACE_EXEMPTION" ]]; then
-  TRACE_EXEMPTION="$(find_trace_exemption || true)"
+TRACE_MISSING_IDS=()
+while IFS= read -r id; do
+  [[ -n "$id" ]] && TRACE_MISSING_IDS+=("$id")
+done < <(trace_missing_ids "$PROJECT_ROOT")
+
+if [[ -z "$TRACE_EXEMPTION" && ${#TRACE_MISSING_IDS[@]} -gt 0 ]]; then
+  TRACE_EXEMPTION="$(find_applicable_trace_exemption "" "${TRACE_MISSING_IDS[@]}" || true)"
+elif [[ -n "$TRACE_EXEMPTION" ]]; then
+  if ! TRACE_EXEMPTION="$(find_applicable_trace_exemption "$TRACE_EXEMPTION" "${TRACE_MISSING_IDS[@]}" || true)"; then
+    TRACE_EXEMPTION=""
+  fi
 fi
 
 echo "═══════════════════════════════════════════════"
@@ -141,7 +119,7 @@ else
   warn "未检测到需要收口的关键文档"
 fi
 
-if [[ -n "$TRACE_EXEMPTION" ]]; then
+if [[ -n "$TRACE_EXEMPTION" && ${#TRACE_MISSING_IDS[@]} -gt 0 ]]; then
   if bash "$DOC_LINT" "$TRACE_EXEMPTION"; then
     warn "使用 trace 豁免：${TRACE_EXEMPTION#$PROJECT_ROOT/}"
     if bash "$TRACE_SCRIPT"; then

@@ -1,10 +1,16 @@
 ---
 status: approved
 scope: trace
+mode: until_resolved
 reason: 4 个既有 S1 走查缺口（F06/F07/F08/F13）阻塞所有新变更的 closeout，非本次引入
 approved_by: Lucas
 approved_date: 2026-03-28
 expires: 2026-04-30
+covers: [F06, F07, F08, F13]
+consumed_by_commit:
+consumed_date:
+last_used_commit:
+last_used_date:
 paths: []
 ---
 
@@ -34,5 +40,5 @@ trace.sh 自推导追踪 requirements.md 中所有 S0/S1 条目。当前 4 个 S
 ## 退出条件
 
 - F06/F07/F08/F13 四项全部实现并标注 @req 后删除本豁免
-- 或四项被裁决为丢弃（severity 改为 S1→丢弃）后删除本豁免
+- 或四项被裁决为不再进入 trace 范围后删除本豁免
 - 过期日期：2026-04-30

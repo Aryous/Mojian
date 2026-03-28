@@ -68,18 +68,28 @@ require_section() {
 validate_exemption_doc() {
   local file="$1"
   local rel="${file#$PROJECT_ROOT/}"
-  local status scope expires approved_by approved_date today
+  local status scope mode expires approved_by approved_date consumed_by_commit consumed_date today
+  local covers
 
   status="$(frontmatter_value "$file" "status")"
   scope="$(frontmatter_value "$file" "scope")"
+  mode="$(frontmatter_value "$file" "mode")"
   expires="$(frontmatter_value "$file" "expires")"
   approved_by="$(frontmatter_value "$file" "approved_by")"
   approved_date="$(frontmatter_value "$file" "approved_date")"
+  consumed_by_commit="$(frontmatter_value "$file" "consumed_by_commit")"
+  consumed_date="$(frontmatter_value "$file" "consumed_date")"
+  covers="$(frontmatter_value "$file" "covers")"
   today="$(date +%F)"
 
-  if [[ "$status" != "approved" ]]; then
-    block "$rel 豁免文档必须为 approved"
-  fi
+  case "$status" in
+    draft|review|approved|consumed|expired|revoked)
+      ok "$rel status=$status"
+      ;;
+    *)
+      block "$rel status 非法：$status"
+      ;;
+  esac
 
   if [[ -z "$scope" ]]; then
     block "$rel 缺少 scope"
@@ -87,18 +97,49 @@ validate_exemption_doc() {
     ok "$rel scope=$scope"
   fi
 
+  case "$mode" in
+    one_shot|until_resolved)
+      ok "$rel mode=$mode"
+      ;;
+    *)
+      block "$rel mode 非法：$mode"
+      ;;
+  esac
+
   if [[ -z "$expires" ]]; then
     block "$rel 缺少 expires"
   elif [[ "$expires" < "$today" ]]; then
-    block "$rel 已过期（expires=$expires）"
+    if [[ "$status" == "approved" ]]; then
+      block "$rel approved 豁免已过期（expires=$expires）"
+    else
+      ok "$rel 已过期（status=$status）"
+    fi
   else
     ok "$rel 未过期"
   fi
 
-  if [[ -z "$approved_by" || -z "$approved_date" ]]; then
-    block "$rel 缺少 approved_by / approved_date"
-  else
-    ok "$rel 审批信息完整"
+  if [[ "$status" == "approved" || "$status" == "consumed" || "$status" == "revoked" ]]; then
+    if [[ -z "$approved_by" || -z "$approved_date" ]]; then
+      block "$rel 缺少 approved_by / approved_date"
+    else
+      ok "$rel 审批信息完整"
+    fi
+  fi
+
+  if [[ "$mode" == "until_resolved" ]]; then
+    if [[ -z "${covers//[[:space:]]/}" || "$covers" == "[]" ]]; then
+      block "$rel until_resolved 豁免必须声明 covers"
+    else
+      ok "$rel covers 已声明"
+    fi
+  fi
+
+  if [[ "$status" == "consumed" ]]; then
+    if [[ -z "$consumed_by_commit" || -z "$consumed_date" ]]; then
+      block "$rel consumed 豁免缺少 consumed_by_commit / consumed_date"
+    else
+      ok "$rel consumed 信息完整"
+    fi
   fi
 
   require_section "$file" '^## 背景$' "$rel 背景章节"
