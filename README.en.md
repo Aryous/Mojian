@@ -1,3 +1,5 @@
+English | [中文](README.md)
+
 # Mojian
 
 AI-powered resume editor with classical Chinese aesthetics.
@@ -55,6 +57,3 @@ The framework has been extracted as a standalone project: [HarnessPractice](http
 
 MIT
 
----
-
-[中文](README.md)

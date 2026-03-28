@@ -1,3 +1,5 @@
+[English](README.en.md) | 中文
+
 # 墨简 Mojian
 
 AI 驱动的中古风简历编辑器。
@@ -55,6 +57,3 @@ npm test             # 运行测试
 
 MIT
 
----
-
-[English](README.en.md)
