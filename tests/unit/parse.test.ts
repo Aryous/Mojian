@@ -65,9 +65,16 @@ describe('validateSectionData', () => {
       expect(result).toEqual(data)
     })
 
-    it('缺少必填字段时抛出 ZodError', () => {
+    it('缺少可选字段时用空字符串填充（防御性容错）', () => {
       const data = { name: '张三' }
-      expect(() => validateSectionData('personal', data)).toThrow()
+      const result = validateSectionData('personal', data) as Record<string, unknown>
+      expect(result.name).toBe('张三')
+      expect(result.title).toBe('')
+      expect(result.email).toBe('')
+      expect(result.phone).toBe('')
+      expect(result.location).toBe('')
+      expect(result.website).toBe('')
+      expect(result.summary).toBe('')
     })
   })
 

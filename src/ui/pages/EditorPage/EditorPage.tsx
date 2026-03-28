@@ -4,7 +4,7 @@
 import { useEffect, useCallback, useMemo, useState } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router'
 import { Reorder, useDragControls } from 'motion/react'
-import { useResumeStore, useAiStore } from '@/runtime/store'
+import { useResumeStore, useAiStore, useHistoryStore } from '@/runtime/store'
 import { TEMPLATES } from '@/config'
 import { CloudEmpty, PaperToast } from '@/ui/components'
 import { TopToolbar } from './TopToolbar'
@@ -88,8 +88,9 @@ export function EditorPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const location = useLocation()
-  const { currentResume, loading, openResume, updateCurrentResume, closeResume } = useResumeStore()
+  const { currentResume, loading, openResume, updateCurrentResume, closeResume, restoreResume } = useResumeStore()
   const { error: aiError, clearState: clearAiError } = useAiStore()
+  const { undo, redo } = useHistoryStore()
   const [aiOpen, setAiOpen] = useState(false)
   const [aiTargetSection, setAiTargetSection] = useState<SectionType | undefined>(undefined)
   const [tplOpen, setTplOpen] = useState(false)
@@ -161,6 +162,32 @@ export function EditorPage() {
     document.addEventListener('keydown', handleEsc)
     return () => document.removeEventListener('keydown', handleEsc)
   }, [aiOpen])
+
+  // @req F05 — Cmd+Z 撤销 / Cmd+Shift+Z 或 Cmd+Y 重做
+  // 注意：此 useEffect 在 early return 之前，符合 hooks 规则
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const mod = e.metaKey || e.ctrlKey
+      if (!mod) return
+
+      if (e.key === 'z' && !e.shiftKey) {
+        e.preventDefault()
+        const current = useResumeStore.getState().currentResume
+        if (!current) return
+        const previous = undo(current)
+        if (previous) restoreResume(previous)
+      } else if ((e.key === 'z' && e.shiftKey) || e.key === 'y') {
+        e.preventDefault()
+        const current = useResumeStore.getState().currentResume
+        if (!current) return
+        const next = redo(current)
+        if (next) restoreResume(next)
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [undo, redo, restoreResume])
 
   // Resolve current template name
   const currentTemplateName = useMemo(() => {

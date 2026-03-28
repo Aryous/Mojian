@@ -28,51 +28,51 @@ export function extractJsonFromText(text: string): unknown {
 
 // Zod schemas for each section type (不含 id)
 const educationItemSchema = z.object({
-  school: z.string(),
-  degree: z.string(),
-  field: z.string(),
-  startDate: z.string(),
-  endDate: z.string(),
-  description: z.string(),
+  school: z.string().optional().default(''),
+  degree: z.string().optional().default(''),
+  field: z.string().optional().default(''),
+  startDate: z.string().optional().default(''),
+  endDate: z.string().optional().default(''),
+  description: z.string().optional().default(''),
 })
 
 const workItemSchema = z.object({
-  company: z.string(),
-  position: z.string(),
-  startDate: z.string(),
-  endDate: z.string(),
-  description: z.string(),
+  company: z.string().optional().default(''),
+  position: z.string().optional().default(''),
+  startDate: z.string().optional().default(''),
+  endDate: z.string().optional().default(''),
+  description: z.string().optional().default(''),
 })
 
 const skillItemSchema = z.object({
-  name: z.string(),
+  name: z.string().optional().default(''),
   level: z.enum(['beginner', 'intermediate', 'advanced', 'expert']),
 })
 
 const projectItemSchema = z.object({
-  name: z.string(),
-  role: z.string(),
-  startDate: z.string(),
-  endDate: z.string(),
-  description: z.string(),
-  url: z.string(),
+  name: z.string().optional().default(''),
+  role: z.string().optional().default(''),
+  startDate: z.string().optional().default(''),
+  endDate: z.string().optional().default(''),
+  description: z.string().optional().default(''),
+  url: z.string().optional().default(''),
 })
 
 const customItemSchema = z.object({
-  title: z.string(),
-  subtitle: z.string(),
-  date: z.string(),
-  description: z.string(),
+  title: z.string().optional().default(''),
+  subtitle: z.string().optional().default(''),
+  date: z.string().optional().default(''),
+  description: z.string().optional().default(''),
 })
 
 const personalSchema = z.object({
-  name: z.string(),
-  title: z.string(),
-  email: z.string(),
-  phone: z.string(),
-  location: z.string(),
-  website: z.string(),
-  summary: z.string(),
+  name: z.string().optional().default(''),
+  title: z.string().optional().default(''),
+  email: z.string().optional().default(''),
+  phone: z.string().optional().default(''),
+  location: z.string().optional().default(''),
+  website: z.string().optional().default(''),
+  summary: z.string().optional().default(''),
 })
 
 const sectionSchemaMap: Record<SectionType, z.ZodSchema> = {

@@ -103,6 +103,7 @@ export async function optimizeResume(params: OptimizeParams): Promise<OptimizeRe
     messages,
     temperature: 0.7,
     max_tokens: 4096,
+    response_format: { type: 'json_object' as const },
   })
 
   const rawText = response.choices[0]?.message?.content

@@ -4,3 +4,4 @@
 export { useResumeStore } from './resumeStore'
 export { usePreviewStore } from './previewStore'
 export { useAiStore } from './aiStore'
+export { useHistoryStore } from './historyStore'

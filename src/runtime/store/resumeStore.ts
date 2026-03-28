@@ -4,6 +4,7 @@
 import { create } from 'zustand'
 import type { Resume, ResumeSummary, ResumeCreateInput } from '@/types'
 import * as resumeService from '@/service/resume'
+import { useHistoryStore } from './historyStore'
 
 interface ResumeState {
   /** 简历列表 */
@@ -21,6 +22,8 @@ interface ResumeState {
   openResume: (id: string) => Promise<void>
   /** 更新当前简历（局部更新 + 自动持久化） */
   updateCurrentResume: (changes: Partial<Omit<Resume, 'id' | 'createdAt'>>) => Promise<void>
+  /** @req F05 — 恢复到指定状态（undo/redo 专用，不触发 history push） */
+  restoreResume: (resume: Resume) => Promise<void>
   /** 删除简历 */
   deleteResume: (id: string) => Promise<void>
   /** 关闭当前编辑 */
@@ -55,6 +58,9 @@ export const useResumeStore = create<ResumeState>((set, get) => ({
     const { currentResume } = get()
     if (!currentResume) return
 
+    // @req F05 — 编辑前记录快照，供撤销使用
+    useHistoryStore.getState().pushSnapshot(currentResume)
+
     const updatedResume = {
       ...currentResume,
       ...changes,
@@ -64,6 +70,12 @@ export const useResumeStore = create<ResumeState>((set, get) => ({
 
     // 异步持久化，不阻塞 UI
     await resumeService.updateResume(currentResume.id, changes)
+  },
+
+  restoreResume: async (resume) => {
+    // @req F05 — 恢复到指定状态，不触发 pushSnapshot 避免循环
+    set({ currentResume: resume })
+    await resumeService.updateResume(resume.id, resume)
   },
 
   deleteResume: async (id) => {
@@ -85,6 +97,8 @@ export const useResumeStore = create<ResumeState>((set, get) => ({
   },
 
   closeResume: () => {
+    // @req F05 — 关闭编辑器时清空历史，避免下次打开恢复到上一份简历的历史
+    useHistoryStore.getState().clear()
     set({ currentResume: null })
   },
 }))
