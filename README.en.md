@@ -32,11 +32,24 @@ docs/               Contract documents (requirements, design, tech decisions, ex
 .claude/            Harness framework (agent definitions, scripts, rules)
 ```
 
-## Development
+## Getting Started
+
+Requires Node.js >= 18.
 
 ```bash
+git clone https://github.com/Aryous/Mojian.git
+cd Mojian
 npm install
-npm run dev          # Start dev server
+npm run dev
+```
+
+Open `http://localhost:5173`. Enter your OpenRouter API Key in settings to enable AI features.
+
+The editor works without an API Key — you can edit and preview resumes normally.
+
+### Other Commands
+
+```bash
 npm run build        # Production build
 npm run lint         # ESLint (includes layer rules)
 npm test             # Run tests

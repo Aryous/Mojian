@@ -32,11 +32,24 @@ docs/               契约文档（需求、设计、技术决策、执行计划
 .claude/            Harness 框架（Agent 定义、脚本、规则）
 ```
 
-## 开发
+## 运行
+
+需要 Node.js >= 18。
 
 ```bash
+git clone https://github.com/Aryous/Mojian.git
+cd Mojian
 npm install
-npm run dev          # 启动开发服务器
+npm run dev
+```
+
+打开 `http://localhost:5173`，在设置中填入 OpenRouter API Key 即可使用 AI 功能。
+
+不配置 API Key 也可以正常编辑和预览简历。
+
+### 其他命令
+
+```bash
 npm run build        # 生产构建
 npm run lint         # ESLint（含分层规则）
 npm test             # 运行测试
