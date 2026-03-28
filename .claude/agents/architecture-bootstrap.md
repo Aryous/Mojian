@@ -51,17 +51,24 @@ bootstrap | incremental:
         依赖规则,
         横切关注点唯一入口,
         目录结构映射,
-        机械化执行建议,
     )
 
     for each constraint:
         if cannot_decide:
             write Q(背景, 选项≥2, 影响, 阻塞)
 
+    # 机械化执行：为可 lint 化的结构约束生成规则代码
+    for each constraint where enforceable_by_lint:
+        # 典型：依赖方向、禁止跨层引用、唯一入口
+        generate eslint-rules/<constraint-name>.js   # ESLint 规则插件
+        register in eslint.config.ts                 # 确保规则被加载
+        # 规则的 error message 必须包含修复指引
+
     # 输出前加载 Skill 获取结构契约
     invoke arch-output Skill
     output ARCHITECTURE.md             # 按 doc-structure 契约
     output ARCHITECTURE.trace.yaml     # 按 trace-schema 契约（消费端）
+    output eslint-rules/*.js           # lint 硬约束（如有新增）
 
     set status = review
     # 不得设为 approved，等人类审批
@@ -72,6 +79,7 @@ close_conditions:
     assert ARCHITECTURE.trace.yaml 与文档同步
     assert 没有把实现习惯伪装成架构不变量
     assert 所有未决问题显式标记为 Q
+    assert 每条 lint 规则的 error message 包含修复指引
     assert status != approved
 ```
 

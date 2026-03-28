@@ -183,6 +183,16 @@ Agent 失败时，**禁止简单重试**。诊断：
 docs/（软约束）→ .claude/rules/（中约束）→ lint 规则（硬约束）
 ```
 
+**执行者**：
+
+| 升级路径 | 执行者 | 说明 |
+|---|---|---|
+| docs/ → .claude/rules/ | 主控 | 直接写入规则文件 |
+| .claude/rules/ → eslint-rules/ | architecture-bootstrap agent | 结构约束（分层、依赖方向、唯一入口） |
+| .claude/rules/ → eslint-rules/ | feature agent | 实现模式约束（命名规范、API 调用模式等） |
+
+主控根据约束性质判断派发哪个 Agent。结构约束由 architecture-bootstrap 生成（它已持有完整的架构不变量上下文），实现模式约束由 feature agent 生成（它在编码上下文中）。
+
 约束只升级，不降级。
 
 ---
